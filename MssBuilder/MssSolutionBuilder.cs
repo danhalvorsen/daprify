@@ -31,8 +31,16 @@ namespace MssBuilder
                     }
                 }
 
-                MssValueTypeBuilder valueBuilder = new(dir.FullName);
-                valueBuilder.Generate(classes);
+                List<MssCSharpProject> projects = [];
+
+                MssValueTypeBuilder valueBuilder = new();
+                MssCSharpProject valueTypeProject = valueBuilder.Build(classes);
+                projects.Add(valueTypeProject);
+
+                foreach (var project in projects)
+                {
+                    project.Write(dir.FullName);
+                }
             }
             else
             {
