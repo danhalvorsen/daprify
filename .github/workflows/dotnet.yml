@@ -32,5 +32,5 @@ jobs:
       - name: Test
         run: >
           dotnet test --no-build --verbosity normal
-          --filter "FullyQualifiedName!=CLITests.Commands.TryCertificateCommandTests.Expected_Certificates_Generated &&
+          --filter "FullyQualifiedName!=CLITests.Commands.TryCertificateCommandTests.Expected_Certificates_Generated &
           FullyQualifiedName!=CLITests.Commands.TryGenAllCommandTests.Expected_Config_File_Generates_All"
