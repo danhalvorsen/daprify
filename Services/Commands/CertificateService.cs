@@ -42,7 +42,7 @@ namespace CLI.Services
         private static string BuildScriptPath(string scriptName)
         {
             const string SCRIPT_DIR_NAME = "Scripts";
-            DirectoryInfo cliDir = DirectoryService.FindDirectoryUpwards("CLI");
+            DirectoryInfo cliDir = DirectoryService.FindDirectoryUpwards("daprify");
 
             return Path.Combine(cliDir.FullName, SCRIPT_DIR_NAME, scriptName);
         }
