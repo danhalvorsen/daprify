@@ -1,5 +1,4 @@
-using HandlebarsDotNet;
-using Mss;
+using CLI.Templates;
 using Mss.Types;
 using System.Diagnostics;
 
@@ -7,21 +6,12 @@ namespace MssBuilder
 {
     public class MssValueTypeBuilder
     {
-        private readonly string _solutionPath;
         public readonly string ProjectName = "ValueTypes";
         public readonly string ProjectPath;
 
-        private readonly string _valueClassTemplate =
-@"namespace {{Namespace}}
-{
-    class {{ClassName}}
-    {
-        public {{TypeName}} {{PropName}} { get; set; }
-
-        public {{ClassName}}() { }
-        public {{ClassName}}({{TypeName}} value) => {{PropName}} = value;
-    }
-}";
+        private readonly string _solutionPath;
+        private readonly ValueClassTemplate _classTemplate = new();
+        private readonly ClassLibraryProjectTemplate _projectTemplate = new();
 
         public MssValueTypeBuilder(string solutionPath)
         {
@@ -32,35 +22,15 @@ namespace MssBuilder
         private void GenerateClassFile(MssClassType valueType, DirectoryInfo projectDir)
         {
             string classFile = Path.Combine(projectDir.FullName, valueType.Name + ".cs");
-            var template = Handlebars.Compile(_valueClassTemplate);
-            var data = new
-            {
-                Namespace = ProjectName,
-                ClassName = valueType.Name,
-                TypeName = valueType.Field.Type.ToString(),
-                PropName = valueType.Field.Name
-            };
-            var result = template(data);
-
-            Console.WriteLine(classFile);
-            Console.WriteLine(result);
-
-            File.WriteAllText(classFile, result);
+            string classContent = _classTemplate.Render(ProjectName, valueType.Name, valueType.Field.Name,
+                                                        valueType.Field.Type.ToString());
+            File.WriteAllText(classFile, classContent);
         }
 
         private void GenerateProjectFile(DirectoryInfo projectDir)
         {
-            var projectTemplate =
-@"<Project Sdk=""Microsoft.NET.Sdk"">
-
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-
-</Project>";
-            File.WriteAllText(projectDir.FullName + "/" + ProjectName + ".csproj", projectTemplate);
+            string projectContent = _projectTemplate.Render();
+            File.WriteAllText(projectDir.FullName + "/" + ProjectName + ".csproj", projectContent);
         }
 
         public void Generate(IEnumerable<MssClassType> classes)
