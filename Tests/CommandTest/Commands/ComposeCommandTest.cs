@@ -20,7 +20,7 @@ namespace CLITests.Commands
         private readonly TemplateFactory _templateFactory;
         private readonly DirectoryInfo _startingDir = new(Directory.GetCurrentDirectory());
 
-        private const string EXPECTED_FILENAME = "docker-compose.yml", Compose_DIR = "Dapr/Compose";
+        private const string EXPECTED_FILENAME = "docker-compose.yml", COMPOSE_DIR = "Dapr/Compose";
         private readonly List<string> serviceArguments = ["ServiceA", "ServiceB",];
         private readonly List<string> componentArguments = ["rabbitmq", "redis",];
 
@@ -48,7 +48,7 @@ namespace CLITests.Commands
             sut.Parse(argument).Invoke();
 
             // Assert
-            string filepath = Path.Combine(Directory.GetCurrentDirectory(), Compose_DIR);
+            string filepath = Path.Combine(Directory.GetCurrentDirectory(), COMPOSE_DIR);
             Directory.Exists(filepath).Should().BeTrue($"Directory {filepath} should exist but was not found.");
 
             Directory.SetCurrentDirectory(filepath);
@@ -59,6 +59,7 @@ namespace CLITests.Commands
         [TestCleanup]
         public void Cleanup()
         {
+            _consoleOutput.GetStringBuilder().Clear();
             DirectoryService.DeleteDirectory(Directory.GetCurrentDirectory());
             Directory.SetCurrentDirectory(_startingDir.FullName);
         }

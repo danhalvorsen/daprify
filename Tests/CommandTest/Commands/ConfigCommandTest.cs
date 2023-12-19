@@ -20,7 +20,7 @@ namespace CLITests.Commands
         private readonly TemplateFactory _templateFactory;
         private readonly DirectoryInfo _startingDir = new(Directory.GetCurrentDirectory());
 
-        private const string EXPECTED_FILENAME = "config.yaml", CONFIG_DIR = "Dapr/Config";
+        private const string EXPECTED_FILENAME = "config.yaml", DAPR_DIR = "Dapr", CONFIG_FILE = "config.yaml", CONFIG_DIR = "Config/";
         private readonly List<string> arguments = ["mtls", "tracing",];
 
         public TryConfigCommandTests()
@@ -36,32 +36,28 @@ namespace CLITests.Commands
 
 
         [TestMethod]
-        public void Expected_Configs_Generated()
+        public void Expected_Config_Generated()
         {
             // Arrange
-            string[] argument = [_settings.CommandName, ConfigSettings.OptionName[0], arguments[0], arguments[1]];
+            string[] argument = [_settings.CommandName];
             CLICommand<ConfigService, ConfigSettings, ConfigValidator> sut = new(_service, _settings, _validator);
 
             // Act
             sut.Parse(argument).Invoke();
 
             // Assert
-            string filepath = Path.Combine(Directory.GetCurrentDirectory(), CONFIG_DIR);
-            Directory.Exists(filepath).Should().BeTrue($"Directory {filepath} should exist but was not found.");
-            Directory.SetCurrentDirectory(filepath);
+            Directory.SetCurrentDirectory(Path.Combine(Directory.GetCurrentDirectory(), DAPR_DIR));
+            string consoleOutput = _consoleOutput.ToString();
 
-            File.Exists(EXPECTED_FILENAME).Should().BeTrue($"File {EXPECTED_FILENAME} should exist but was not found.");
+            consoleOutput.Should().Contain("config");
+            File.Exists(CONFIG_DIR + CONFIG_FILE).Should().BeTrue($"File {CONFIG_FILE} should exist but was not found.");
         }
 
 
         [TestCleanup]
         public void Cleanup()
         {
-            if (File.Exists(EXPECTED_FILENAME))
-            {
-                File.Delete(EXPECTED_FILENAME);
-            }
-
+            _consoleOutput.GetStringBuilder().Clear();
             DirectoryService.DeleteDirectory(Directory.GetCurrentDirectory());
             Directory.SetCurrentDirectory(_startingDir.FullName);
         }
