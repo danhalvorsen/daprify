@@ -1,0 +1,14 @@
+{
+    "components": [
+        "statestore", 
+        "secretstore"
+    ],
+    "services": [
+        "ServiceA", 
+        "ServiceB"
+    ],
+    "settings": [
+        "mtls", 
+        "tracing"
+    ]
+}

@@ -48,10 +48,10 @@ namespace CLITests.Commands
             string consoleOutput = _consoleOutput.ToString();
             Directory.SetCurrentDirectory(Path.Combine(Directory.GetCurrentDirectory(), COMPONENTS_DIR));
 
-            foreach (string expectedFile in arguments)
+            foreach (string arg in arguments)
             {
-                consoleOutput.Should().Contain(expectedFile);
-                File.Exists(expectedFile + FILE_EXT).Should().BeTrue($"File {expectedFile} should exist but was not found.");
+                consoleOutput.Should().Contain(arg);
+                File.Exists(arg + FILE_EXT).Should().BeTrue($"File {arg} should exist but was not found.");
             }
         }
 
@@ -59,14 +59,7 @@ namespace CLITests.Commands
         [TestCleanup]
         public void Cleanup()
         {
-            foreach (string expectedFile in arguments)
-            {
-                if (File.Exists(expectedFile + FILE_EXT))
-                {
-                    File.Delete(expectedFile + FILE_EXT);
-                }
-            }
-
+            _consoleOutput.GetStringBuilder().Clear();
             DirectoryService.DeleteDirectory(Directory.GetCurrentDirectory());
             Directory.SetCurrentDirectory(_startingDir.FullName);
         }

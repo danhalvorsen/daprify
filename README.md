@@ -83,7 +83,7 @@ Generates everything needed to use Dapr with docker-compose including components
 dotnet run gen_all -- [options]
 ```
 
-Find available arguments for the options **[Here](#available-options)**
+Find available arguments for the options **[Here](#available-options-and-arguments)**
 
 ```bash
 Description:
@@ -146,7 +146,7 @@ Generate necessary component files for your Dapr project. These files, once crea
 dotnet run gen_components -- [options]
 ```
 
-Find available arguments for the options **[Here](#available-options)**
+Find available arguments for the options **[Here](#available-options-and-arguments)**
 
 ```bash
 dotnet run gen_components -- --help
@@ -192,7 +192,7 @@ If no configuration file is mounted to the sidecar, the dapr sidecar will use th
 dotnet run gen_config -- [options]
 ```
 
-Find available arguments for the options **[Here](#available-options)**
+Find available arguments for the options **[Here](#available-options-and-arguments)**
 
 ```bash
 dotnet run gen_config -- --help
@@ -228,7 +228,7 @@ If you are going to host your project with the sidecars in a docker container yo
 dotnet run gen_compose -- [options]
 ```
 
-Find available arguments for the options **[Here](#available-options)**
+Find available arguments for the options **[Here](#available-options-and-arguments)**
 
 ```bash
 dotnet run gen_compose -- --help
