@@ -1,5 +1,6 @@
 ﻿using Mss;
 using Mss.Types;
+using MssBuilder.Projects;
 
 namespace MssBuilder
 {
@@ -36,6 +37,12 @@ namespace MssBuilder
                 MssValueTypeBuilder valueBuilder = new();
                 MssCSharpProject valueTypeProject = valueBuilder.Build(classes);
                 projects.Add(valueTypeProject);
+
+                MssServiceBuilder serviceBuilder = new();
+                foreach (var service in spec.Services)
+                {
+                    projects.Add(serviceBuilder.Build(service));
+                }
 
                 foreach (var project in projects)
                 {

@@ -1,6 +1,7 @@
 using CLI.Templates;
 using Mss.Types;
 using System.Diagnostics;
+using MssBuilder.Projects;
 
 namespace MssBuilder
 {

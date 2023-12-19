@@ -1,6 +1,4 @@
-using CLI.Templates;
-
-namespace MssBuilder
+namespace MssBuilder.Projects
 {
     public abstract class MssCSharpProject(string name, string relPath)
     {
@@ -26,16 +24,6 @@ namespace MssBuilder
             {
                 file.Write(path);
             }
-        }
-    }
-
-    public class MssClassLibraryProject(string name, string path) : MssCSharpProject(name, path)
-    {
-        private readonly ClassLibraryProjectTemplate _template = new();
-
-        protected override string GetCsProjContent()
-        {
-            return _template.Render();
         }
     }
 }
