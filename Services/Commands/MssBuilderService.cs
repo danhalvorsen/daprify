@@ -1,5 +1,8 @@
 using CLI.Models;
+using Mss;
+using Mss.Parsing;
 using MssBuilder;
+using System.Drawing;
 
 namespace CLI.Services
 {
@@ -59,7 +62,12 @@ namespace CLI.Services
             if (inFile != null && outDir != null)
             {
                 Console.WriteLine("Parsing: " + inFile + " -> " + outDir);
-                Builder.GenerateServices(null!, "test");
+                string mssSource = File.ReadAllText(inFile);
+                MssSpec? spec = MssParser.ParseMss(inFile, mssSource);
+                if (spec != null)
+                {
+                    MssSolutionBuilder.GenerateServices(spec, outDir, "test");
+                }
             }
         }
     }
