@@ -63,6 +63,16 @@ Commands:
                     dotnet run gen_compose --settings mtls https --services ServiceA
                     dotnet run gen_compose --solution_path ../../Backend
                     dotnet run gen_compose --components rabbitmq sentry --services Frontend Backend --solution_path ../../Backend
+  gen_puml        Generates a plantuml diagram of the supplied micro service spec.
+
+                  Example:
+                    dotnet run gen_puml -i test.mss
+                    dotnet run gen_puml -i test.mss -o out.plantuml
+  gen_mss         Generates a solution from the supplied micro service spec.
+
+                  Example:
+                    dotnet run gen_mss -i test.mss
+                    dotnet run gen_mss -i test.mss -o ./out
 ```
 
 ### Generate All
@@ -254,7 +264,39 @@ dotnet run gen_compose --components rabbitmq sentry --services Frontend Backend
 To generate plantuml from a mss file use:
 
 ```bash
-dotnet run gen_puml -i test.mss -o out.plantuml
+dotnet run gen_puml -- --help
+Description:
+  Generates a plantuml diagram of the supplied micro service spec.
+
+  Examples:
+    dotnet run gen_puml -i test.mss
+    dotnet run gen_puml -i test.mss -o out.plantuml
+
+Usage:
+  Commands gen_puml [options]
+
+Options:
+  -i, --input   The .mss file to parse, selects the first .mss file in the working directory if omitted.
+  -o, --output  The .plantuml file to generate. Will default to the name and directory of the input if omitted.
+```
+
+## Generate Solution from MSS
+
+```bash
+dotnet run gen_mss -- --help
+Description:
+  Generates a solution from the supplied micro service spec.
+
+  Examples:
+    dotnet run gen_mss -i test.mss
+    dotnet run gen_mss -i test.mss -o ./out
+
+Usage:
+  Commands gen_mss [options]
+
+Options:
+  -i, --input   The .mss file to parse, selects the first .mss file in the working directory if omitted.
+  -o, --output  The directory to generate to. Will default to the working directory if omitted.
 ```
 
 ## Available options and arguments
@@ -269,6 +311,8 @@ dotnet run gen_puml -i test.mss -o out.plantuml
 | `gen_compose`    | `components` | dashboard, placement, rabbitmq, redis, sentry, zipkin                |
 |                  | `settings`   | https, logging, metric, middleware, mtls, tracing, https             |
 | `gen_puml`       | `input`      |                                                                      |
+|                  | `output`     |                                                                      |
+| `gen_mss`        | `input`      |                                                                      |
 |                  | `output`     |                                                                      |
 
 ## Additional Resources

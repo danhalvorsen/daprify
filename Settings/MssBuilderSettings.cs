@@ -2,16 +2,16 @@ using System.CommandLine;
 
 namespace CLI.Settings
 {
-    public class CompileToPumlSettings : ISettings
+    public class MssBuilderSettings : ISettings
     {
-        public string CommandName => "gen_puml";
-        public string CommandDescription => "Generates a plantuml diagram of the supplied micro service spec.";
-        public string CommandExample => "\n\nExamples:\n  dotnet run gen_puml -i test.mss\n  dotnet run gen_puml -i test.mss -o out.plantuml";
+        public string CommandName => "gen_mss";
+        public string CommandDescription => "Generates a solution from the supplied micro service spec.";
+        public string CommandExample => "\n\nExamples:\n  dotnet run gen_mss -i test.mss\n  dotnet run gen_mss -i test.mss -o ./out";
 
         public static string[] InputOptionName { get; } = ["-i", "--in"];
         public static string InputOptionDescription { get; } = "The input file name.";
         public static string[] OutputOptionName { get; } = ["-o", "--out"];
-        public static string OutputOptionDescription { get; } = "The output file name.";
+        public static string OutputOptionDescription { get; } = "The output path.";
 
         public static readonly Option<List<string>> InputOption = new(InputOptionName, () => [], InputOptionDescription);
         public static readonly Option<List<string>> OutputOption = new(OutputOptionName, () => [], OutputOptionDescription);

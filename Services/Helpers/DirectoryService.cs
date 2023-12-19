@@ -1,3 +1,4 @@
+using CLI.Models;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -97,6 +98,20 @@ namespace CLI.Services
         {
             string filePath = Path.Combine(workingDir, fileName);
             File.AppendAllText(filePath, content);
+        }
+
+        public static string? GetInputFile(OptionDictionary options, string wildcard = "xxx.xxx", string dir = "./")
+        {
+            List<string>? input = options.GetAllPairValues("in");
+            if (input != null && input.Count == 1)
+            {
+                return input[0];
+            }
+            else
+            {
+                string? filename = GetFileInDirectory(dir, wildcard);
+                return filename;
+            }
         }
     }
 }

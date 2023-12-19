@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using CLI.Models;
 using Mss;
 using Mss.Parsing;
@@ -20,22 +19,18 @@ namespace CLI.Services
 
         private static string? FindInputFile(OptionDictionary options)
         {
-            var input = options.GetAllPairValues("in");
-            if (input != null && input.Count == 1)
+            var inFile = DirectoryService.GetInputFile(options, WILDCARD);
+            if (inFile == null)
             {
-                return input[0];
-            }
-            else
-            {
-                string? filename = DirectoryService.GetFileInDirectory("./", WILDCARD);
-                if (filename != null)
-                {
-                    return filename;
-                }
                 PrintError("No " + WILDCARD + " files found.");
             }
+            else if (!File.Exists(inFile))
+            {
+                PrintError(inFile + " does not exist.");
+                return null;
+            }
 
-            return null;
+            return inFile;
         }
 
         private static string FindOutputFile(OptionDictionary options, string inFile)
