@@ -1,15 +1,19 @@
-using CLI.Templates;
+using System.Xml.Linq;
 
 namespace MssBuilder.Projects
 {
     public class MssWebApiProject(string name, string path) : MssCSharpProject(name, path)
     {
-        // Todo: use a webapi template
-        private readonly ClassLibraryProjectTemplate _template = new();
-
-        protected override string GetCsProjContent()
+        protected override string CreateProjectFile()
         {
-            return _template.Render();
+            XElement header = CreateProjectHeader();
+            header.Add(CreatePropertyGroup());
+
+            if (_projectReferences.Count > 0)
+            {
+                header.Add(CreateProjectReferences());
+            }
+            return header.ToString();
         }
     }
 }

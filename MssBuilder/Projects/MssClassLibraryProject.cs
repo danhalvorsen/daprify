@@ -1,14 +1,15 @@
-using CLI.Templates;
+using System.Xml.Linq;
 
 namespace MssBuilder.Projects
 {
     public class MssClassLibraryProject(string name, string path) : MssCSharpProject(name, path)
     {
-        private readonly ClassLibraryProjectTemplate _template = new();
-
-        protected override string GetCsProjContent()
+        protected override string CreateProjectFile()
         {
-            return _template.Render();
+            XElement header = CreateProjectHeader();
+            header.Add(CreatePropertyGroup());
+            header.Add(CreateProjectReferences());
+            return header.ToString();
         }
     }
 }

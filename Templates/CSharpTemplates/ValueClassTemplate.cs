@@ -5,7 +5,7 @@ namespace CLI.Templates
         private const string TEMPLATE_STR =
 @"namespace {{Namespace}}
 {
-    class {{ClassName}}
+    public class {{ClassName}}
     {
         public {{TypeName}} {{PropName}} { get; set; }
 
