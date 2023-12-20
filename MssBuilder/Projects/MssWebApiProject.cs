@@ -9,10 +9,16 @@ namespace MssBuilder.Projects
             XElement header = CreateProjectHeader();
             header.Add(CreatePropertyGroup());
 
+            if (_packageReferences.Count > 0)
+            {
+                header.Add(CreatePackageReferences());
+            }
+
             if (_projectReferences.Count > 0)
             {
                 header.Add(CreateProjectReferences());
             }
+
             return header.ToString();
         }
     }

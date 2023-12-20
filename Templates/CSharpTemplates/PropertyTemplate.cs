@@ -2,7 +2,7 @@ namespace CLI.Templates
 {
     public class PropertyTemplate() : HandlebarTemplate(TEMPLATE_STR)
     {
-        private const string TEMPLATE_STR = "        public {{type}} {{name}} { get; set; }";
+        private const string TEMPLATE_STR = "        public {{{type}}} {{name}} { get; set; }";
 
         protected override string TemplateString => TEMPLATE_STR;
 

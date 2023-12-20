@@ -7,7 +7,7 @@ namespace CLI.Templates
 {
     public class {{ClassName}}
     {
-{{Properties}}
+{{{Properties}}}
     }
 }";
 

@@ -2,7 +2,7 @@ namespace CLI.Templates
 {
     public class UsingTemplate() : HandlebarTemplate(TEMPLATE_STR)
     {
-        private const string TEMPLATE_STR = "using {{Namespace}};";
+        private const string TEMPLATE_STR = "using {{Namespace}};\n";
 
         protected override string TemplateString => TEMPLATE_STR;
 
