@@ -12,7 +12,8 @@ namespace MssBuilder
         private readonly PropertyTemplate _propertyTemplate = new();
         private readonly EntityTemplate _entityTemplate = new();
         private readonly UsingTemplate _usingTemplate = new();
-        private readonly DbContextHeaderTemplate _dbcontextHeaderTemplate = new();
+        private readonly DbContextHeaderTemplate _dbContextHeaderTemplate = new();
+        private readonly DbContextConstructorTemplate _dbContextConstructorTemplate = new();
 
         private string _serviceName = "";
         private const string ENTITY_FOLDER = "Entities";
@@ -218,7 +219,16 @@ namespace MssBuilder
             {
                 contentBuilder.Append(_usingTemplate.Render(MssValueTypeBuilder.ProjectName));
             }
-            contentBuilder.Append(_dbcontextHeaderTemplate.Render(projectName, className));
+            contentBuilder.Append(_dbContextHeaderTemplate.Render(projectName, className));
+
+            string rootName = GetEntityName(database.Root);
+            contentBuilder.Append($"        public DbSet<{rootName}> {rootName} {{ get; set; }}\n");
+            foreach (var entity in database.Entities)
+            {
+                contentBuilder.Append($"        public DbSet<{entity.Name}> {entity.Name} {{ get; set; }}\n");
+            }
+
+            contentBuilder.Append(_dbContextConstructorTemplate.Render(projectName, className));
 
             contentBuilder.Append(
     @"

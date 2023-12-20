@@ -10,24 +10,6 @@ namespace {{Service}}
 {
     public class {{Class}} : DbContext
     {
-        public {{Class}}()
-        {
-            try
-            {
-                _ = Database.EnsureCreated();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
-        }
-
-        public {{Class}}(DbContextOptions<{{Class}}> options) : base(options) { }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseInMemoryDatabase(""{{Service}}DB"");
-        }
 ";
 
         protected override string TemplateString => TEMPLATE_STR;
