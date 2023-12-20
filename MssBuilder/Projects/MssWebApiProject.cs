@@ -4,10 +4,14 @@ namespace MssBuilder.Projects
 {
     public class MssWebApiProject(string name, string path) : MssCSharpProject(name, path)
     {
+        public override Guid TypeGuid { get => _aspCoreProjectUUID; }
+
         protected override string CreateProjectFile()
         {
             XElement header = CreateProjectHeader();
-            header.Add(CreatePropertyGroup());
+            var propertyGrp = CreatePropertyGroup();
+            propertyGrp.Add(new XElement("OutputType", "Exe"));
+            header.Add(propertyGrp);
 
             if (_packageReferences.Count > 0)
             {
