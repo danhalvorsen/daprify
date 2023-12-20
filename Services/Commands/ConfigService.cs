@@ -40,7 +40,7 @@ namespace CLI.Services
                 _ => throw new ArgumentException("Invalid setting name:" + argument, nameof(argument))
             };
 
-            return template.Replace($"{{{argument}}}", argTemplate);
+            return template.Replace($"{{{{{argument}}}}}", argTemplate);
         }
     }
 }
