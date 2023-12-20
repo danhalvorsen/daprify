@@ -17,5 +17,10 @@ namespace CLI.Templates
             Temp _template = _serviceProvider.GetRequiredService<Temp>();
             return _template.GetTemplate();
         }
+
+        public Temp GetTemplateService<Temp>() where Temp : TemplateBase
+        {
+            return _serviceProvider.GetRequiredService<Temp>();
+        }
     }
 }
