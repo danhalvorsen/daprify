@@ -7,6 +7,7 @@ namespace CLI.Services
     {
         private readonly TemplateFactory _templateFactory = templateFactory;
         private const string DOCKER_NAME = "Docker";
+        private const string PROJECT_OPT = "project_path";
         private const string SOLUTION_OPT = "solution_path";
         private const string DOCKERFILE_EXT = ".Dockerfile";
         List<string> _services = [];
@@ -40,8 +41,10 @@ namespace CLI.Services
 
         private void GetServices(OptionDictionary options)
         {
+            List<string> projectPathOpt = options.GetAllPairValues(PROJECT_OPT);
+            string projectRoot = projectPathOpt.Count > 0 ? projectPathOpt[0] : string.Empty;
             List<string> solutionPaths = options.GetAllPairValues(SOLUTION_OPT);
-            _projectPaths = SolutionService.GetDaprServicesFromSln(ref _services, solutionPaths);
+            _projectPaths = SolutionService.GetDaprServicesFromSln(ref _services, projectRoot, solutionPaths);
         }
     }
 }

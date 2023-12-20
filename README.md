@@ -56,6 +56,10 @@ Commands:
                   Examples:
                     dotnet run gen_components --components statestore
                     dotnet run gen_components --components statestore pubsub
+  gen_dockerfiles  Generates dockerfiles for all your projects in the specified solutions.
+
+                   Examples:
+                     dotnet run gen_dockerfiles --solution_path ../../Service1 ../../Service2
   gen_compose     Generates docker-compose.yml from your Dapr directory or for the specified service(s).
 
                   Examples:
@@ -104,7 +108,7 @@ Options:
   --c, --components <bindings|configstore|crypto|lock|pubsub|secretstore|statestore>  The specific component(s) to generate docker-compose content to. [default: statestore|secretstore]
   --se, --services <services>                                                         The specific service(s) to generate docker-compose content to.
   --s, --settings <https|logging|metric|middleware|mtls|tracing>                      Additional settings for your services.
-  --so, --solution_path <solution_path>                                               Path to your .Net sln file (from executing path). Adds all projects dependent on Dapr to docker-compose.
+  --sp, --solution_path <solution_path>                                               Path to your .Net sln file (from executing path). Adds all projects dependent on Dapr to docker-compose.
   -?, -h, --help                                                                      Show help and usage information
 ```
 
@@ -220,6 +224,30 @@ dotnet run gen_config --settings mtls tracing
 
 If there is need for other settings in your configuration file or editing the generated one, see more at: **[Dapr Config Reference](https://docs.dapr.io/operations/configuration/configuration-overview/)**
 
+## Generate dockerfiles
+
+This command generates dockerfiles for your .Net project. The dockerfiles are needed in the docker-compose.yml. In case of special needs in the dockerfiles, add these after they are generated. e.g if you have a option.json file needed inside the docker container.
+
+```bash
+dotnet run gen_dockerfiles -- [options]
+```
+
+```bash
+Description:
+  Generates dockerfiles for all your projects in the specified solutions.
+
+  Examples:
+    dotnet run gen_dockerfiles --solution_path ../../Service1 ../../Service2
+
+Usage:
+  Commands gen_dockerfiles [options]
+
+Options:
+  --pp, --project_path <project_path>    The path to the root of your project (from executing path). Not needed if it's a git project. Used to find correct paths.
+  --solution_path, --sp <solution_path>  The path to your .Net solution file (from executing path). Used to generate dockerfile for all projects in the sln file.
+  -?, -h, --help                         Show help and usage information
+```
+
 ## Generate docker-compose file
 
 If you are going to host your project with the sidecars in a docker container you can generate the docker-compose-yml file for the specified services and components you have in your project. If a docker-compose file already exists at the location it is written to, it will append the services and components to the file instead of overwriting it.
@@ -247,9 +275,10 @@ Usage:
 
 Options:
   --c, --components <dashboard|placement|rabbitmq|redis|sentry|zipkin>  The specific component(s) to generate docker-compose content to. [default: dashboard|placement|zipkin]
+  --pp, --project_path <project_path>                                   The path to your project's root from the current execution location. Unnecessary for Git projects; used for path resolution.
   --s, --settings <settings>                                            Additional settings for your services.
   --se, --services <services>                                           The specific service(s) to generate docker-compose content to.
-  --so, --solution_path <solution_path>                                 The path to your .Net solution file (from executing path). Used to generate certificates for all services dependent on Dapr.
+  --sp, --solution_path <solution_path>                                 The path to your .Net solution file (from executing path). Used to generate certificates for all services dependent on Dapr.
   -?, -h, --help                                                        Show help and usage information
 ```
 

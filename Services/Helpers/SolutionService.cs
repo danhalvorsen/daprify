@@ -8,7 +8,7 @@ namespace CLI.Services
         private const string SLN_EXT = "*.sln";
         private const string DAPR = "Dapr";
 
-        public static List<string> GetDaprServicesFromSln(ref List<string> services, List<string> slnPaths)
+        public static List<string> GetDaprServicesFromSln(ref List<string> services, string projectRoot, List<string> slnPaths)
         {
             List<string> projectPaths = [];
             if (slnPaths.Count > 0)
@@ -18,7 +18,7 @@ namespace CLI.Services
                 CheckDaprProjects(daprProjects);
 
                 slnProjects = FilterDaprProjects(slnProjects, daprProjects);
-                slnProjects = UpdateProjectPaths(slnPaths, slnProjects);
+                slnProjects = UpdateProjectPaths(projectRoot, slnPaths, slnProjects);
 
                 services.AddRange(daprProjects);
                 projectPaths.AddRange(slnProjects);
@@ -50,9 +50,9 @@ namespace CLI.Services
         private static List<string> GetProjectPaths(string slnPath)
         {
             List<string> projectPaths = [];
-            SolutionFile slnFile = SolutionFile.Parse(slnPath);
+            SolutionFile sln = SolutionFile.Parse(slnPath);
 
-            foreach (ProjectInSolution project in slnFile.ProjectsInOrder)
+            foreach (ProjectInSolution project in sln.ProjectsInOrder)
             {
                 // Only add projects that are not test projects
                 if (project.ProjectType == SolutionProjectType.KnownToBeMSBuildFormat && !project.ProjectName.Contains("Test", StringComparison.OrdinalIgnoreCase))
@@ -116,14 +116,18 @@ namespace CLI.Services
         }
 
 
-        private static List<string> UpdateProjectPaths(List<string> slnPaths, List<string> projects)
+        private static List<string> UpdateProjectPaths(string projectRoot, List<string> slnPaths, List<string> projects)
         {
             foreach (string slnPath in slnPaths)
             {
-                string gitPath = DirectoryService.CheckProjectType(slnPath);
+                if (string.IsNullOrEmpty(projectRoot))
+                {
+                    projectRoot = DirectoryService.CheckProjectType(slnPath);
+                }
+
                 for (int i = 0; i < projects.Count; i++)
                 {
-                    projects[i] = Path.GetRelativePath(gitPath, projects[i]);
+                    projects[i] = Path.GetRelativePath(projectRoot, projects[i]);
                 }
             }
             return projects;

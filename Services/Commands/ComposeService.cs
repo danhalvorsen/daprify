@@ -37,7 +37,7 @@ namespace CLI.Services
         private void GetServices(OptionDictionary options)
         {
             List<string>? solutionPaths = options.GetAllPairValues(SOLUTION_OPT);
-            _ = SolutionService.GetDaprServicesFromSln(ref _services, solutionPaths);
+            _ = SolutionService.GetDaprServicesFromSln(ref _services, string.Empty, solutionPaths);
             _services.AddRange(options.GetAllPairValues(SERVICE_OPT));
 
             _services = _services.Union(options.GetAllPairValues(SERVICE_OPT)).ToList();
