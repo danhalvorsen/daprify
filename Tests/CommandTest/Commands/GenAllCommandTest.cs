@@ -21,7 +21,7 @@ namespace CLITests.Commands
         private readonly TemplateFactory _templateFactory;
         private readonly DirectoryInfo _startingDir = new(Directory.GetCurrentDirectory());
 
-        private const string FILE_EXT = ".yaml", DAPR_DIR = "Dapr", COMPOSE_FILE = "docker-compose.yml", COMPOSE_DIR = "Compose/",
+        private const string FILE_EXT = ".yaml", DAPR_DIR = "Dapr", COMPOSE_FILE = "docker-compose.yml", DOCKER_DIR = "Docker/",
                             CONFIG_FILE = "config.yaml", CONFIG_DIR = "Config/", CERT_DIR = "Certs/",
                             ENV_FILE = "Dapr.Env", ENV_DIR = "Env/", COMPONENT_DIR = "Components/";
         private readonly string _confPath;
@@ -137,7 +137,7 @@ namespace CLITests.Commands
 
             // Assert
             Directory.SetCurrentDirectory(Path.Combine(Directory.GetCurrentDirectory(), DAPR_DIR));
-            File.Exists(COMPOSE_DIR + COMPOSE_FILE).Should().BeTrue($"File {COMPOSE_FILE} should exist but was not found.");
+            File.Exists(DOCKER_DIR + COMPOSE_FILE).Should().BeTrue($"File {COMPOSE_FILE} should exist but was not found.");
         }
 
         [TestMethod]
@@ -174,7 +174,7 @@ namespace CLITests.Commands
 
             File.Exists(ENV_DIR + ENV_FILE).Should().BeTrue($"File {ENV_FILE} should exist but was not found.");
             File.Exists(CONFIG_DIR + CONFIG_FILE).Should().BeTrue($"File {CONFIG_FILE} should exist but was not found.");
-            File.Exists(COMPOSE_DIR + COMPOSE_FILE).Should().BeTrue($"File {COMPOSE_FILE} should exist but was not found.");
+            File.Exists(DOCKER_DIR + COMPOSE_FILE).Should().BeTrue($"File {COMPOSE_FILE} should exist but was not found.");
         }
 
 
