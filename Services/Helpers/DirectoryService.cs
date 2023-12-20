@@ -20,16 +20,16 @@ namespace CLI.Services
 
         public static string SetDirectory(string dirPath)
         {
-            string baseDir = CheckProjectType();
+            string baseDir = CheckProjectType(Directory.GetCurrentDirectory());
             string workingDir = Path.Combine(baseDir, DAPR, dirPath);
             Directory.CreateDirectory(workingDir);
             return workingDir;
         }
 
-        public static string CheckProjectType()
+        public static string CheckProjectType(string dirPath)
         {
             string? isTestProject = Environment.GetEnvironmentVariable("isTestProject");
-            return isTestProject == "true" ? Directory.GetCurrentDirectory() : GetGitRootDirectory();
+            return isTestProject == "true" ? Directory.GetCurrentDirectory() : GetGitRootDirectory(dirPath);
         }
 
         /// <summary>
@@ -37,8 +37,10 @@ namespace CLI.Services
         /// If no Git repository is found, the parent directory of the current directory is returned.
         /// </summary>
         /// <returns>The root directory of the Git repository.</returns>
-        public static string GetGitRootDirectory()
+        public static string GetGitRootDirectory(string dirPath)
         {
+            string startingPath = Path.GetDirectoryName(dirPath) ?? throw new DirectoryNotFoundException($"Could not find the directory: {dirPath}");
+
             using Process process = new()
             {
                 StartInfo = new ProcessStartInfo
@@ -47,7 +49,8 @@ namespace CLI.Services
                     Arguments = "rev-parse --show-toplevel",
                     RedirectStandardOutput = true,
                     UseShellExecute = false,
-                    CreateNoWindow = true
+                    CreateNoWindow = true,
+                    WorkingDirectory = startingPath
                 }
             };
             process.Start();

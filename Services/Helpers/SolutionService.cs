@@ -6,34 +6,33 @@ namespace CLI.Services
     public class SolutionService()
     {
         private const string SLN_EXT = "*.sln";
+        private const string DAPR = "Dapr";
 
-        public static List<string> GetDaprServicesFromSln(ref List<string> services, List<string> solutionPaths)
+        public static List<string> GetDaprServicesFromSln(ref List<string> services, List<string> slnPaths)
         {
             List<string> projectPaths = [];
-            if (solutionPaths.Count > 0)
+            if (slnPaths.Count > 0)
             {
-                List<string> slnProjects = FindProjects(solutionPaths);
+                List<string> slnProjects = FindProjects(slnPaths);
                 List<string> daprProjects = GetDaprServices(slnProjects);
                 CheckDaprProjects(daprProjects);
 
-                AddToList(services, projectPaths, slnProjects, daprProjects);
+                slnProjects = FilterDaprProjects(slnProjects, daprProjects);
+                slnProjects = UpdateProjectPaths(slnPaths, slnProjects);
+
+                services.AddRange(daprProjects);
+                projectPaths.AddRange(slnProjects);
             }
             return projectPaths;
         }
 
-        private static void AddToList(List<string> services, List<string> projectPaths, List<string> projects, List<string> daprProjects)
-        {
-            services.AddRange(daprProjects);
-            projectPaths.AddRange(projects.Where(project => daprProjects.Any(daprProject => project.Contains(daprProject))));
-        }
 
-
-        public static List<string> FindProjects(List<string> solutionPaths)
+        public static List<string> FindProjects(List<string> slnPaths)
         {
             List<string> projectPaths = [];
             DirectoryInfo currentDir = new(Directory.GetCurrentDirectory());
 
-            foreach (string path in solutionPaths)
+            foreach (string path in slnPaths)
             {
                 string solutionDir = Path.Combine(currentDir.FullName, path);
                 string? slnPath = DirectoryService.GetFileInDirectory(solutionDir, SLN_EXT);
@@ -46,14 +45,6 @@ namespace CLI.Services
             }
 
             return projectPaths;
-        }
-
-        private static void CheckDaprProjects(List<string> daprProjects)
-        {
-            if (daprProjects.Count == 0)
-            {
-                Console.WriteLine("No Dapr services found in the solution! \nUse the --services option to specify the services to generate certificates for.");
-            }
         }
 
         private static List<string> GetProjectPaths(string slnPath)
@@ -80,14 +71,15 @@ namespace CLI.Services
 
             foreach (string projectPath in projectPaths)
             {
-                if (!File.Exists(projectPath))
+                string fullPath = Path.GetFullPath(projectPath);
+                if (!File.Exists(fullPath))
                 {
                     throw new FileNotFoundException($"Error occurred while trying to find the project file: '{projectPath}'");
                 }
 
                 XDocument project = XDocument.Load(projectPath);
 
-                if (CheckDependency(project, "Dapr"))
+                if (CheckDependency(project, DAPR))
                 {
                     AddProjNameToList(daprServices, projectPath);
                 }
@@ -108,6 +100,33 @@ namespace CLI.Services
         {
             string projectName = Path.GetFileNameWithoutExtension(projectPath);
             services.Add(projectName);
+        }
+
+        private static void CheckDaprProjects(List<string> daprProjects)
+        {
+            if (daprProjects.Count == 0)
+            {
+                Console.WriteLine("No Dapr services found in the solution! \nUse the --services option to specify the services to generate certificates for.");
+            }
+        }
+
+        private static List<string> FilterDaprProjects(List<string> projects, List<string> daprProjects)
+        {
+            return projects.Where(project => daprProjects.Any(daprProject => project.Contains(daprProject))).ToList();
+        }
+
+
+        private static List<string> UpdateProjectPaths(List<string> slnPaths, List<string> projects)
+        {
+            foreach (string slnPath in slnPaths)
+            {
+                string gitPath = DirectoryService.CheckProjectType(slnPath);
+                for (int i = 0; i < projects.Count; i++)
+                {
+                    projects[i] = Path.GetRelativePath(gitPath, projects[i]);
+                }
+            }
+            return projects;
         }
     }
 }
