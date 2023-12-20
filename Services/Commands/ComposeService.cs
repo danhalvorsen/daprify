@@ -1,5 +1,6 @@
 using CLI.Models;
 using CLI.Templates;
+using System.Text;
 
 namespace CLI.Services
 {
@@ -12,40 +13,36 @@ namespace CLI.Services
         private const string SETTING_OPT = "settings";
         private const string SERVICE_OPT = "services";
         private const string SOLUTION_OPT = "solution_path";
-        List<string> _services = [];
+        private int _startPort = 1000;
+        private readonly int _nextPort = 500;
+        private static readonly List<string> _components = [];
+        private List<string> _services = [];
 
 
         protected override List<string> CreateFiles(OptionDictionary options, string workingDir)
         {
             GetServices(options);
-            string compose = GetComposeStart(workingDir) + GetServicesComposeSection(_services);
 
-            foreach (string argument in options.GetAllPairValues(COMPONENT_OPT))
-            {
-                string processedArg = PreProcessArgument(argument);
-                compose = GetArgumentTemplate(processedArg, compose);
-            }
-
-            foreach (string argument in options.GetAllPairValues(SETTING_OPT))
-            {
-                compose = ReplaceSettings(argument, compose);
-            }
+            string compose = GetComposeStart(workingDir) + GetServicesComposeSection(options);
+            compose = AddComponents(options, compose);
+            compose = AddDependsOn(compose);
 
             compose = PlaceholderRegex().Replace(compose, string.Empty);
-            DirectoryService.AppendFile(workingDir, FILE_NAME, compose);
+            DirectoryService.WriteFile(workingDir, FILE_NAME, compose);
 
             return ["docker-compose"];
         }
 
+
         private void GetServices(OptionDictionary options)
         {
-            List<string> solutionPaths = options.GetAllPairValues(SOLUTION_OPT);
+            List<string>? solutionPaths = options.GetAllPairValues(SOLUTION_OPT);
             _ = SolutionService.GetDaprServicesFromSln(ref _services, solutionPaths);
             _services.AddRange(options.GetAllPairValues(SERVICE_OPT));
 
-            List<string> servOpt = options.GetAllPairValues(SERVICE_OPT);
-            _services = _services.Union(servOpt).ToList();
+            _services = _services.Union(options.GetAllPairValues(SERVICE_OPT)).ToList();
         }
+
 
         private string GetComposeStart(string workingDir)
         {
@@ -53,15 +50,70 @@ namespace CLI.Services
             return File.Exists(filepath) ? "\n\n" : _templateFactory.CreateTemplate<ComposeStartTemplate>();
         }
 
-        private string GetServicesComposeSection(List<string> services)
+
+        private string GetServicesComposeSection(OptionDictionary options)
         {
-            return services.Aggregate(string.Empty, (current, service) => current + AddServiceToCompose(service));
+            StringBuilder composeBuilder = new();
+            foreach (string service in _services)
+            {
+                composeBuilder.Append(AddServiceToCompose(service));
+                composeBuilder.Append(AddDaprServiceToCompose(service));
+
+                foreach (string argument in options.GetAllPairValues(SETTING_OPT))
+                {
+                    ReplaceSettings(argument, composeBuilder);
+                }
+                composeBuilder.Replace("{port}", SetServicePort());
+            }
+            return composeBuilder.ToString();
         }
 
         private string AddServiceToCompose(string service)
         {
-            string template = _templateFactory.CreateTemplate<ComposeTemplate>();
-            return template.Replace("{service}", service.ToLower());
+            string serviceTemp = _templateFactory.CreateTemplate<ComposeServiceTemplate>();
+            return serviceTemp.Replace("{service}", service.ToLower())
+                              .Replace("{Service}", service);
+        }
+
+
+        private string AddDaprServiceToCompose(string service)
+        {
+            string daprTemp = _templateFactory.CreateTemplate<ComposeDaprTemplate>();
+            return daprTemp.Replace("{service}", service.ToLower());
+        }
+
+
+        private void ReplaceSettings(string argument, StringBuilder template)
+        {
+            _ = argument.ToLower() switch
+            {
+                "https" => ReplaceHttps(template),
+                "mtls" => ReplaceMtls(template),
+                _ => null!
+            };
+        }
+
+
+        private string AddComponents(OptionDictionary options, string compose)
+        {
+            foreach (string argument in options.GetAllPairValues(COMPONENT_OPT))
+            {
+                string processedArg = PreProcessArgument(argument);
+                compose = GetArgumentTemplate(processedArg, compose);
+            }
+            return compose;
+        }
+
+
+        private static string AddDependsOn(string compose)
+        {
+            const string INDENT = "    ";
+            StringBuilder dependsOnBuilder = new();
+            dependsOnBuilder.AppendLine("depends_on:");
+
+            _components.ForEach(component => dependsOnBuilder.AppendLine($"{INDENT}  - {component}"));
+
+            return compose.Replace("{depends_on}", dependsOnBuilder.ToString());
         }
 
 
@@ -74,6 +126,7 @@ namespace CLI.Services
                 _ => argument
             };
         }
+
 
         protected override string GetArgumentTemplate(string argument, string template)
         {
@@ -88,17 +141,32 @@ namespace CLI.Services
                 _ => null!
             };
 
+            if (argTemplate != null)
+            {
+                _components.Add(argument);
+            }
+
             return template + argTemplate;
         }
-        private string ReplaceSettings(string argument, string template)
+
+
+        private string SetServicePort()
         {
-            return argument.ToLower() switch
-            {
-                "https" => template.Replace("{https}", _templateFactory.CreateTemplate<HttpsTemplate>()),
-                "mtls" => template.Replace("{mtls}", _templateFactory.CreateTemplate<MtlsCompTemplate>())
-                                  .Replace("{env_file}", _templateFactory.CreateTemplate<EnvTemplate>()),
-                _ => template
-            };
+            int port = _startPort;
+            _startPort += _nextPort; // Increment the service port by 500
+            return port.ToString();
+        }
+
+        private StringBuilder ReplaceHttps(StringBuilder template)
+        {
+            return template.Replace("{dapr-https}", _templateFactory.CreateTemplate<HttpsDaprTemplate>())
+                           .Replace("{https}", _templateFactory.CreateTemplate<HttpsServiceTemplate>()); ;
+        }
+
+        private StringBuilder ReplaceMtls(StringBuilder template)
+        {
+            return template.Replace("{mtls}", _templateFactory.CreateTemplate<MtlsCompTemplate>())
+                           .Replace("{env_file}", _templateFactory.CreateTemplate<EnvTemplate>());
         }
     }
 }
