@@ -30,7 +30,6 @@ service Milking {
             Id: PK;
             AnimalId: FK;
             MilkContainerId: FK;
-            When: TimeInterval;
             Milk: Volume;
             Fat: Nutrient;
             Lactose: Nutrient;
@@ -57,7 +56,6 @@ service Milking {
         Id: EK;
         LivestockId: EK = root.AnimalId.LivestockId;
         MilkContainerId: EK = root.MilkContainerId.MilkContainerId;
-        When: TimeInterval;
         Milk: Volume;
         Fat: Nutrient;
         Lactose: Nutrient;
@@ -85,8 +83,6 @@ service LivestockOrder {
             Id: PK;
             CustomerId: FK;
             OrderNo: OrderNumber;
-            Placed: TimeStamp;
-            Collected: TimeStamp;
             Price: Price;
             Payed: bool;
         }
@@ -111,8 +107,6 @@ service LivestockOrder {
         OrderNo: OrderNumber;
         StakeholderId: EK = root.CustomerId.StakeholderId;
         LiveStock: List<EK> = Animal.LivestockId;
-        Placed: TimeStamp;
-        Collected: TimeStamp;
         Price: Price;
         Payed: bool;
     }

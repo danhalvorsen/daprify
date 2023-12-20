@@ -7,7 +7,13 @@ namespace MssBuilder
 
         public void Write(string path)
         {
-            File.WriteAllText(Path.Combine(path, Filename), Content);
+            string fullPath = Path.Combine(path, Filename);
+            string pathOnly = Path.GetDirectoryName(fullPath)!;
+            if (!Path.Exists(pathOnly))
+            {
+                _ = Directory.CreateDirectory(pathOnly);
+            }
+            File.WriteAllText(fullPath, Content);
         }
     }
 }

@@ -7,16 +7,16 @@ namespace MssBuilder
 {
     public class MssValueTypeBuilder
     {
-        public readonly string ProjectName = "ValueTypes";
+        public static readonly string ProjectName = "ValueTypes";
 
         private readonly ValueClassTemplate _classTemplate = new();
 
-        private MssCSharpFile GenerateClassFile(MssClassType valueType)
+        private MssCSharpFile BuildValueClassFile(MssClassType valueType)
         {
-            string classFile = valueType.Name + ".cs";
+            string filename = valueType.Name + ".cs";
             string classContent = _classTemplate.Render(ProjectName, valueType.Name, valueType.Field.Name,
                                                         valueType.Field.Type.ToString());
-            return new(classFile, classContent);
+            return new(filename, classContent);
         }
 
         public MssCSharpProject Build(IEnumerable<MssClassType> classes)
@@ -26,7 +26,7 @@ namespace MssBuilder
 
             foreach (var valueType in classes)
             {
-                project.AddFile(GenerateClassFile(valueType));
+                project.AddFile(BuildValueClassFile(valueType));
             }
 
             return project;
