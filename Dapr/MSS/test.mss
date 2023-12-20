@@ -24,7 +24,6 @@ types {
    line
    comment */
 
-/*
 service Milking {
     database {
         root {
@@ -65,7 +64,6 @@ service Milking {
         Viable: Viability;
     }
 }
-*/
 
 types {
     extern TimeStamp: Types::Types.Time;

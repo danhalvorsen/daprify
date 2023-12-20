@@ -74,6 +74,13 @@ namespace MssBuilder
 
             foreach (var field in fields)
             {
+                // primary key won't be added if part of a relation, so must be manually added here
+                if (field.Type is MssKeyType && field.Type.ToString() == "PK")
+                {
+                    // Todo could add a to c# string
+                    properties.Add(_propertyTemplate.Render(field.Name, "int"));
+                }
+
                 var rels = relations.Where(r => r.ContainsField(field)).ToList();
                 Debug.Assert(rels.Count > 0);
                 foreach (var rel in rels)
@@ -134,6 +141,75 @@ namespace MssBuilder
             return new(filename, content);
         }
 
+        private string BuildEntityModel(MssEntity entity, IEnumerable<MssRelation> relations)
+        {
+            StringBuilder modelBuilder = new();
+            modelBuilder.AppendLine($"            modelBuilder.Entity<{GetEntityName(entity)}>(entity =>");
+            modelBuilder.AppendLine("            {");
+
+            string entityName = GetEntityName(entity);
+            string indent = "                ";
+
+            foreach (var field in entity.Fields)
+            {
+                if (field.Type is MssKeyType keyType && keyType.ToString() == "PK")
+                {
+                    modelBuilder.AppendLine($"{indent}entity.HasKey(e => e.{field.Name});");
+                }
+                else
+                {
+                    var rels = relations.Where(r => r.ContainsField(field));
+                    if (rels.Any())
+                    {
+                        foreach (var rel in rels)
+                        {
+                            var toField = rel.GetOppositeField(field)!;
+                            var toEntity = rel.GetOppositeEntity(entity)!;
+                            var fromRel = rel.GetRelation(field)!;
+                            var toRel = rel.GetRelation(toField)!;
+
+                            string toEntityName = GetEntityName(toEntity);
+                            Debug.Assert(IsFkPkPair(field.Type, toField.Type));
+
+                            if (toRel.IsMany)
+                            {
+                                modelBuilder.AppendLine($"{indent}entity.HasMany(e => e.{toEntityName})");
+                                if (fromRel.IsMany)
+                                {
+                                    modelBuilder.AppendLine($"{indent}    .WithMany(o => o.{entityName})");
+                                }
+                                else
+                                {
+                                    modelBuilder.AppendLine($"{indent}    .WithOne(o => o.{entityName})");
+                                }
+                            }
+                            else
+                            {
+                                modelBuilder.AppendLine($"{indent}entity.HasOne(e => e.{toEntityName})");
+                                if (fromRel.IsMany)
+                                {
+                                    modelBuilder.AppendLine($"{indent}    .WithMany(o => o.{entityName})");
+                                }
+                                else
+                                {
+                                    modelBuilder.AppendLine($"{indent}    .WithOne(o => o.{entityName})");
+                                }
+                            }
+                            modelBuilder.AppendLine($"{indent}    .OnDelete(DeleteBehavior.Restrict);");
+                        }
+                    }
+                    // Cannot own a built in type
+                    else if (field.Type is not MssBuiltInType && field.Type is not MssKeyType)
+                    {
+                        modelBuilder.AppendLine($"{indent}entity.OwnsOne(e => e.{field.Name});");
+                    }
+                }
+            }
+
+            modelBuilder.AppendLine("            });");
+            return modelBuilder.ToString();
+        }
+
         private MssCSharpFile BuildDbContext(MssDatabase database, string projectName)
         {
             string className = projectName + "Context";
@@ -144,8 +220,21 @@ namespace MssBuilder
             }
             contentBuilder.Append(_dbcontextHeaderTemplate.Render(projectName, className));
 
+            contentBuilder.Append(
+    @"
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
 
-            contentBuilder.Append("    }\n}\n");
+");
+
+            contentBuilder.Append(BuildEntityModel(database.Root, database.Relations.Where(r => r.ContainsEntity(database.Root))));
+            foreach (var entity in database.Entities)
+            {
+                contentBuilder.Append(BuildEntityModel(entity, database.Relations.Where(r => r.ContainsEntity(entity))));
+            }
+
+            contentBuilder.Append("        }\n    }\n}\n");
 
             return new(className + ".cs", contentBuilder.ToString());
         }
@@ -159,26 +248,25 @@ namespace MssBuilder
 
             foreach (var entity in service.Database.Entities)
             {
-                project.AddFile(BuildEntityFile(entity,
-                                                service.Database.Relations.Where(r => r.ContainsEntity(entity))));
+                project.AddFile(
+                    BuildEntityFile(entity, service.Database.Relations.Where(r => r.ContainsEntity(entity))));
             }
 
-            project.AddFile(BuildEntityFile(service.Database.Root,
-                                            service.Database.Relations.Where(r => r.ContainsEntity(service.Database.Root))));
+            project.AddFile(
+                BuildEntityFile(service.Database.Root,
+                                service.Database.Relations.Where(r => r.ContainsEntity(service.Database.Root))));
 
             if (_serviceUsesValueTypes)
             {
                 project.AddProjectReference(MssValueTypeBuilder.ProjectName);
             }
 
+            project.AddFile(BuildDbContext(service.Database, _serviceName));
+
             project.AddPackageReference("Microsoft.EntityFrameworkCore", "8.0.0");
             project.AddPackageReference("Microsoft.EntityFrameworkCore.Design", "8.0.0");
             // Todo: delete, this is for early testing, should use a server!!!
             project.AddPackageReference("Microsoft.EntityFrameworkCore.InMemory", "8.0.0");
-
-            project.AddFile(BuildDbContext(service.Database, _serviceName));
-
-            // add relations to entities as necessary
 
             return project;
         }
