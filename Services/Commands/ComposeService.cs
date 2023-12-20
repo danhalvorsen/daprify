@@ -3,10 +3,10 @@ using CLI.Templates;
 
 namespace CLI.Services
 {
-    public class ComposeService(TemplateFactory templateFactory) : CommandService(COMPOSE_NAME)
+    public class ComposeService(TemplateFactory templateFactory) : CommandService(DOCKER_NAME)
     {
         protected readonly TemplateFactory _templateFactory = templateFactory;
-        private const string COMPOSE_NAME = "Compose";
+        private const string DOCKER_NAME = "Docker";
         private const string FILE_NAME = "docker-compose.yml";
         private const string COMPONENT_OPT = "components";
         private const string SETTING_OPT = "settings";
@@ -40,7 +40,7 @@ namespace CLI.Services
         private void GetServices(OptionDictionary options)
         {
             List<string> solutionPaths = options.GetAllPairValues(SOLUTION_OPT);
-            SolutionService.GetServicesFromSolution(ref _services, solutionPaths);
+            SolutionService.GetDaprServicesFromSln(ref _services, solutionPaths);
             _services.AddRange(options.GetAllPairValues(SERVICE_OPT));
 
             List<string> servOpt = options.GetAllPairValues(SERVICE_OPT);

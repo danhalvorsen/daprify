@@ -7,17 +7,30 @@ namespace CLI.Services
     {
         private const string SLN_EXT = "*.sln";
 
-        public static void GetServicesFromSolution(ref List<string> services, List<string> solutionPaths)
+        public static List<string> GetDaprServicesFromSln(ref List<string> services, List<string> solutionPaths)
         {
+            List<string> projectPaths = [];
             if (solutionPaths.Count > 0)
             {
-                services = FindDaprDep(solutionPaths);
+                List<string> slnProjects = FindProjects(solutionPaths);
+                List<string> daprProjects = GetDaprServices(slnProjects);
+                CheckDaprProjects(daprProjects);
+
+                AddToList(services, projectPaths, slnProjects, daprProjects);
             }
+            return projectPaths;
         }
 
-        public static List<string> FindDaprDep(List<string> solutionPaths)
+        private static void AddToList(List<string> services, List<string> projectPaths, List<string> projects, List<string> daprProjects)
         {
-            List<string> services = [];
+            services.AddRange(daprProjects);
+            projectPaths.AddRange(projects.Where(project => daprProjects.Any(daprProject => project.Contains(daprProject))));
+        }
+
+
+        public static List<string> FindProjects(List<string> solutionPaths)
+        {
+            List<string> projectPaths = [];
             DirectoryInfo currentDir = new(Directory.GetCurrentDirectory());
 
             foreach (string path in solutionPaths)
@@ -29,18 +42,15 @@ namespace CLI.Services
                     throw new FileNotFoundException($"Could not find the solution file: {slnPath}");
                 }
 
-                List<string> projectPaths = GetProjectPaths(slnPath);
-                services.AddRange(GetDaprServices(projectPaths));
+                projectPaths.AddRange(GetProjectPaths(slnPath));
             }
 
-            CheckServicesList(services);
-
-            return services;
+            return projectPaths;
         }
 
-        private static void CheckServicesList(List<string> services)
+        private static void CheckDaprProjects(List<string> daprProjects)
         {
-            if (services.Count == 0)
+            if (daprProjects.Count == 0)
             {
                 Console.WriteLine("No Dapr services found in the solution! \nUse the --services option to specify the services to generate certificates for.");
             }
@@ -56,7 +66,8 @@ namespace CLI.Services
                 // Only add projects that are not test projects
                 if (project.ProjectType == SolutionProjectType.KnownToBeMSBuildFormat && !project.ProjectName.Contains("Test", StringComparison.OrdinalIgnoreCase))
                 {
-                    projectPaths.Add(project.AbsolutePath);
+                    string relPath = Path.GetRelativePath(Directory.GetCurrentDirectory(), project.AbsolutePath);
+                    projectPaths.Add(relPath);
                 }
             }
 
@@ -76,22 +87,27 @@ namespace CLI.Services
 
                 XDocument project = XDocument.Load(projectPath);
 
-                if (CheckDaprDependency(project))
+                if (CheckDependency(project, "Dapr"))
                 {
-                    string projectName = Path.GetFileNameWithoutExtension(projectPath);
-                    daprServices.Add(projectName);
+                    AddProjNameToList(daprServices, projectPath);
                 }
             }
 
             return daprServices;
         }
 
-        private static bool CheckDaprDependency(XDocument project)
+        private static bool CheckDependency(XDocument project, string dependency)
         {
             return project
                     .Descendants("PackageReference")
                     .Any(pr => pr.Attribute("Include")?.Value
-                    .Contains("Dapr", StringComparison.OrdinalIgnoreCase) ?? false);
+                    .Contains(dependency, StringComparison.OrdinalIgnoreCase) ?? false);
+        }
+
+        private static void AddProjNameToList(List<string> services, string projectPath)
+        {
+            string projectName = Path.GetFileNameWithoutExtension(projectPath);
+            services.Add(projectName);
         }
     }
 }

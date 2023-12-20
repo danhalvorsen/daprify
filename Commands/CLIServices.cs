@@ -38,6 +38,7 @@ namespace CLI
             services.AddTransient<Command, CLICommand<CertificateService, CertificateSettings, CertificateValidator>>();
             services.AddTransient<Command, CLICommand<ConfigService, ConfigSettings, ConfigValidator>>();
             services.AddTransient<Command, CLICommand<ComponentService, ComponentSettings, ComponentValidator>>();
+            services.AddTransient<Command, CLICommand<DockerfileService, DockerfileSettings, DockerfileValidator>>();
             services.AddTransient<Command, CLICommand<ComposeService, ComposeSettings, ComposeValidator>>();
             services.AddTransient<Command, CLICommand<CompileToPumlService, CompileToPumlSettings, CompileToPumlValidator>>();
             services.AddTransient<Command, CLICommand<MssBuilderService, MssBuilderSettings, MssBuilderValidator>>();
