@@ -8,11 +8,11 @@ kind: Configuration
 metadata:
   name: daprsystem
 spec:
-  {logging}
-  {metric}
-  {middleware}
-  {mtls}
-  {tracing}
+  {{logging}}
+  {{metric}}
+  {{middleware}}
+  {{mtls}}
+  {{tracing}}
 
 # For more information: https://docs.dapr.io/operations/configuration/configuration-overview/
 ";
