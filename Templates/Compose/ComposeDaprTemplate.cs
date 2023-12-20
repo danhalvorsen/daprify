@@ -1,6 +1,6 @@
 namespace CLI.Templates
 {
-  public class ComposeTemplate : TemplateBase
+  public class ComposeDaprTemplate : TemplateBase
   {
     protected override string TemplateString =>
 @"###############################################
@@ -11,12 +11,12 @@ namespace CLI.Templates
     image: ""daprio/daprd:latest""
     command: [""./daprd"",
       ""-app-id"", ""{service}"",
-      ""-app-port"", <APP_PORT>, # The port your application is exposed to, e.g. 5000
+      ""-app-port"", ""{port}"",
       ""-placement-host-address"", ""placement:50005"",
       ""-components-path"", ""/dapr/components"",
       ""-config"", ""/dapr/config/config.yaml"",
       ""-log-level"", ""debug"",
-      {https}
+      {dapr-https}
       {mtls}
       ]
     volumes:
@@ -26,7 +26,8 @@ namespace CLI.Templates
     depends_on:
       - {service}
     network_mode: ""service:{service}""
-    
+
+
 ";
   }
 }
