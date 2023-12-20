@@ -6,8 +6,8 @@ namespace CLI.Templates
 @"###############################################
 # Dapr-dashboard
 ###############################################   
-  dapr-dashboard:
-    container_name: dapr-dashboard
+  dashboard:
+    container_name: dashboard
     image: ""daprio/dashboard:latest""
     command: [ ""--docker-compose=true"", 
       ""--components-path=/home/nonroot/components"", 
