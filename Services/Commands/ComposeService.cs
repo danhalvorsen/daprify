@@ -37,7 +37,7 @@ namespace CLI.Services
         private void GetServices(OptionDictionary options)
         {
             List<string>? solutionPaths = options.GetAllPairValues(SOLUTION_OPT);
-            _ = SolutionService.GetDaprServicesFromSln(ref _services, solutionPaths);
+            _ = SolutionService.GetDaprServicesFromSln(ref _services, string.Empty, solutionPaths);
             _services.AddRange(options.GetAllPairValues(SERVICE_OPT));
 
             _services = _services.Union(options.GetAllPairValues(SERVICE_OPT)).ToList();
@@ -63,7 +63,7 @@ namespace CLI.Services
                 {
                     ReplaceSettings(argument, composeBuilder);
                 }
-                composeBuilder.Replace("{port}", SetServicePort());
+                composeBuilder.Replace("{{port}}", SetServicePort());
             }
             return composeBuilder.ToString();
         }
@@ -71,15 +71,15 @@ namespace CLI.Services
         private string AddServiceToCompose(string service)
         {
             string serviceTemp = _templateFactory.CreateTemplate<ComposeServiceTemplate>();
-            return serviceTemp.Replace("{service}", service.ToLower())
-                              .Replace("{Service}", service);
+            return serviceTemp.Replace("{{service}}", service.ToLower())
+                              .Replace("{{Service}}", service);
         }
 
 
         private string AddDaprServiceToCompose(string service)
         {
             string daprTemp = _templateFactory.CreateTemplate<ComposeDaprTemplate>();
-            return daprTemp.Replace("{service}", service.ToLower());
+            return daprTemp.Replace("{{service}}", service.ToLower());
         }
 
 
@@ -113,7 +113,7 @@ namespace CLI.Services
 
             _components.ForEach(component => dependsOnBuilder.AppendLine($"{INDENT}  - {component}"));
 
-            return compose.Replace("{depends_on}", dependsOnBuilder.ToString());
+            return compose.Replace("{{depends_on}}", dependsOnBuilder.ToString());
         }
 
 
@@ -159,14 +159,14 @@ namespace CLI.Services
 
         private StringBuilder ReplaceHttps(StringBuilder template)
         {
-            return template.Replace("{dapr-https}", _templateFactory.CreateTemplate<HttpsDaprTemplate>())
-                           .Replace("{https}", _templateFactory.CreateTemplate<HttpsServiceTemplate>()); ;
+            return template.Replace("{{dapr-https}}", _templateFactory.CreateTemplate<HttpsDaprTemplate>())
+                           .Replace("{{https}}", _templateFactory.CreateTemplate<HttpsServiceTemplate>()); ;
         }
 
         private StringBuilder ReplaceMtls(StringBuilder template)
         {
-            return template.Replace("{mtls}", _templateFactory.CreateTemplate<MtlsCompTemplate>())
-                           .Replace("{env_file}", _templateFactory.CreateTemplate<EnvTemplate>());
+            return template.Replace("{{mtls}}", _templateFactory.CreateTemplate<MtlsCompTemplate>())
+                           .Replace("{{env_file}}", _templateFactory.CreateTemplate<EnvTemplate>());
         }
     }
 }

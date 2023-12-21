@@ -38,7 +38,7 @@ namespace CLI.Services
         }
 
 
-        [GeneratedRegex(@"\{.*?\}", RegexOptions.Compiled)]
+        [GeneratedRegex(@"\{{.*?\}}", RegexOptions.Compiled)]
         public static partial Regex PlaceholderRegex();
     }
 }

@@ -4,21 +4,21 @@ namespace CLI.Templates
   {
     protected override string TemplateString =>
 @"###############################################
-# {service}
+# {{service}}
 ############################################### 
-  {service}:
-    container_name: {service}
+  {{service}}:
+    container_name: {{service}}
     build:
-      context: ./
-      dockerfile: {Service}.Dockerfile
+      context: ../../
+      dockerfile: Dapr/Docker/{{Service}}.Dockerfile
     ports:
-      - ""{port}:{port}""
+      - ""{{port}}:{{port}}""
     expose:
-      - {port}
+      - {{port}}
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      {https}
-    {depends_on}
+      {{https}}
+    {{depends_on}}
 ";
   }
 }
