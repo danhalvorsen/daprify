@@ -19,6 +19,8 @@ namespace MssBuilder.Projects
         public readonly string RelPath = relPath;
         public readonly Guid Id = Guid.NewGuid();
 
+        protected bool _useWebSdk = false;
+
         public virtual Guid TypeGuid { get => _csharpProjectUUID; }
 
         public IEnumerable<string> Dependencies { get => _projectReferences.Select(d => d.Name); }
@@ -66,9 +68,16 @@ namespace MssBuilder.Projects
             return result;
         }
 
-        protected static XElement CreateProjectHeader()
+        protected XElement CreateProjectHeader()
         {
-            return new XElement("Project", new XAttribute("Sdk", "Microsoft.NET.Sdk"));
+            if (_useWebSdk)
+            {
+                return new XElement("Project", new XAttribute("Sdk", "Microsoft.NET.Sdk.Web"));
+            }
+            else
+            {
+                return new XElement("Project", new XAttribute("Sdk", "Microsoft.NET.Sdk"));
+            }
         }
 
         protected XElement CreatePropertyGroup()
