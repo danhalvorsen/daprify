@@ -2,14 +2,32 @@ using System.Xml.Linq;
 
 namespace MssBuilder.Projects
 {
-    public abstract class MssCSharpProject(string name, string relPath)
+    public class ProjectDependency(string name)
     {
         public readonly string Name = name;
+        public readonly XElement Xml = new("ProjectReference",
+                                           new XAttribute("Include", $"..\\{name}\\{name}.csproj"));
+    }
+
+    public abstract class MssCSharpProject(string name, string relPath)
+    {
+        // solution file uuid for c# project/class library
+        protected Guid _csharpProjectUUID = new("FAE04EC0-301F-11D3-BF4B-00C04F79EFBC");
+        protected Guid _aspCoreProjectUUID = new("9A19103F-16F7-4668-BE54-9A1E7A4F7556");
+
+        public readonly string Name = name;
         public readonly string RelPath = relPath;
+        public readonly Guid Id = Guid.NewGuid();
+
+        protected bool _useWebSdk = false;
+
+        public virtual Guid TypeGuid { get => _csharpProjectUUID; }
+
+        public IEnumerable<string> Dependencies { get => _projectReferences.Select(d => d.Name); }
 
         private readonly List<MssCSharpFile> _files = [];
 
-        protected readonly List<XElement> _projectReferences = [];
+        protected readonly List<ProjectDependency> _projectReferences = [];
         protected readonly List<XElement> _packageReferences = [];
 
         protected readonly int _dotnet_major_version = 8;
@@ -37,8 +55,7 @@ namespace MssBuilder.Projects
 
         public void AddProjectReference(string projectName)
         {
-            _projectReferences.Add(new XElement("ProjectReference",
-                                                new XAttribute("Include", $"..\\{projectName}\\{projectName}.csproj")));
+            _projectReferences.Add(new ProjectDependency(projectName));
         }
 
         protected XElement CreateProjectReferences()
@@ -46,14 +63,21 @@ namespace MssBuilder.Projects
             var result = new XElement("ItemGroup");
             foreach (var reference in _projectReferences)
             {
-                result.Add(reference);
+                result.Add(reference.Xml);
             }
             return result;
         }
 
-        protected static XElement CreateProjectHeader()
+        protected XElement CreateProjectHeader()
         {
-            return new XElement("Project", new XAttribute("Sdk", "Microsoft.NET.Sdk"));
+            if (_useWebSdk)
+            {
+                return new XElement("Project", new XAttribute("Sdk", "Microsoft.NET.Sdk.Web"));
+            }
+            else
+            {
+                return new XElement("Project", new XAttribute("Sdk", "Microsoft.NET.Sdk"));
+            }
         }
 
         protected XElement CreatePropertyGroup()

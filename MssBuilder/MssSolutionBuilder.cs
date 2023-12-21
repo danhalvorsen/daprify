@@ -1,6 +1,7 @@
 ﻿using Mss;
 using Mss.Types;
 using MssBuilder.Projects;
+using System.Text;
 
 namespace MssBuilder
 {
@@ -18,6 +19,8 @@ namespace MssBuilder
                 }
                 DirectoryInfo dir = Directory.CreateDirectory(solutionPath);
 
+                var solution = new MssCSharpSolution(solutionName);
+
                 List<MssClassType> classes = [];
                 List<MssExternType> externs = [];
                 foreach (var type in spec.Types)
@@ -32,22 +35,17 @@ namespace MssBuilder
                     }
                 }
 
-                List<MssCSharpProject> projects = [];
-
                 MssValueTypeBuilder valueBuilder = new();
                 MssCSharpProject valueTypeProject = valueBuilder.Build(classes);
-                projects.Add(valueTypeProject);
+                solution.Add(valueTypeProject);
 
                 MssServiceBuilder serviceBuilder = new();
                 foreach (var service in spec.Services)
                 {
-                    projects.Add(serviceBuilder.Build(service));
+                    solution.Add(serviceBuilder.Build(service));
                 }
 
-                foreach (var project in projects)
-                {
-                    project.Write(dir.FullName);
-                }
+                solution.Write(solutionPath);
             }
             else
             {

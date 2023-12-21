@@ -266,6 +266,8 @@ namespace MssBuilder
                 BuildEntityFile(service.Database.Root,
                                 service.Database.Relations.Where(r => r.ContainsEntity(service.Database.Root))));
 
+            project.AddFile(new MssApiProgramFile(_serviceName));
+
             if (_serviceUsesValueTypes)
             {
                 project.AddProjectReference(MssValueTypeBuilder.ProjectName);
