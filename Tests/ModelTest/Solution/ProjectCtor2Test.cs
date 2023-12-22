@@ -91,7 +91,10 @@ namespace CLITests.Projects
             string invalidPath = "/invalid/path/project.csproj";
 
             // Act
-            void act() => new Project(_mockIQuery.Object, _mockISolution.Object, invalidPath);
+            void act()
+            {
+                Project unused = new(_mockIQuery.Object, _mockISolution.Object, invalidPath);
+            }
 
             // Assert
             Asserts.VerifyExceptionWithMessage<FileNotFoundException>(act, $"Error occurred while trying to find the project file: '{invalidPath}'");

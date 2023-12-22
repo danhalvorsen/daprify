@@ -12,7 +12,6 @@ namespace CLI.Models
     {
         private readonly SolutionFile _solution;
         private readonly AbsolutePath _path;
-        private readonly IQuery _query;
         private readonly IProjectProvider _projectProvider;
         private const string SLN_EXT = "*.sln";
 
@@ -20,9 +19,8 @@ namespace CLI.Models
 
         public Solution(IQuery query, IProjectProvider projectProvider, IPath path)
         {
-            _query = query;
             string slnDir = Path.Combine(Directory.GetCurrentDirectory(), path.ToString());
-            string? sln = _query.GetFileInDirectory(slnDir, SLN_EXT);
+            string? sln = query.GetFileInDirectory(slnDir, SLN_EXT);
             string? slnPath = sln != null ? Path.GetFullPath(sln, slnDir) : null;
             if (slnPath == null || !File.Exists(slnPath))
             {

@@ -2,7 +2,7 @@ namespace CLI.Models
 {
     public class RelativePath : MyPath
     {
-        public IPath _targetPath;
+        private readonly IPath _targetPath;
 
         public RelativePath(string path) : base(path) { }
 

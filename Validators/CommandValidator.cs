@@ -28,14 +28,11 @@ namespace CLI.Validation
 
         public static T? GetOptionValue<T>(CommandResult commandResult, ISettings settings, string optionName)
         {
-            Option<List<string>>? option = settings.Options.FirstOrDefault(o => o.Aliases.Contains(optionName));
+            Option<List<string>>? option = settings.Options.Find(o => o.Aliases.Contains(optionName));
 
-            if (option != null)
+            if (option is Option<T> typedOption)
             {
-                if (option is Option<T> typedOption)
-                {
-                    return commandResult.GetValueForOption(typedOption);
-                }
+                return commandResult.GetValueForOption(typedOption);
             }
 
             return default;

@@ -29,7 +29,10 @@ namespace CLITests.Paths
             MyPath targetPath = new("/home/user/Folder1/Folder2");
 
             // Act & Assert
-            Action act = () => new RelativePath(basePath, targetPath);
+            void act()
+            {
+                RelativePath unused = new(basePath, targetPath);
+            }
 
             // Assert
             Asserts.VerifyException<ArgumentNullException>(act);
@@ -43,7 +46,10 @@ namespace CLITests.Paths
             MyPath targetPath = null!;
 
             // Act & Assert
-            Action act = () => new RelativePath(basePath, targetPath);
+            void act()
+            {
+                RelativePath unused = new(basePath, targetPath);
+            }
 
             // Assert
             Asserts.VerifyException<ArgumentNullException>(act);
