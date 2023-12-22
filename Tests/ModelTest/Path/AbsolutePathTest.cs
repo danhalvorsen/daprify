@@ -1,6 +1,5 @@
 using CLI.Models;
 using CLITests.Assert;
-using FluentAssertions;
 
 namespace CLITests.Paths
 {
@@ -8,6 +7,22 @@ namespace CLITests.Paths
     public class TryAbsolutePath
     {
         private readonly AbsolutePath _basePath = new("Folder1/FolderX/Folder2");
+
+        [TestMethod]
+        public void Expect_Constructor_ConvertsToAbsolutePath()
+        {
+            // Arrange
+            string relativePath = "relative/path";
+            string expectedAbsolutePath = Path.GetFullPath(relativePath);
+
+            // Act
+            AbsolutePath sut = new(relativePath);
+
+            // Assert
+            Asserts.VerifyString(sut.ToString(), expectedAbsolutePath);
+        }
+
+
         [TestMethod]
         public void Expect_GetRelativePath_WithValidTarget_ShouldReturnRelativePath()
         {
@@ -16,7 +31,7 @@ namespace CLITests.Paths
             string expectedResult = "../Folder3";
 
             // Act
-            AbsolutePath sut = _basePath.GetRelativePath(targetPath);
+            RelativePath sut = MyPath.GetRelativePath(_basePath, targetPath);
 
             // Assert
             Asserts.VerifyString(sut.ToString(), expectedResult);
@@ -26,7 +41,7 @@ namespace CLITests.Paths
         public void Expect_GetRelativePath_WithNullTarget_ShouldThrowArgumentNullException()
         {
             // Act & Assert
-            Action act = () => _basePath.GetRelativePath(null!);
+            Action act = () => MyPath.GetRelativePath(_basePath, null!);
 
             // Assert
             Asserts.VerifyException<ArgumentNullException>(act);
@@ -38,7 +53,7 @@ namespace CLITests.Paths
             string expectedResult = ".";
 
             // Act
-            AbsolutePath sut = _basePath.GetRelativePath(_basePath);
+            RelativePath sut = MyPath.GetRelativePath(_basePath, _basePath);
 
             // Assert
             Asserts.VerifyString(sut.ToString(), expectedResult);
@@ -53,7 +68,7 @@ namespace CLITests.Paths
             string expectedResult = "Folder2";
 
             // Act
-            AbsolutePath sut = basePath.GetRelativePath(targetPath);
+            RelativePath sut = MyPath.GetRelativePath(basePath, targetPath);
 
             // Assert
             Asserts.VerifyString(sut.ToString(), expectedResult);
@@ -67,7 +82,7 @@ namespace CLITests.Paths
             string expectedResult = "..";
 
             // Act
-            AbsolutePath sut = _basePath.GetRelativePath(targetPath);
+            RelativePath sut = MyPath.GetRelativePath(_basePath, targetPath);
 
             // Assert
             Asserts.VerifyString(sut.ToString(), expectedResult);
