@@ -39,7 +39,8 @@ namespace CLITests.Commands
             ComponentService componentService = new(_templateFactory);
             ComposeService composeService = new(mockIQuery.Object, mockIProjectProvider.Object, _templateFactory);
             ConfigService configService = new(_templateFactory);
-            _service = new(certificateService, componentService, composeService, configService);
+            DockerfileService dockerfileService = new(mockIQuery.Object, mockIProjectProvider.Object, _templateFactory);
+            _service = new(certificateService, componentService, composeService, configService, dockerfileService);
             Console.SetOut(_consoleOutput);
 
             string testDir = DirectoryService.FindDirectoryUpwards("CommandTest").FullName;
