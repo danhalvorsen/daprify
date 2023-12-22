@@ -1,3 +1,5 @@
+using CLI.Models;
+
 namespace CLI.Templates
 {
     public class DockerfileTemplate() : HandlebarTemplate(TEMPLATE_STR)
@@ -26,12 +28,12 @@ ENTRYPOINT [""dotnet"", ""{{ServiceName}}.dll""]";
 
         protected override string TemplateString => TEMPLATE_STR;
 
-        public string Render(string servicePath, string serviceName)
+        public string Render(MyPath servicePath, Name serviceName)
         {
             var data = new
             {
-                ServicePath = servicePath,
-                ServiceName = serviceName,
+                ServicePath = servicePath.ToString(),
+                ServiceName = serviceName.ToString(),
             };
             return _template(data);
         }
