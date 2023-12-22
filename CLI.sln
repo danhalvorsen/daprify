@@ -4,10 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Commands", "Commands\Commands.csproj", "{6A1E78DB-3F54-4552-8102-D30173AB9AD8}"
-	ProjectSection(ProjectDependencies) = postProject
-		{3C641232-FF69-48F0-99E3-F653AA04940D} = {3C641232-FF69-48F0-99E3-F653AA04940D}
-		{D8773D84-598A-4DAC-9DE9-C811AA97291E} = {D8773D84-598A-4DAC-9DE9-C811AA97291E}
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services", "Services\Services.csproj", "{356B8EB1-A547-45F0-9570-D074BE7C7F25}"
 EndProject
@@ -17,17 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommandTest", "Tests\Comman
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models", "Models\Models.csproj", "{579B8037-17E6-4900-BC3F-DEE414CF74C4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mss", "Mss\Mss.csproj", "{D8773D84-598A-4DAC-9DE9-C811AA97291E}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MssParser", "MssParser\MssParser.csproj", "{3C641232-FF69-48F0-99E3-F653AA04940D}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settings", "Settings\Settings.csproj", "{7604987A-35A0-45B8-9715-FCAE8442F340}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Validators", "Validators\Validators.csproj", "{59816A0A-50EF-4E68-89A0-B69DC7733F7D}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MssParsingTest", "Tests\MssParsingTest\MssParsingTest.csproj", "{1F5917EF-6D6C-42D9-A59D-2E409EE59C48}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MssBuilder", "MssBuilder\MssBuilder.csproj", "{8DDCE7B6-7DD0-4B31-A502-367BDF5A04EC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{C62B41A0-01F0-4216-8BA7-E9AB6704551F}"
 EndProject
