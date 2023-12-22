@@ -69,14 +69,14 @@ namespace CLI.Services
         {
             string tempPath = Path.GetTempPath();
 
-            if (paths != null)
-            {
-                tempPath = paths.Aggregate(tempPath, Path.Combine);
-            }
-
             if (!Directory.Exists(tempPath))
             {
                 throw new DirectoryNotFoundException("Directory does not exist: " + tempPath);
+            }
+
+            if (paths != null)
+            {
+                tempPath = paths.Aggregate(tempPath, Path.Combine);
             }
 
             Directory.CreateDirectory(tempPath);

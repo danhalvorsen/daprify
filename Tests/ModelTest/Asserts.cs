@@ -5,6 +5,11 @@ namespace CLITests.Assert
 {
     public class Asserts
     {
+
+        public static void VerifyBool(bool actual, bool expected)
+        {
+            actual.Should().Be(expected);
+        }
         public static void VerifyNotNull<T>(T item)
         {
             item.Should().NotBeNull();
@@ -20,6 +25,11 @@ namespace CLITests.Assert
             actual.Should().Be(expected);
         }
 
+        public static void VerifyType<T>(object actual)
+        {
+            actual.Should().BeOfType<T>();
+        }
+
         public static void VerifyEnumerableString(IEnumerable<string> actual, IEnumerable<string> expected)
         {
             actual.Should().BeEquivalentTo(expected);
@@ -28,6 +38,11 @@ namespace CLITests.Assert
         public static void VerifyException<T>(Action act) where T : Exception
         {
             act.Should().ThrowExactly<T>();
+        }
+
+        public static void VerifyExceptionWithMessage<T>(Action act, string message) where T : Exception
+        {
+            act.Should().ThrowExactly<T>().WithMessage(message);
         }
     }
 }

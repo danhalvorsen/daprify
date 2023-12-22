@@ -16,6 +16,8 @@ namespace CLI.Models
         private readonly IProjectProvider projectProvider;
         private const string SLN_EXT = "*.sln";
 
+        public Solution() { }
+
         public Solution(IQuery query, IProjectProvider projectProvider, IPath path)
         {
             this.query = query;
