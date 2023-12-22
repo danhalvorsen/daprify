@@ -4,9 +4,11 @@ using System.Text;
 
 namespace CLI.Services
 {
-    public class ComposeService(TemplateFactory templateFactory) : CommandService(DOCKER_NAME)
+    public class ComposeService(IQuery query, IProjectProvider projectProvider, TemplateFactory templateFactory) : CommandService(DOCKER_NAME)
     {
         protected readonly TemplateFactory _templateFactory = templateFactory;
+        private readonly IQuery _query = query;
+        private readonly IProjectProvider _projectProvider = projectProvider;
         private const string DOCKER_NAME = "Docker";
         private const string FILE_NAME = "docker-compose.yml";
         private const string COMPONENT_OPT = "components";
@@ -16,7 +18,7 @@ namespace CLI.Services
         private int _startPort = 1000;
         private readonly int _nextPort = 500;
         private static readonly List<string> _components = [];
-        private List<string> _services = [];
+        private List<IProject> _projects = [];
 
 
         protected override List<string> CreateFiles(OptionDictionary options, string workingDir)
@@ -36,11 +38,12 @@ namespace CLI.Services
 
         private void GetServices(OptionDictionary options)
         {
-            List<string>? solutionPaths = options.GetAllPairValues(SOLUTION_OPT);
-            _ = SolutionService.GetDaprServicesFromSln(ref _services, string.Empty, solutionPaths);
-            _services.AddRange(options.GetAllPairValues(SERVICE_OPT));
+            IEnumerable<MyPath> solutionPaths = MyPath.FromStringList(options.GetAllPairValues(SOLUTION_OPT));
+            IEnumerable<Solution> solutions = solutionPaths.Select(path => new Solution(_query, _projectProvider, path));
+            _projects = SolutionService.GetDaprServicesFromSln(new(string.Empty), solutions).ToList();
 
-            _services = _services.Union(options.GetAllPairValues(SERVICE_OPT)).ToList();
+            IEnumerable<Project> services = Project.FromStringList(options.GetAllPairValues(SERVICE_OPT));
+            _projects.AddRange(services);
         }
 
 
@@ -54,10 +57,10 @@ namespace CLI.Services
         private string GetServicesComposeSection(OptionDictionary options)
         {
             StringBuilder composeBuilder = new();
-            foreach (string service in _services)
+            foreach (Project project in _projects)
             {
-                composeBuilder.Append(AddServiceToCompose(service));
-                composeBuilder.Append(AddDaprServiceToCompose(service));
+                composeBuilder.Append(AddServiceToCompose(project.GetName()));
+                composeBuilder.Append(AddDaprServiceToCompose(project.GetName()));
 
                 foreach (string argument in options.GetAllPairValues(SETTING_OPT))
                 {
@@ -68,18 +71,18 @@ namespace CLI.Services
             return composeBuilder.ToString();
         }
 
-        private string AddServiceToCompose(string service)
+        private string AddServiceToCompose(Name service)
         {
             string serviceTemp = _templateFactory.CreateTemplate<ComposeServiceTemplate>();
-            return serviceTemp.Replace("{{service}}", service.ToLower())
-                              .Replace("{{Service}}", service);
+            return serviceTemp.Replace("{{service}}", service.ToString().ToLower())
+                              .Replace("{{Service}}", service.ToString());
         }
 
 
-        private string AddDaprServiceToCompose(string service)
+        private string AddDaprServiceToCompose(Name service)
         {
             string daprTemp = _templateFactory.CreateTemplate<ComposeDaprTemplate>();
-            return daprTemp.Replace("{{service}}", service.ToLower());
+            return daprTemp.Replace("{{service}}", service.ToString().ToLower());
         }
 
 
