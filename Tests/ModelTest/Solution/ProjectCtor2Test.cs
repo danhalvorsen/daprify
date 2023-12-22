@@ -17,12 +17,11 @@ namespace CLITests.Projects
 
 
         [TestInitialize]
-        public MyPath InitializeTest()
+        public void InitializeTest()
         {
             _tempDir = new(DirectoryService.CreateTempDirectory([PROJECT_DIR]));
             _csprojPath = new(Path.Combine(_tempDir.ToString(), PROJECT));
             File.WriteAllText(Path.Combine(_tempDir.ToString(), PROJECT), "<Project Sdk=\"Microsoft.NET.Sdk\"> </Project>");
-            return _tempDir;
         }
 
         [TestMethod]
