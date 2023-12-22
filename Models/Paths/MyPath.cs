@@ -9,7 +9,7 @@ namespace CLI.Models
 
     public class MyPath : IPath
     {
-        private string path = string.Empty;
+        private string _path = string.Empty;
 
         public MyPath() { }
         public MyPath(string path)
@@ -24,10 +24,10 @@ namespace CLI.Models
 
         public void SetPath(string path)
         {
-            this.path = path ?? throw new ArgumentNullException(nameof(path));
+            _path = path ?? throw new ArgumentNullException(nameof(path));
         }
         public IPath GetPath() => this;
 
-        public override string ToString() => this.path;
+        public override string ToString() => _path;
     }
 }

@@ -2,7 +2,6 @@ using System.Xml.Linq;
 
 namespace CLI.Models
 {
-
     public interface IProject
     {
         IPath GetPath();
@@ -19,34 +18,34 @@ namespace CLI.Models
 
     public class Project : IProject
     {
-        private readonly IQuery query;
-        private readonly XDocument project;
-        private IPath path;
-        private readonly RelativePath relativeSlnPath;
-        private RelativePath relativeProjPath;
-        private readonly ISolution solution;
-        private readonly Name name;
+        private readonly IQuery _query;
+        private readonly XDocument _project;
+        private IPath _path;
+        private readonly RelativePath _relativeSlnPath;
+        private RelativePath _relativeProjPath;
+        private readonly ISolution _solution;
+        private readonly Name _name;
 
         public Project(IQuery query, Name name)
         {
-            this.query = query;
-            this.name = name;
-            this.path = new MyPath();
+            _query = query;
+            _name = name;
+            _path = new MyPath();
         }
 
         public Project(IQuery query, ISolution sln, string projectPath)
         {
-            this.query = query;
-            this.solution = sln;
+            _query = query;
+            _solution = sln;
             if (!File.Exists(projectPath))
             {
                 throw new FileNotFoundException($"Error occurred while trying to find the project file: '{projectPath}'");
             }
 
-            this.project = XDocument.Load(projectPath);
-            this.path = new AbsolutePath(projectPath);
-            this.relativeSlnPath = new RelativePath(solution.GetPath(), this.path);
-            this.name = new(Path.GetFileNameWithoutExtension(this.path.ToString()));
+            _project = XDocument.Load(projectPath);
+            _path = new AbsolutePath(projectPath);
+            _relativeSlnPath = new RelativePath(_solution.GetPath(), _path);
+            _name = new(Path.GetFileNameWithoutExtension(_path.ToString()));
         }
 
         public static IEnumerable<Project> FromStringList(List<string> names)
@@ -55,24 +54,24 @@ namespace CLI.Models
             return names.Select(name => new Project(query, new(name)));
         }
 
-        public Name GetName() => this.name;
-        public IPath GetPath() => this.path;
-        public XDocument GetProject() => this.project;
-        public RelativePath GetRelativeProjPath() => this.relativeProjPath;
-        public RelativePath GetRelativeSlnPath() => this.relativeSlnPath;
-        public ISolution GetSolution() => this.solution;
+        public Name GetName() => _name;
+        public IPath GetPath() => _path;
+        public XDocument GetProject() => _project;
+        public RelativePath GetRelativeProjPath() => _relativeProjPath;
+        public RelativePath GetRelativeSlnPath() => _relativeSlnPath;
+        public ISolution GetSolution() => _solution;
 
         public void SetPath(IPath path)
         {
-            this.path = path ?? throw new ArgumentNullException(nameof(path));
+            _path = path ?? throw new ArgumentNullException(nameof(path));
         }
 
         public void SetRelativeProjectPath(IPath basePath)
         {
-            this.relativeProjPath = new RelativePath(basePath, this.path);
+            _relativeProjPath = new RelativePath(basePath, _path);
         }
 
-        public bool CheckPackageReference(string dependency) => this.query.CheckPackageReference(this, dependency);
+        public bool CheckPackageReference(string dependency) => _query.CheckPackageReference(this, dependency);
 
         public bool Contains(string target)
         {
@@ -81,7 +80,7 @@ namespace CLI.Models
                 throw new ArgumentNullException(nameof(target));
             }
 
-            if (this.name.ToString().Contains(target, StringComparison.OrdinalIgnoreCase))
+            if (_name.ToString().Contains(target, StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }

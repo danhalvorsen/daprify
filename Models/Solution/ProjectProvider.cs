@@ -8,14 +8,9 @@ namespace CLI.Models
         IEnumerable<Project> GetProjects(Solution solution);
     }
 
-    public class ProjectProvider : IProjectProvider
+    public class ProjectProvider(IQuery query) : IProjectProvider
     {
-        private readonly IQuery query;
-
-        public ProjectProvider(IQuery query)
-        {
-            this.query = query;
-        }
+        private readonly IQuery _query = query;
 
         public IEnumerable<Project> GetProjects(Solution solution)
         {
@@ -25,7 +20,7 @@ namespace CLI.Models
                                         project.ProjectType == SolutionProjectType.KnownToBeMSBuildFormat &&
                                         !project.ProjectName.Contains("Test", StringComparison.OrdinalIgnoreCase));
 
-            return filteredProjects.Select(project => new Project(query, solution, project.AbsolutePath));
+            return filteredProjects.Select(project => new Project(_query, solution, project.AbsolutePath));
         }
     }
 }
