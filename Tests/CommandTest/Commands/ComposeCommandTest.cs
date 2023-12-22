@@ -3,6 +3,7 @@ using CLI.Services;
 using CLI.Settings;
 using CLI.Templates;
 using CLI.Validation;
+using CLITests.Mocks;
 using FluentAssertions;
 using System.CommandLine;
 using System.CommandLine.Parsing;
@@ -27,8 +28,10 @@ namespace CLITests.Commands
         public TryComposeCommandTests()
         {
             MockServiceProvider _serviceProvider = new();
+            MockIQuery mockIQuery = new();
+            MockIProjectProvider mockIProjectProvider = new();
             _templateFactory = new(_serviceProvider.Object);
-            _service = new(_templateFactory);
+            _service = new(mockIQuery.Object, mockIProjectProvider.Object, _templateFactory);
             Console.SetOut(_consoleOutput);
 
             Directory.SetCurrentDirectory(DirectoryService.CreateTempDirectory());
