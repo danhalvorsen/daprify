@@ -4,6 +4,7 @@ using CLI.Services;
 using CLI.Settings;
 using CLI.Templates;
 using CLI.Validation;
+using CLITests.Mocks;
 using FluentAssertions;
 using System.CommandLine;
 using System.CommandLine.Parsing;
@@ -32,15 +33,17 @@ namespace CLITests.Commands
         public TryGenAllCommandTests()
         {
             _templateFactory = new(_serviceProvider.Object);
+            MockIQuery mockIQuery = new();
+            MockIProjectProvider mockIProjectProvider = new();
             CertificateService certificateService = new();
             ComponentService componentService = new(_templateFactory);
-            ComposeService composeService = new(_templateFactory);
+            ComposeService composeService = new(mockIQuery.Object, mockIProjectProvider.Object, _templateFactory);
             ConfigService configService = new(_templateFactory);
             _service = new(certificateService, componentService, composeService, configService);
             Console.SetOut(_consoleOutput);
 
             string testDir = DirectoryService.FindDirectoryUpwards("CommandTest").FullName;
-            _confPath = Path.Combine(testDir, "Mocks/config-mock.json");
+            _confPath = Path.Combine(testDir, "../Mocks/config-mock.json");
             Directory.SetCurrentDirectory(DirectoryService.CreateTempDirectory());
             Environment.SetEnvironmentVariable("isTestProject", "true");
         }

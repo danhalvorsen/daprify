@@ -3,6 +3,7 @@ using CLI.Services;
 using CLI.Settings;
 using CLI.Templates;
 using CLI.Validation;
+using CLITests.Mocks;
 using FluentAssertions;
 using System.CommandLine;
 using System.CommandLine.Parsing;

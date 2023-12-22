@@ -18,10 +18,12 @@
     <PackageReference Include="coverlet.collector" Version="6.0.0" />
   </ItemGroup>
 
+  
   <ItemGroup>
-    <ProjectReference Include="..\..\Commands\Commands.csproj" />
+    <ProjectReference Include="..\..\Models\Models.csproj" />
     <ProjectReference Include="..\..\Services\Services.csproj" />
     <ProjectReference Include="..\Mocks\Mocks.csproj" />
   </ItemGroup>
+
 
 </Project>

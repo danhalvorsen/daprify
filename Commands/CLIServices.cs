@@ -14,7 +14,7 @@ namespace CLI
         // TODO: Add the commands to implement Command and not AsSelf()
         public static void ScanAssemblies(this IServiceCollection services)
         {
-            string[] projectAssemblyNames = ["Commands", "Services", "Settings", "Templates", "Validators"];
+            string[] projectAssemblyNames = ["Commands", "Models", "Services", "Settings", "Templates", "Validators"];
 
             Assembly[] loadedAssemblies = projectAssemblyNames
                 .Select(Assembly.Load)

@@ -2,7 +2,7 @@
 using CLI.Templates;
 using Moq;
 
-namespace CLITests
+namespace CLITests.Mocks
 {
     public class MockServiceProvider : Mock<IServiceProvider>
     {
