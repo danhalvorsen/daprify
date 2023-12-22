@@ -12,13 +12,12 @@ namespace CLITests.Paths
         {
             // Arrange
             string validPath = "C:\\test";
-            MyPath expectedResult = new(validPath);
 
             // Act
             MyPath sut = new(validPath);
 
             // Assert
-            Asserts.VerifyString(sut, expectedResult);
+            Asserts.VerifyString(sut.ToString(), validPath);
         }
 
         [TestMethod]
@@ -37,13 +36,12 @@ namespace CLITests.Paths
             // Arrange
             MyPath sut = new("C:\\initial");
             string newPath = "C:\\new";
-            MyPath expectedResult = new(newPath);
 
             // Act
             sut.SetPath(newPath);
 
             // Assert
-            Asserts.VerifyString(sut, expectedResult);
+            Asserts.VerifyString(sut.ToString(), newPath);
         }
 
         [TestMethod]
@@ -69,8 +67,8 @@ namespace CLITests.Paths
             List<MyPath> sut = MyPath.FromStringList(paths).ToList();
 
             // Assert
-            IEnumerable<MyPath> expectedPaths = paths.Select(p => new MyPath(p));
-            IEnumerable<MyPath> actualPaths = sut.Select(mp => mp);
+            IEnumerable<string> expectedPaths = paths.Select(p => new MyPath(p).ToString());
+            IEnumerable<string> actualPaths = sut.Select(mp => mp.ToString());
 
             Asserts.VerifyEnumerableString(actualPaths, expectedPaths);
         }

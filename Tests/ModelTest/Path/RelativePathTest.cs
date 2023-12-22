@@ -11,14 +11,14 @@ namespace CLITests.Paths
             // Arrange
             MyPath basePath = new("/home/user/Folder1");
             MyPath targetPath = new("/home/user/Folder1/Folder2");
-            MyPath expected = new("Folder2");
+            string expected = "Folder2";
 
             // Act
             RelativePath sut = new(basePath, targetPath);
 
             // Assert
-            Asserts.VerifyString(sut, expected);
-            Asserts.VerifyString(sut.TargetPath, targetPath);
+            Asserts.VerifyString(sut.ToString(), expected);
+            Asserts.VerifyString(sut.TargetPath.ToString(), targetPath.ToString());
         }
 
         [TestMethod]
@@ -54,13 +54,13 @@ namespace CLITests.Paths
         {
             // Arrange
             MyPath basePath = new("/home/user/Folder1");
-            MyPath expected = new(".");
+            string expected = ".";
 
             // Act
             RelativePath sut = new(basePath, basePath);
 
             // Assert
-            Asserts.VerifyString(sut, expected);
+            Asserts.VerifyString(sut.ToString(), expected);
         }
     }
 }

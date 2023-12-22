@@ -15,12 +15,12 @@ namespace CLITests.Assert
             items.Should().NotBeNull().And.HaveCount(expectedCount);
         }
 
-        public static void VerifyString(IPath actual, IPath expected)
+        public static void VerifyString(string actual, string expected)
         {
             actual.Should().Be(expected);
         }
 
-        public static void VerifyEnumerableString(IEnumerable<IPath> actual, IEnumerable<IPath> expected)
+        public static void VerifyEnumerableString(IEnumerable<string> actual, IEnumerable<string> expected)
         {
             actual.Should().BeEquivalentTo(expected);
         }
