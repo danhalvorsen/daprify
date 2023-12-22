@@ -24,7 +24,10 @@ namespace CLITests.Paths
         public void Expect_Constructor_WithNullPath_ShouldThrowArgumentNullException()
         {
             // Act & Assert
-            Action act = () => new MyPath(null!);
+            static void act()
+            {
+                MyPath unused = new(null!);
+            }
 
             // Assert
             Asserts.VerifyException<ArgumentNullException>(act);

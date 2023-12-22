@@ -2,7 +2,7 @@ using CLI.Models;
 
 namespace CLI.Services
 {
-    public class SolutionService()
+    public static class SolutionService
     {
         private const string DAPR = "Dapr";
 

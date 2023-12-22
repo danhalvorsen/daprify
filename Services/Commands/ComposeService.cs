@@ -57,7 +57,7 @@ namespace CLI.Services
         private string GetServicesComposeSection(OptionDictionary options)
         {
             StringBuilder composeBuilder = new();
-            foreach (Project project in _projects)
+            foreach (IProject project in _projects)
             {
                 composeBuilder.Append(AddServiceToCompose(project.GetName()));
                 composeBuilder.Append(AddDaprServiceToCompose(project.GetName()));
@@ -163,7 +163,7 @@ namespace CLI.Services
         private StringBuilder ReplaceHttps(StringBuilder template)
         {
             return template.Replace("{{dapr-https}}", _templateFactory.CreateTemplate<HttpsDaprTemplate>())
-                           .Replace("{{https}}", _templateFactory.CreateTemplate<HttpsServiceTemplate>()); ;
+                           .Replace("{{https}}", _templateFactory.CreateTemplate<HttpsServiceTemplate>());
         }
 
         private StringBuilder ReplaceMtls(StringBuilder template)

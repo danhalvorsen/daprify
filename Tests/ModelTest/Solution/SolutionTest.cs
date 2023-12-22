@@ -91,7 +91,10 @@ namespace CLITests.Solutions
             MyPath invalidPath = new("InvalidPath");
 
             // Act
-            Action act = () => new Solution(_mockIQuery.Object, _mockIProjectProvider.Object, invalidPath);
+            Action act = () =>
+            {
+                Solution unused = new(_mockIQuery.Object, _mockIProjectProvider.Object, invalidPath);
+            };
 
             // Assert
             act.Should().Throw<FileNotFoundException>()
