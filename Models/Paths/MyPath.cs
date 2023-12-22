@@ -29,5 +29,15 @@ namespace CLI.Models
         public IPath GetPath() => this;
 
         public override string ToString() => _path;
+
+        public static RelativePath GetRelativePath(IPath basePath, IPath target)
+        {
+            if (basePath != null && target != null)
+            {
+                return new(Path.GetRelativePath(basePath.ToString(), target.ToString()));
+            }
+
+            throw new ArgumentNullException(nameof(target));
+        }
     }
 }

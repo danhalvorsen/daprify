@@ -18,7 +18,7 @@ namespace CLITests.Paths
 
             // Assert
             Asserts.VerifyString(sut.ToString(), expected);
-            Asserts.VerifyString(sut.TargetPath.ToString(), targetPath.ToString());
+            Asserts.VerifyString(sut.GetTargetPath().ToString(), targetPath.ToString());
         }
 
         [TestMethod]
