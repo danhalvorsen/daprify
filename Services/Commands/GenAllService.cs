@@ -3,12 +3,14 @@ using CLI.Models;
 namespace CLI.Services
 {
     public class GenAllService(CertificateService certificateService, ComponentService componentService,
-                             ComposeService composeService, ConfigService configService) : IService
+                             ComposeService composeService, ConfigService configService,
+                             DockerfileService dockerfileService) : IService
     {
         private readonly CertificateService _certificateService = certificateService;
         private readonly ComponentService _componentService = componentService;
         private readonly ComposeService _composeService = composeService;
         private readonly ConfigService _configService = configService;
+        private readonly DockerfileService _dockerfileService = dockerfileService;
         private const string CONFIG_OPT = "config";
         private const string SETTING_OPT = "settings";
         private const string MTLS = "mtls";
@@ -22,6 +24,7 @@ namespace CLI.Services
 
             GenerateCerts(options, settingOpt);
             _componentService.Generate(options);
+            _dockerfileService.Generate(options);
             _composeService.Generate(options);
             RemoveHttps(options, settingOpt);
             _configService.Generate(options);
