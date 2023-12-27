@@ -10,7 +10,7 @@ Read more at **[Dapr Resources](#additional-resources)**
 
 ## Usage
 
-Run the available commands in your terminal. Outputs are saved to **git_root/Dapr/** (if a git root exists) or **CLI/Dapr/** otherwise.
+Run the available commands in your terminal. Outputs are saved to **git_root/Dapr/** (if a git root exists) or **CLI/Dapr/** otherwise. Copy the created directory into your project's root directory and do run **docker-compose up -d** inside Dapr/Docker.
 
 Define your project requirements in the `config.json` file located in `CLI/Commands` and use the command:
 
@@ -37,11 +37,11 @@ Options:
 
 Commands:
   gen_all         Generates everything needed to use Dapr with docker-compose (components, config, certificates and docker-compose file(s))
-                  If all your services has a PackageReference to Dapr use --solution_path instead of --services.
+                  If all your services has a PackageReference to Dapr use --solution_paths instead of --services.
                   Use dotnet run gen_all -- -help to see all available options.
 
                   Examples:
-                    dotnet run gen_all --components rabbitmq redis --services ServiceA ServiceB --settings mtls tracing --solution_path ../../Backend
+                    dotnet run gen_all --components rabbitmq redis --services ServiceA ServiceB --settings mtls tracing --solution_paths ../../Backend
   gen_certs       Generates certificates needed for the Dapr sidecars.
 
                   Examples:
@@ -59,14 +59,14 @@ Commands:
   gen_dockerfiles  Generates dockerfiles for all your projects in the specified solutions.
 
                    Examples:
-                     dotnet run gen_dockerfiles --solution_path ../../Service1 ../../Service2
+                     dotnet run gen_dockerfiles --solution_paths ../../Service1 ../../Service2
   gen_compose     Generates docker-compose.yml from your Dapr directory or for the specified service(s).
 
                   Examples:
                     dotnet run gen_compose --components rabbitmq sentry
                     dotnet run gen_compose --settings mtls https --services ServiceA
-                    dotnet run gen_compose --solution_path ../../Backend
-                    dotnet run gen_compose --components rabbitmq sentry --services Frontend Backend --solution_path ../../Backend
+                    dotnet run gen_compose --solution_paths ../../Backend
+                    dotnet run gen_compose --components rabbitmq sentry --services Frontend Backend --solution_paths ../../Backend
   gen_puml        Generates a plantuml diagram of the supplied micro service spec.
 
                   Example:
@@ -81,7 +81,7 @@ Commands:
 
 ### Generate All
 
-Generates everything needed to use Dapr with docker-compose including components, config, certificates, and docker-compose files. Use --solution_path instead of --services if all your services have a PackageReference to Dapr.
+Generates everything needed to use Dapr with docker-compose including components, config, certificates, and docker-compose files. Use --solution_paths instead of --services if all your services have a PackageReference to Dapr.
 
 ```bash
 dotnet run gen_all -- [options]
@@ -93,12 +93,12 @@ Find available arguments for the options **[Here](#available-options-and-argumen
 Description:
   Generates everything needed to use Dapr with docker-compose (components, config, certificates and docker-compose file(s))
   Easiest to specify all your project needs in at CLI/Commands/config.json and execute with --config config.json
-  If all your services has a PackageReference to Dapr use --solution_path instead of --services.
+  If all your services has a PackageReference to Dapr use --solution_paths instead of --services.
   Use dotnet run gen_all -- -help to see all available options.
 
   Examples:
     dotnet run gen_all --config config.json
-    dotnet run gen_all --components rabbitmq redis --services ServiceA ServiceB --settings mtls tracing --solution_path ../../Backend
+    dotnet run gen_all --components rabbitmq redis --services ServiceA ServiceB --settings mtls tracing --solution_paths ../../Backend
 
 Usage:
   Commands gen_all [options]
@@ -108,7 +108,7 @@ Options:
   --c, --components <bindings|configstore|crypto|lock|pubsub|secretstore|statestore>  The specific component(s) to generate docker-compose content to. [default: statestore|secretstore]
   --se, --services <services>                                                         The specific service(s) to generate docker-compose content to.
   --s, --settings <https|logging|metric|middleware|mtls|tracing>                      Additional settings for your services.
-  --sp, --solution_path <solution_path>                                               Path to your .Net sln file (from executing path). Adds all projects dependent on Dapr to docker-compose.
+  --sp, --solution_paths <solution_path>                                               Path to your .Net sln file (from executing path). Adds all projects dependent on Dapr to docker-compose.
   -?, -h, --help                                                                      Show help and usage information
 ```
 
@@ -237,14 +237,14 @@ Description:
   Generates dockerfiles for all your projects in the specified solutions.
 
   Examples:
-    dotnet run gen_dockerfiles --solution_path ../../Service1 ../../Service2
+    dotnet run gen_dockerfiles --solution_paths ../../Service1 ../../Service2
 
 Usage:
   Commands gen_dockerfiles [options]
 
 Options:
   --pp, --project_path <project_path>    The path to the root of your project (from executing path). Not needed if it's a git project. Used to find correct paths.
-  --solution_path, --sp <solution_path>  The path to your .Net solution file (from executing path). Used to generate dockerfile for all projects in the sln file.
+  --solution_paths, --sp <solution_path>  The path to your .Net solution file (from executing path). Used to generate dockerfile for all projects in the sln file.
   -?, -h, --help                         Show help and usage information
 ```
 
@@ -267,8 +267,8 @@ Description:
   Examples:
     dotnet run gen_compose --components rabbitmq sentry
     dotnet run gen_compose --settings mtls https --services ServiceA
-    dotnet run gen_compose --solution_path ../../Backend
-    dotnet run gen_compose --components rabbitmq sentry --services Frontend Backend --solution_path ../../Backend
+    dotnet run gen_compose --solution_paths ../../Backend
+    dotnet run gen_compose --components rabbitmq sentry --services Frontend Backend --solution_paths ../../Backend
 
 Usage:
   Commands gen_compose [options]
@@ -278,7 +278,7 @@ Options:
   --pp, --project_path <project_path>                                   The path to your project's root from the current execution location. Unnecessary for Git projects; used for path resolution.
   --s, --settings <settings>                                            Additional settings for your services.
   --se, --services <services>                                           The specific service(s) to generate docker-compose content to.
-  --sp, --solution_path <solution_path>                                 The path to your .Net solution file (from executing path). Used to generate certificates for all services dependent on Dapr.
+  --sp, --solution_paths <solution_path>                                 The path to your .Net solution file (from executing path). Used to generate certificates for all services dependent on Dapr.
   -?, -h, --help                                                        Show help and usage information
 ```
 
@@ -286,46 +286,6 @@ To generate a docker-compose-yml with specific components and services:
 
 ```bash
 dotnet run gen_compose --components rabbitmq sentry --services Frontend Backend
-```
-
-## Generate PlantUML from MSS
-
-To generate plantuml from a mss file use:
-
-```bash
-dotnet run gen_puml -- --help
-Description:
-  Generates a plantuml diagram of the supplied micro service spec.
-
-  Examples:
-    dotnet run gen_puml -i test.mss
-    dotnet run gen_puml -i test.mss -o out.plantuml
-
-Usage:
-  Commands gen_puml [options]
-
-Options:
-  -i, --input   The .mss file to parse, selects the first .mss file in the working directory if omitted.
-  -o, --output  The .plantuml file to generate. Will default to the name and directory of the input if omitted.
-```
-
-## Generate Solution from MSS
-
-```bash
-dotnet run gen_mss -- --help
-Description:
-  Generates a solution from the supplied micro service spec.
-
-  Examples:
-    dotnet run gen_mss -i test.mss
-    dotnet run gen_mss -i test.mss -o ./out
-
-Usage:
-  Commands gen_mss [options]
-
-Options:
-  -i, --input   The .mss file to parse, selects the first .mss file in the working directory if omitted.
-  -o, --output  The directory to generate to. Will default to the working directory if omitted.
 ```
 
 ## Available options and arguments
@@ -339,10 +299,6 @@ Options:
 | `gen_components` | `components` | bindings, configstore, crypto, lock, pubsub, secretstore, statestore |
 | `gen_compose`    | `components` | dashboard, placement, rabbitmq, redis, sentry, zipkin                |
 |                  | `settings`   | https, logging, metric, middleware, mtls, tracing, https             |
-| `gen_puml`       | `input`      |                                                                      |
-|                  | `output`     |                                                                      |
-| `gen_mss`        | `input`      |                                                                      |
-|                  | `output`     |                                                                      |
 
 ## Additional Resources
 
