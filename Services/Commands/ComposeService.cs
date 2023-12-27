@@ -14,7 +14,8 @@ namespace CLI.Services
         private const string COMPONENT_OPT = "components";
         private const string SETTING_OPT = "settings";
         private const string SERVICE_OPT = "services";
-        private const string SOLUTION_OPT = "solution_path";
+        private const string SOLUTION_OPT = "solution_paths";
+        private bool _addMtls = false;
         private int _startPort = 1000;
         private readonly int _nextPort = 500;
         private static readonly List<string> _components = [];
@@ -30,7 +31,7 @@ namespace CLI.Services
             compose = AddDependsOn(compose);
 
             compose = PlaceholderRegex().Replace(compose, string.Empty);
-            DirectoryService.WriteFile(workingDir, FILE_NAME, compose);
+            DirectoryService.AppendFile(workingDir, FILE_NAME, compose);
 
             return ["docker-compose"];
         }
@@ -68,6 +69,7 @@ namespace CLI.Services
                 }
                 composeBuilder.Replace("{{port}}", SetServicePort());
             }
+            CheckMtls(composeBuilder);
             return composeBuilder.ToString();
         }
 
@@ -152,6 +154,14 @@ namespace CLI.Services
             return template + argTemplate;
         }
 
+        private void CheckMtls(StringBuilder template)
+        {
+            if (_addMtls)
+            {
+                template.Append(_templateFactory.CreateTemplate<SentryTemplate>());
+                _addMtls = false;
+            }
+        }
 
         private string SetServicePort()
         {
@@ -168,6 +178,7 @@ namespace CLI.Services
 
         private StringBuilder ReplaceMtls(StringBuilder template)
         {
+            _addMtls = true;
             return template.Replace("{{mtls}}", _templateFactory.CreateTemplate<MtlsCompTemplate>())
                            .Replace("{{env_file}}", _templateFactory.CreateTemplate<EnvTemplate>());
         }
