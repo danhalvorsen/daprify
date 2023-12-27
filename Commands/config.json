@@ -11,7 +11,10 @@
         "mtls", 
         "tracing"
     ],
-    "solution_path": [
-        "../../Backend"
+    "project_path": [
+        "../../Project"
+    ],
+    "solution_paths": [
+        "../../Project/Backend"
     ]
 }

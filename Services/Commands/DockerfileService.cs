@@ -9,7 +9,7 @@ namespace CLI.Services
         private readonly IProjectProvider _projectProvider = projectProvider;
         private const string DOCKER_NAME = "Docker";
         private const string PROJECT_OPT = "project_path";
-        private const string SOLUTION_OPT = "solution_path";
+        private const string SOLUTION_OPT = "solution_paths";
         private const string DOCKERFILE_EXT = ".Dockerfile";
         private readonly IQuery _query = query;
         IEnumerable<IProject> _projects = [];

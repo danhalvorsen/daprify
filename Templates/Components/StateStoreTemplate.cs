@@ -12,7 +12,7 @@ spec:
   version: v1
   metadata:
     - name: redisHost
-      value: <HOSTNAME>:<PORT> # HOSTNAME and PORT from the docker container. i.e localhost:6379
+      value: redishost:6379 
 
 # For more information: https://docs.dapr.io/reference/components-reference/supported-state-stores/setup-redis/
       ";

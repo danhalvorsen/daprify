@@ -8,6 +8,7 @@
 .config
 .sonarqube
 *.zsh
+Dapr
 
 # User-specific files
 *.rsuser
