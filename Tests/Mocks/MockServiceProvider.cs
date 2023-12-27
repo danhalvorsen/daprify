@@ -17,6 +17,7 @@ namespace CLITests.Mocks
         private readonly RabbitMqTemplate rabbitMqTemplate = new();
         private readonly RedisTemplate redisTemplate = new();
         private readonly SecretStoreTemplate secretStoreTemplate = new();
+        private readonly SentryTemplate sentryTemplate = new();
         private readonly StateStoreTemplate stateStoreTemplate = new();
         private readonly TracingTemplate tracingTemplate = new();
 
@@ -33,6 +34,7 @@ namespace CLITests.Mocks
             Setup(x => x.GetService(typeof(RabbitMqTemplate))).Returns(rabbitMqTemplate);
             Setup(x => x.GetService(typeof(RedisTemplate))).Returns(redisTemplate);
             Setup(x => x.GetService(typeof(SecretStoreTemplate))).Returns(secretStoreTemplate);
+            Setup(x => x.GetService(typeof(SentryTemplate))).Returns(sentryTemplate);
             Setup(x => x.GetService(typeof(StateStoreTemplate))).Returns(stateStoreTemplate);
             Setup(x => x.GetService(typeof(TracingTemplate))).Returns(tracingTemplate);
         }
