@@ -6,7 +6,6 @@ namespace CLI.Templates
 @"mtls:
     enabled: true
     allowedClockSkew: 15m
-    workloadCertTTL: 24h
-";
+    workloadCertTTL: 24h";
     }
 }

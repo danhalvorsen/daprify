@@ -14,7 +14,6 @@ namespace CLI.Templates
         - name: oauth2
             type: middleware.http.oauth2
         - name: uppercase
-            type: middleware.http.uppercase
-";
+            type: middleware.http.uppercase";
     }
 }
