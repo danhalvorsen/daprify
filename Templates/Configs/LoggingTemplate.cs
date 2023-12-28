@@ -7,7 +7,6 @@ namespace CLI.Templates
     apiLogging:
         enabled: false
         obfuscateURLs: false
-        omitHealthChecks: false
-";
+        omitHealthChecks: false";
     }
 }

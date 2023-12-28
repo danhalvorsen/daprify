@@ -4,7 +4,6 @@ namespace CLI.Templates
     {
         protected override string TemplateString =>
 @"metrics:
-    enabled: true
-";
+    enabled: true";
     }
 }
