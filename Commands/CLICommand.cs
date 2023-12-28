@@ -2,47 +2,72 @@ using CLI.Models;
 using CLI.Services;
 using CLI.Settings;
 using CLI.Validation;
+using FluentValidation;
+using FluentValidation.Results;
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.CommandLine.Parsing;
 
 namespace CLI.Commands
 {
-    public class CLICommand<Service, Settings, Validator> : Command
+    public class CLICommand<Service, Settings> : Command
         where Service : IService
         where Settings : ISettings
-        where Validator : IValidator
     {
         private readonly Service _service;
         private readonly Settings _settings;
-        private readonly Validator _validator;
+        private readonly OptionValidator _validator;
+        private readonly OptionDictionary _optionArguments = [];
 
-        public CLICommand(Service service, Settings settings, Validator validator) : base(settings.CommandName, settings.CommandDescription + settings.CommandExample)
+        public CLICommand(Service service, Settings settings, IOptionValidatorFactory validatorFactory)
+            : base(settings.CommandName, settings.CommandDescription + settings.CommandExample)
         {
             _service = service;
             _settings = settings;
-            _validator = validator;
+            _validator = validatorFactory.CreateValidator(settings);
 
+            AddOptions();
+            this.SetHandler(Execute);
+        }
+
+        private void AddOptions()
+        {
             foreach (var option in _settings.Options)
             {
                 AddOption(option);
             }
-            AddValidator(commandResult => _validator.Validate(commandResult, _settings));
-            this.SetHandler(Execute);
         }
 
         private void Execute(InvocationContext context)
         {
-            OptionDictionary optionArguments = [];
+            ValidateCommand(context.ParseResult.CommandResult);
+            GetOptionArguments(context);
+            _service.Generate(_optionArguments);
+        }
+
+        private void ValidateCommand(CommandResult commandResult)
+        {
+            ValidationResult result = _validator.Validate(commandResult);
+
+            if (!result.IsValid)
+            {
+                List<string> errorMessages = result.Errors.Select(error => error.ErrorMessage).ToList();
+                string exceptionMessage = string.Join(Environment.NewLine, errorMessages);
+
+                throw new ValidationException(exceptionMessage);
+            }
+        }
+
+        private void GetOptionArguments(InvocationContext context)
+        {
             foreach (var option in _settings.Options)
             {
-                string optionName = option.Name;
                 var values = context.ParseResult.GetValueForOption(option);
                 if (values != null)
                 {
-                    optionArguments.Add(optionName, values);
+                    _optionArguments.Add(option.Name, values);
                 }
             }
-            _service.Generate(optionArguments);
         }
     }
 }
