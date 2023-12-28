@@ -17,7 +17,7 @@ namespace CLITests.Commands
         private readonly ComposeService _service;
         private readonly ComposeSettings _settings = new();
 
-        private readonly ComposeValidator _validator = new();
+        private readonly OptionValidatorFactory _optionValidatorFactory;
         private readonly TemplateFactory _templateFactory;
         private readonly DirectoryInfo _startingDir = new(Directory.GetCurrentDirectory());
 
@@ -27,6 +27,9 @@ namespace CLITests.Commands
 
         public TryComposeCommandTests()
         {
+            MyPathValidator myPathValidator = new();
+            _optionValidatorFactory = new(myPathValidator);
+
             MockServiceProvider _serviceProvider = new();
             MockIQuery mockIQuery = new();
             MockIProjectProvider mockIProjectProvider = new();
@@ -45,7 +48,7 @@ namespace CLITests.Commands
             // Arrange
             string[] argument = [_settings.CommandName, ComposeSettings.ServiceOptionName[0], serviceArguments[0], serviceArguments[1],
                                                         ComposeSettings.ComponentOptionName[0], componentArguments[0], componentArguments[1]];
-            CLICommand<ComposeService, ComposeSettings, ComposeValidator> sut = new(_service, _settings, _validator);
+            CLICommand<ComposeService, ComposeSettings> sut = new(_service, _settings, _optionValidatorFactory);
 
             // Act
             sut.Parse(argument).Invoke();

@@ -34,12 +34,12 @@ namespace CLI
 
         public static void AddCommands(this IServiceCollection services)
         {
-            services.AddTransient<Command, CLICommand<GenAllService, GenAllSettings, GenAllValidator>>();
-            services.AddTransient<Command, CLICommand<CertificateService, CertificateSettings, CertificateValidator>>();
-            services.AddTransient<Command, CLICommand<ConfigService, ConfigSettings, ConfigValidator>>();
-            services.AddTransient<Command, CLICommand<ComponentService, ComponentSettings, ComponentValidator>>();
-            services.AddTransient<Command, CLICommand<DockerfileService, DockerfileSettings, DockerfileValidator>>();
-            services.AddTransient<Command, CLICommand<ComposeService, ComposeSettings, ComposeValidator>>();
+            services.AddTransient<Command, CLICommand<GenAllService, GenAllSettings>>();
+            services.AddTransient<Command, CLICommand<CertificateService, CertificateSettings>>();
+            services.AddTransient<Command, CLICommand<ConfigService, ConfigSettings>>();
+            services.AddTransient<Command, CLICommand<ComponentService, ComponentSettings>>();
+            services.AddTransient<Command, CLICommand<DockerfileService, DockerfileSettings>>();
+            services.AddTransient<Command, CLICommand<ComposeService, ComposeSettings>>();
         }
     }
 }

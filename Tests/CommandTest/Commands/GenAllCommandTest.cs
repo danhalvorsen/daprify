@@ -17,7 +17,7 @@ namespace CLITests.Commands
         private readonly StringWriter _consoleOutput = new();
         private readonly GenAllService _service;
         private readonly GenAllSettings _settings = new();
-        private readonly GenAllValidator _validator = new();
+        private readonly OptionValidatorFactory _optionValidatorFactory;
         private readonly MockServiceProvider _serviceProvider = new();
         private readonly TemplateFactory _templateFactory;
         private readonly DirectoryInfo _startingDir = new(Directory.GetCurrentDirectory());
@@ -32,6 +32,9 @@ namespace CLITests.Commands
 
         public TryGenAllCommandTests()
         {
+            MyPathValidator myPathValidator = new();
+            _optionValidatorFactory = new(myPathValidator);
+
             _templateFactory = new(_serviceProvider.Object);
             MockIQuery mockIQuery = new();
             MockIProjectProvider mockIProjectProvider = new();
@@ -55,7 +58,7 @@ namespace CLITests.Commands
         {
             // Arrange
             string[] argument = [_settings.CommandName, GenAllSettings.SettingOptionName[0], settingArgs[0], settingArgs[1]];
-            CLICommand<GenAllService, GenAllSettings, GenAllValidator> sut = new(_service, _settings, _validator);
+            CLICommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _optionValidatorFactory);
 
             // Act
             sut.Parse(argument).Invoke();
@@ -77,7 +80,7 @@ namespace CLITests.Commands
         {
             // Arrange
             string[] argument = [_settings.CommandName, GenAllSettings.SettingOptionName[0], settingArgs[0], settingArgs[1]];
-            CLICommand<GenAllService, GenAllSettings, GenAllValidator> sut = new(_service, _settings, _validator);
+            CLICommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _optionValidatorFactory);
 
             // Act
             sut.Parse(argument).Invoke();
@@ -93,7 +96,7 @@ namespace CLITests.Commands
         {
             // Arrange
             string[] argument = [_settings.CommandName, GenAllSettings.ComponentOptionName[0], componentArgs[0], componentArgs[1]];
-            CLICommand<GenAllService, GenAllSettings, GenAllValidator> sut = new(_service, _settings, _validator);
+            CLICommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _optionValidatorFactory);
 
             // Act
             sut.Parse(argument).Invoke();
@@ -115,7 +118,7 @@ namespace CLITests.Commands
         {
             // Arrange
             string[] argument = [_settings.CommandName];
-            CLICommand<GenAllService, GenAllSettings, GenAllValidator> sut = new(_service, _settings, _validator);
+            CLICommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _optionValidatorFactory);
 
             // Act
             sut.Parse(argument).Invoke();
@@ -134,7 +137,7 @@ namespace CLITests.Commands
             // Arrange
             string[] argument = [_settings.CommandName, GenAllSettings.ComponentOptionName[0], componentArgs[0], componentArgs[1],
                                                         GenAllSettings.SettingOptionName[0], settingArgs[0], settingArgs[1]];
-            CLICommand<GenAllService, GenAllSettings, GenAllValidator> sut = new(_service, _settings, _validator);
+            CLICommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _optionValidatorFactory);
 
             // Act
             sut.Parse(argument).Invoke();
@@ -154,7 +157,7 @@ namespace CLITests.Commands
             string destPath = Path.Combine(destDir, "config-mock.json");
             File.Copy(_confPath, destPath, true);
             string[] argument = [_settings.CommandName, GenAllSettings.ConfigOptionName[0], destPath];
-            CLICommand<GenAllService, GenAllSettings, GenAllValidator> sut = new(_service, _settings, _validator);
+            CLICommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _optionValidatorFactory);
 
             // Act
             sut.Parse(argument).Invoke();

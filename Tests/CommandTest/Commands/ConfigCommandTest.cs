@@ -17,7 +17,7 @@ namespace CLITests.Commands
         private readonly ConfigService _service;
         private readonly ConfigSettings _settings = new();
 
-        private readonly ConfigValidator _validator = new();
+        private readonly OptionValidatorFactory _optionValidatorFactory;
         private readonly TemplateFactory _templateFactory;
         private readonly DirectoryInfo _startingDir = new(Directory.GetCurrentDirectory());
 
@@ -26,6 +26,9 @@ namespace CLITests.Commands
 
         public TryConfigCommandTests()
         {
+            MyPathValidator myPathValidator = new();
+            _optionValidatorFactory = new(myPathValidator);
+
             MockServiceProvider _serviceProvider = new();
             _templateFactory = new(_serviceProvider.Object);
             _service = new(_templateFactory);
@@ -41,7 +44,7 @@ namespace CLITests.Commands
         {
             // Arrange
             string[] argument = [_settings.CommandName];
-            CLICommand<ConfigService, ConfigSettings, ConfigValidator> sut = new(_service, _settings, _validator);
+            CLICommand<ConfigService, ConfigSettings> sut = new(_service, _settings, _optionValidatorFactory);
 
             // Act
             sut.Parse(argument).Invoke();

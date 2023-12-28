@@ -2,9 +2,9 @@ namespace CLI.Models
 {
     public interface IPath
     {
-        public IPath GetPath();
-        public void SetPath(string path);
-        public string ToString();
+        IPath GetPath();
+        void SetPath(string path);
+        string ToString();
     }
 
     public class MyPath : IPath
@@ -28,6 +28,16 @@ namespace CLI.Models
         }
         public IPath GetPath() => this;
 
+        public static MyPath GetFullPath(IPath path)
+        {
+            if (path != null)
+            {
+                return new(Path.GetFullPath(path.ToString()));
+            }
+
+            throw new ArgumentNullException(nameof(path));
+        }
+
         public override string ToString() => _path;
 
         public static RelativePath GetRelativePath(IPath basePath, IPath target)
@@ -35,6 +45,16 @@ namespace CLI.Models
             if (basePath != null && target != null)
             {
                 return new(Path.GetRelativePath(basePath.ToString(), target.ToString()));
+            }
+
+            throw new ArgumentNullException(nameof(target));
+        }
+
+        public static MyPath Combine(IPath basePath, IPath target)
+        {
+            if (basePath != null && target != null)
+            {
+                return new(Path.Combine(basePath.ToString(), target.ToString()));
             }
 
             throw new ArgumentNullException(nameof(target));
