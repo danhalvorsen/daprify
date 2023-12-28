@@ -14,7 +14,7 @@ namespace CLITests.Commands
         private readonly StringWriter _consoleOutput = new();
         private readonly CertificateService _service = new();
         private readonly CertificateSettings _settings = new();
-        private readonly CertificateValidator _validator = new();
+        private readonly OptionValidatorFactory _optionValidatorFactory;
         private readonly DirectoryInfo _startingDir = new(Directory.GetCurrentDirectory());
 
         private const string DAPR_DIR = "Dapr", CERT_DIR = "Certs/", ENV_FILE = "Dapr.Env", ENV_DIR = "Env/";
@@ -22,6 +22,9 @@ namespace CLITests.Commands
 
         public TryCertificateCommandTests()
         {
+            MyPathValidator myPathValidator = new();
+            _optionValidatorFactory = new(myPathValidator);
+
             Console.SetOut(_consoleOutput);
             Directory.SetCurrentDirectory(DirectoryService.CreateTempDirectory());
             Environment.SetEnvironmentVariable("isTestProject", "true");
@@ -33,7 +36,7 @@ namespace CLITests.Commands
         {
             // Arrange
             string[] argument = [_settings.CommandName];
-            CLICommand<CertificateService, CertificateSettings, CertificateValidator> sut = new(_service, _settings, _validator);
+            CLICommand<CertificateService, CertificateSettings> sut = new(_service, _settings, _optionValidatorFactory);
 
             // Act
             sut.Parse(argument).Invoke();
@@ -54,7 +57,7 @@ namespace CLITests.Commands
         {
             // Arrange
             string[] argument = [_settings.CommandName];
-            CLICommand<CertificateService, CertificateSettings, CertificateValidator> sut = new(_service, _settings, _validator);
+            CLICommand<CertificateService, CertificateSettings> sut = new(_service, _settings, _optionValidatorFactory);
 
             // Act
             sut.Parse(argument).Invoke();

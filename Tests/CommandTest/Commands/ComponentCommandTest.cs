@@ -16,7 +16,7 @@ namespace CLITests.Commands
         private readonly StringWriter _consoleOutput = new();
         private readonly ComponentService _service;
         private readonly ComponentSettings _settings = new();
-        private readonly ComponentValidator _validator = new();
+        private readonly OptionValidatorFactory _optionValidatorFactory;
         private readonly MockServiceProvider _serviceProvider = new();
         private readonly TemplateFactory _templateFactory;
         private readonly DirectoryInfo _startingDir = new(Directory.GetCurrentDirectory());
@@ -26,6 +26,9 @@ namespace CLITests.Commands
 
         public TryComponentCommandTests()
         {
+            MyPathValidator myPathValidator = new();
+            _optionValidatorFactory = new(myPathValidator);
+
             _templateFactory = new(_serviceProvider.Object);
             _service = new(_templateFactory);
             Console.SetOut(_consoleOutput);
@@ -40,7 +43,7 @@ namespace CLITests.Commands
         {
             // Arrange
             string[] argument = [_settings.CommandName, ComponentSettings.OptionName[0], arguments[0], arguments[1]];
-            CLICommand<ComponentService, ComponentSettings, ComponentValidator> sut = new(_service, _settings, _validator);
+            CLICommand<ComponentService, ComponentSettings> sut = new(_service, _settings, _optionValidatorFactory);
 
             // Act
             sut.Parse(argument).Invoke();
