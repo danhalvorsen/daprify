@@ -47,7 +47,7 @@ namespace CLITests.Commands
             Console.SetOut(_consoleOutput);
 
             string testDir = DirectoryService.FindDirectoryUpwards("CommandTest").FullName;
-            _confPath = Path.Combine(testDir, "../Mocks/config-mock.json");
+            _confPath = Path.Combine(testDir, "../Utils/Mocks/config-mock.json");
             Directory.SetCurrentDirectory(DirectoryService.CreateTempDirectory());
             Environment.SetEnvironmentVariable("isTestProject", "true");
         }

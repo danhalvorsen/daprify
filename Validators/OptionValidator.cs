@@ -28,7 +28,7 @@ namespace CLI.Validation
                 .SetValidator(_myPathValidator);
         }
 
-        private IEnumerable<MyPath> GetPaths(CommandResult commandResult, string optionName)
+        public IEnumerable<MyPath> GetPaths(CommandResult commandResult, string optionName)
         {
             List<string>? options = GetOptionValue(commandResult, optionName);
             if (options == null)

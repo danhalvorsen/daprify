@@ -7,10 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="6.12.0" />
     <PackageReference Include="Moq" Version="4.20.70" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Settings\Settings.csproj" />
     <ProjectReference Include="..\..\Templates\Templates.csproj" />
     <ProjectReference Include="..\..\Models\Models.csproj" />
   </ItemGroup>

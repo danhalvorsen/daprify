@@ -21,7 +21,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{C62B41A0
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelTest", "Tests\ModelTest\ModelTest.csproj", "{FFAEB0A9-5F12-4474-A03A-946FDDD56B48}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mocks", "Tests\Mocks\Mocks.csproj", "{8DFE1FEE-F792-419D-ABD5-564B8B83A160}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utils", "Tests\Utils\Utils.csproj", "{8DFE1FEE-F792-419D-ABD5-564B8B83A160}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ValidatorTest", "Tests\ValidatorTest\ValidatorTest.csproj", "{4B202A25-B970-4BFF-8235-2FE7C25E229A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -81,6 +83,10 @@ Global
 		{8DFE1FEE-F792-419D-ABD5-564B8B83A160}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8DFE1FEE-F792-419D-ABD5-564B8B83A160}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8DFE1FEE-F792-419D-ABD5-564B8B83A160}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B202A25-B970-4BFF-8235-2FE7C25E229A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B202A25-B970-4BFF-8235-2FE7C25E229A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B202A25-B970-4BFF-8235-2FE7C25E229A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B202A25-B970-4BFF-8235-2FE7C25E229A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -90,5 +96,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{FFAEB0A9-5F12-4474-A03A-946FDDD56B48} = {C62B41A0-01F0-4216-8BA7-E9AB6704551F}
+		{4B202A25-B970-4BFF-8235-2FE7C25E229A} = {C62B41A0-01F0-4216-8BA7-E9AB6704551F}
 	EndGlobalSection
 EndGlobal
