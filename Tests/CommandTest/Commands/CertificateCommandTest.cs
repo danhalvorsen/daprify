@@ -1,4 +1,5 @@
 using CLI.Commands;
+using CLI.Models;
 using CLI.Services;
 using CLI.Settings;
 using CLI.Validation;
@@ -26,7 +27,7 @@ namespace CLITests.Commands
             _optionValidatorFactory = new(myPathValidator);
 
             Console.SetOut(_consoleOutput);
-            Directory.SetCurrentDirectory(DirectoryService.CreateTempDirectory());
+            Directory.SetCurrentDirectory(DirectoryService.CreateTempDirectory().ToString());
             Environment.SetEnvironmentVariable("isTestProject", "true");
         }
 
@@ -42,7 +43,7 @@ namespace CLITests.Commands
             sut.Parse(argument).Invoke();
 
             // Assert
-            Directory.SetCurrentDirectory(Path.Combine(Directory.GetCurrentDirectory(), DAPR_DIR));
+            Directory.SetCurrentDirectory(MyPath.Combine(DirectoryService.GetCurrentDirectory().ToString(), DAPR_DIR).ToString());
             string consoleOutput = _consoleOutput.ToString();
 
             foreach (string crt in certFiles)
@@ -63,7 +64,7 @@ namespace CLITests.Commands
             sut.Parse(argument).Invoke();
 
             // Assert
-            Directory.SetCurrentDirectory(Path.Combine(Directory.GetCurrentDirectory(), DAPR_DIR));
+            Directory.SetCurrentDirectory(MyPath.Combine(DirectoryService.GetCurrentDirectory().ToString(), DAPR_DIR).ToString());
             File.Exists(ENV_DIR + ENV_FILE).Should().BeTrue($"File {ENV_FILE} should exist but was not found.");
         }
 
@@ -72,7 +73,7 @@ namespace CLITests.Commands
         public void Cleanup()
         {
             _consoleOutput.GetStringBuilder().Clear();
-            DirectoryService.DeleteDirectory(Directory.GetCurrentDirectory());
+            DirectoryService.DeleteDirectory(DirectoryService.GetCurrentDirectory());
             Directory.SetCurrentDirectory(_startingDir.FullName);
         }
     }

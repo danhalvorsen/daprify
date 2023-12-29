@@ -1,4 +1,5 @@
 using CLI.Models;
+using CLI.Services;
 using CLI.Validation;
 using CLITests.Assert;
 using FluentValidation.Results;
@@ -14,7 +15,7 @@ namespace ValidatorTest
         public void Expect_ValidPath_Give_No_Validation_Errors()
         {
             // Arrange
-            MyPath validPath = new(Directory.GetCurrentDirectory());
+            MyPath validPath = DirectoryService.GetCurrentDirectory();
             IEnumerable<MyPath> paths = [validPath];
 
             // Act
@@ -28,7 +29,7 @@ namespace ValidatorTest
         public void Expect_ValidPaths_Give_No_Validation_Errors()
         {
             // Arrange
-            MyPath currentDir = new(Directory.GetCurrentDirectory());
+            MyPath currentDir = DirectoryService.GetCurrentDirectory();
             MyPath parentDir = new(Directory.GetParent(currentDir.ToString())!.FullName);
             IEnumerable<MyPath> paths = [currentDir, parentDir];
 

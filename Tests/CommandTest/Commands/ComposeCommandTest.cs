@@ -1,4 +1,5 @@
 using CLI.Commands;
+using CLI.Models;
 using CLI.Services;
 using CLI.Settings;
 using CLI.Templates;
@@ -37,7 +38,7 @@ namespace CLITests.Commands
             _service = new(mockIQuery.Object, mockIProjectProvider.Object, _templateFactory);
             Console.SetOut(_consoleOutput);
 
-            Directory.SetCurrentDirectory(DirectoryService.CreateTempDirectory());
+            Directory.SetCurrentDirectory(DirectoryService.CreateTempDirectory().ToString());
             Environment.SetEnvironmentVariable("isTestProject", "true");
         }
 
@@ -54,7 +55,7 @@ namespace CLITests.Commands
             sut.Parse(argument).Invoke();
 
             // Assert
-            string filepath = Path.Combine(Directory.GetCurrentDirectory(), DOCKER_DIR);
+            string filepath = MyPath.Combine(DirectoryService.GetCurrentDirectory().ToString(), DOCKER_DIR).ToString();
             Directory.Exists(filepath).Should().BeTrue($"Directory {filepath} should exist but was not found.");
 
             Directory.SetCurrentDirectory(filepath);
@@ -66,7 +67,7 @@ namespace CLITests.Commands
         public void Cleanup()
         {
             _consoleOutput.GetStringBuilder().Clear();
-            DirectoryService.DeleteDirectory(Directory.GetCurrentDirectory());
+            DirectoryService.DeleteDirectory(DirectoryService.GetCurrentDirectory());
             Directory.SetCurrentDirectory(_startingDir.FullName);
         }
     }

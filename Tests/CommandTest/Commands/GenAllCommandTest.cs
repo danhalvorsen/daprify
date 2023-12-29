@@ -48,7 +48,7 @@ namespace CLITests.Commands
 
             string testDir = DirectoryService.FindDirectoryUpwards("CommandTest").FullName;
             _confPath = Path.Combine(testDir, "../Utils/Mocks/config-mock.json");
-            Directory.SetCurrentDirectory(DirectoryService.CreateTempDirectory());
+            Directory.SetCurrentDirectory(DirectoryService.CreateTempDirectory().ToString());
             Environment.SetEnvironmentVariable("isTestProject", "true");
         }
 
@@ -64,7 +64,7 @@ namespace CLITests.Commands
             sut.Parse(argument).Invoke();
 
             // Assert
-            Directory.SetCurrentDirectory(Path.Combine(Directory.GetCurrentDirectory(), DAPR_DIR));
+            Directory.SetCurrentDirectory(MyPath.Combine(DirectoryService.GetCurrentDirectory().ToString(), DAPR_DIR).ToString());
             string consoleOutput = _consoleOutput.ToString();
 
             foreach (string crt in certFiles)
@@ -86,7 +86,7 @@ namespace CLITests.Commands
             sut.Parse(argument).Invoke();
 
             // Assert
-            Directory.SetCurrentDirectory(Path.Combine(Directory.GetCurrentDirectory(), DAPR_DIR));
+            Directory.SetCurrentDirectory(MyPath.Combine(DirectoryService.GetCurrentDirectory().ToString(), DAPR_DIR).ToString());
             File.Exists(ENV_DIR + ENV_FILE).Should().BeTrue($"File {ENV_FILE} should exist but was not found.");
         }
 
@@ -102,7 +102,7 @@ namespace CLITests.Commands
             sut.Parse(argument).Invoke();
 
             // Assert
-            Directory.SetCurrentDirectory(Path.Combine(Directory.GetCurrentDirectory(), DAPR_DIR));
+            Directory.SetCurrentDirectory(MyPath.Combine(DirectoryService.GetCurrentDirectory().ToString(), DAPR_DIR).ToString());
             string consoleOutput = _consoleOutput.ToString();
 
             foreach (string comp in componentArgs)
@@ -124,7 +124,7 @@ namespace CLITests.Commands
             sut.Parse(argument).Invoke();
 
             // Assert
-            Directory.SetCurrentDirectory(Path.Combine(Directory.GetCurrentDirectory(), DAPR_DIR));
+            Directory.SetCurrentDirectory(MyPath.Combine(DirectoryService.GetCurrentDirectory().ToString(), DAPR_DIR).ToString());
             string consoleOutput = _consoleOutput.ToString();
 
             consoleOutput.Should().Contain("config");
@@ -143,7 +143,7 @@ namespace CLITests.Commands
             sut.Parse(argument).Invoke();
 
             // Assert
-            Directory.SetCurrentDirectory(Path.Combine(Directory.GetCurrentDirectory(), DAPR_DIR));
+            Directory.SetCurrentDirectory(MyPath.Combine(DirectoryService.GetCurrentDirectory().ToString(), DAPR_DIR).ToString());
             File.Exists(DOCKER_DIR + COMPOSE_FILE).Should().BeTrue($"File {COMPOSE_FILE} should exist but was not found.");
         }
 
@@ -151,7 +151,7 @@ namespace CLITests.Commands
         public void Expected_Config_File_Generates_All()
         {
             // Arrange
-            string destDir = Path.Combine(Directory.GetCurrentDirectory(), "Mocks");
+            string destDir = MyPath.Combine(DirectoryService.GetCurrentDirectory().ToString(), "Mocks").ToString();
             Directory.CreateDirectory(destDir);
 
             string destPath = Path.Combine(destDir, "config-mock.json");
@@ -164,7 +164,7 @@ namespace CLITests.Commands
 
             // Assert
             OptionDictionary options = OptionDictionary.PopulateFromJson(destPath);
-            Directory.SetCurrentDirectory(Path.Combine(Directory.GetCurrentDirectory(), DAPR_DIR));
+            Directory.SetCurrentDirectory(MyPath.Combine(DirectoryService.GetCurrentDirectory().ToString(), DAPR_DIR).ToString());
             string consoleOutput = _consoleOutput.ToString();
 
             foreach (string crt in certFiles)
@@ -189,7 +189,7 @@ namespace CLITests.Commands
         public void Cleanup()
         {
             _consoleOutput.GetStringBuilder().Clear();
-            DirectoryService.DeleteDirectory(Directory.GetCurrentDirectory());
+            DirectoryService.DeleteDirectory(DirectoryService.GetCurrentDirectory());
             Directory.SetCurrentDirectory(_startingDir.FullName);
         }
     }

@@ -8,7 +8,7 @@ namespace CLITests.Projects
     [TestClass]
     public class TrySecondProjectCtor
     {
-        private const string PROJECT = "TempProject.csproj", PROJECT_DIR = "ProjectTest";
+        private const string PROJECT = "TempProject.csproj";
         private MyPath _tempDir;
         private MyPath _csprojPath;
         private readonly MockIQuery _mockIQuery = new();
@@ -19,9 +19,10 @@ namespace CLITests.Projects
         [TestInitialize]
         public void InitializeTest()
         {
-            _tempDir = new(DirectoryService.CreateTempDirectory([PROJECT_DIR]));
-            _csprojPath = new(Path.Combine(_tempDir.ToString(), PROJECT));
-            File.WriteAllText(Path.Combine(_tempDir.ToString(), PROJECT), "<Project Sdk=\"Microsoft.NET.Sdk\"> </Project>");
+            MyPath projectDir = new("ProjectTest");
+            _tempDir = DirectoryService.CreateTempDirectory([projectDir]);
+            _csprojPath = MyPath.Combine(_tempDir.ToString(), PROJECT);
+            DirectoryService.WriteFile(_tempDir, PROJECT, "<Project Sdk=\"Microsoft.NET.Sdk\"> </Project>");
         }
 
         [TestMethod]
@@ -103,7 +104,7 @@ namespace CLITests.Projects
         [TestCleanup]
         public void TestCleanup()
         {
-            string fullPath = Path.Combine(Directory.GetCurrentDirectory(), _tempDir.ToString());
+            MyPath fullPath = MyPath.Combine(DirectoryService.GetCurrentDirectory().ToString(), _tempDir.ToString());
             DirectoryService.DeleteDirectory(fullPath);
         }
     }
