@@ -27,13 +27,13 @@ namespace CLI.Models
             return allValues;
         }
 
-        public List<string> GetAllPairValues(string optionName)
+        public OptionValues GetAllPairValues(string optionName)
         {
             if (_optionDictionary.TryGetValue(optionName, out List<string>? value))
             {
-                return value;
+                return new(value);
             }
-            return [];
+            return new([]);
         }
 
         public static OptionDictionary PopulateFromJson(string filePath)
