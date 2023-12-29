@@ -13,7 +13,7 @@ namespace CLI.Services
             List<string> generatedYamls = [];
             List<string> componentOpt = options.GetAllPairValues(COMPONENT_NAME.ToLower());
 
-            foreach (var argument in componentOpt)
+            foreach (string argument in componentOpt)
             {
                 string yaml = GetArgumentTemplate(argument, null!);
                 DirectoryService.WriteFile(workingDir, $"{argument}.yaml", yaml);

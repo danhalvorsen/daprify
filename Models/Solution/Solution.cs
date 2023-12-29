@@ -19,9 +19,9 @@ namespace CLI.Models
 
         public Solution(IQuery query, IProjectProvider projectProvider, IPath path)
         {
-            string slnDir = Path.Combine(Directory.GetCurrentDirectory(), path.ToString());
+            MyPath slnDir = MyPath.Combine(Directory.GetCurrentDirectory(), path.ToString());
             string? sln = query.GetFileInDirectory(slnDir, SLN_EXT);
-            string? slnPath = sln != null ? Path.GetFullPath(sln, slnDir) : null;
+            string? slnPath = sln != null ? Path.GetFullPath(sln, slnDir.ToString()) : null;
             if (slnPath == null || !File.Exists(slnPath))
             {
                 throw new FileNotFoundException($"Could not find the solution file: {slnPath}");

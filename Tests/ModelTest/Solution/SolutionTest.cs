@@ -67,7 +67,7 @@ namespace CLITests.Solutions
 
             // Assert
             _mockIQuery.Verify(x => x.CheckPackageReference(It.IsAny<Project>(), It.IsAny<string>()), Times.Never);
-            _mockIQuery.Verify(x => x.GetFileInDirectory(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+            _mockIQuery.Verify(x => x.GetFileInDirectory(It.IsAny<IPath>(), It.IsAny<string>()), Times.Once);
         }
 
         [TestMethod]

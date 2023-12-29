@@ -8,7 +8,7 @@ namespace CLITests.Mocks
         public MockIQuery()
         {
             Setup(m => m.CheckPackageReference(It.IsAny<Project>(), It.IsAny<string>())).Returns(true);
-            Setup(m => m.GetFileInDirectory(It.IsAny<string>(), It.IsAny<string>())).Returns("TempSolution.sln");
+            Setup(m => m.GetFileInDirectory(It.IsAny<IPath>(), It.IsAny<string>())).Returns("TempSolution.sln");
         }
     }
 }

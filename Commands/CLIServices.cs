@@ -1,7 +1,6 @@
 using CLI.Commands;
 using CLI.Services;
 using CLI.Settings;
-using CLI.Validation;
 using Microsoft.Extensions.DependencyInjection;
 using System.CommandLine;
 using System.Reflection;

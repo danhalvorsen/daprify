@@ -5,7 +5,7 @@ namespace CLI.Models
     public interface IQuery
     {
         public bool CheckPackageReference(Project project, string dependency);
-        public string? GetFileInDirectory(string dirPath, string fileType);
+        public string? GetFileInDirectory(IPath dirPath, string fileType);
     }
 
     public class Query : IQuery
@@ -19,9 +19,9 @@ namespace CLI.Models
                     .Contains(dependency, StringComparison.OrdinalIgnoreCase) ?? false);
         }
 
-        public string? GetFileInDirectory(string dirPath, string fileType)
+        public string? GetFileInDirectory(IPath dirPath, string fileType)
         {
-            return Directory.GetFiles(dirPath, fileType).FirstOrDefault();
+            return Directory.GetFiles(dirPath.ToString(), fileType).FirstOrDefault();
         }
     }
 }
