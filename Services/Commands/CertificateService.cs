@@ -30,7 +30,7 @@ namespace CLI.Services
 
         private static Process GetProcess(string scriptName)
         {
-            string certDir = DirectoryService.SetDirectory(WORKING_DIR);
+            IPath certDir = DirectoryService.SetDirectory(WORKING_DIR);
 
             string scriptPath = BuildScriptPath(scriptName);
             string arguments = BuildArguments(certDir, scriptPath);
@@ -47,7 +47,7 @@ namespace CLI.Services
             return Path.Combine(cliDir.FullName, SCRIPT_DIR_NAME, scriptName);
         }
 
-        private static string BuildArguments(string certDir, string scriptPath)
+        private static string BuildArguments(IPath certDir, string scriptPath)
         {
             return $"{scriptPath} {certDir}";
         }

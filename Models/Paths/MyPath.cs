@@ -50,14 +50,24 @@ namespace CLI.Models
             throw new ArgumentNullException(nameof(target));
         }
 
-        public static MyPath Combine(IPath basePath, IPath target)
+        public static MyPath Combine(string basePath, string target)
         {
             if (basePath != null && target != null)
             {
-                return new(Path.Combine(basePath.ToString(), target.ToString()));
+                return new(Path.Combine(basePath, target));
             }
 
             throw new ArgumentNullException(nameof(target));
+        }
+
+        public static MyPath Combine(string basePath, string target1, string target2)
+        {
+            if (basePath != null && target1 != null && target2 != null)
+            {
+                return new(Path.Combine(basePath, target1, target2));
+            }
+
+            throw new ArgumentNullException(nameof(target2));
         }
     }
 }

@@ -44,7 +44,7 @@ namespace CLI.Services
             {
                 if (string.IsNullOrEmpty(projectRoot?.ToString()))
                 {
-                    projectRoot = new(DirectoryService.CheckProjectType(project.GetSolution().GetPath().ToString()));
+                    projectRoot = DirectoryService.CheckProjectType(project.GetSolution().GetPath());
                 }
 
                 project.SetRelativeProjectPath(projectRoot);

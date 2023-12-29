@@ -11,7 +11,7 @@ namespace CLI.Services
         {
             try
             {
-                string workingDir = DirectoryService.SetDirectory(_directoryName);
+                IPath workingDir = DirectoryService.SetDirectory(_directoryName);
                 List<string> generatedFiles = CreateFiles(options, workingDir);
 
                 Console.WriteLine(FormatOutput(generatedFiles));
@@ -22,7 +22,7 @@ namespace CLI.Services
             }
         }
 
-        protected virtual List<string> CreateFiles(OptionDictionary options, string workingDir) => [];
+        protected virtual List<string> CreateFiles(OptionDictionary options, IPath workingDir) => [];
 
         protected virtual string GetArgumentTemplate(string argument, string template) => "";
 
