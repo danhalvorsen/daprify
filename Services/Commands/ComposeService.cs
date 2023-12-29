@@ -39,11 +39,11 @@ namespace CLI.Services
 
         private void GetServices(OptionDictionary options)
         {
-            IEnumerable<MyPath> solutionPaths = MyPath.FromStringList(options.GetAllPairValues(SOLUTION_OPT));
+            IEnumerable<MyPath> solutionPaths = MyPath.FromStringList(options.GetAllPairValues(SOLUTION_OPT).GetValues());
             IEnumerable<Solution> solutions = solutionPaths.Select(path => new Solution(_query, _projectProvider, path));
             _projects = SolutionService.GetDaprServicesFromSln(new(string.Empty), solutions).ToList();
 
-            IEnumerable<Project> services = Project.FromStringList(options.GetAllPairValues(SERVICE_OPT));
+            IEnumerable<Project> services = Project.FromStringList(options.GetAllPairValues(SERVICE_OPT).GetValues());
             _projects.AddRange(services);
         }
 
@@ -63,7 +63,7 @@ namespace CLI.Services
                 composeBuilder.Append(AddServiceToCompose(project.GetName()));
                 composeBuilder.Append(AddDaprServiceToCompose(project.GetName()));
 
-                foreach (string argument in options.GetAllPairValues(SETTING_OPT))
+                foreach (string argument in options.GetAllPairValues(SETTING_OPT).GetValues())
                 {
                     ReplaceSettings(argument, composeBuilder);
                 }
@@ -101,7 +101,8 @@ namespace CLI.Services
 
         private string AddComponents(OptionDictionary options, string compose)
         {
-            foreach (string argument in options.GetAllPairValues(COMPONENT_OPT))
+            OptionValues componentOpt = options.GetAllPairValues(COMPONENT_OPT);
+            foreach (string argument in componentOpt.GetValues())
             {
                 string processedArg = PreProcessArgument(argument);
                 compose = GetArgumentTemplate(processedArg, compose);

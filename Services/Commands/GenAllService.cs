@@ -20,7 +20,7 @@ namespace CLI.Services
         public void Generate(OptionDictionary options)
         {
             options = LoadConfig(options);
-            List<string> settingOpt = options.GetAllPairValues(SETTING_OPT);
+            OptionValues settingOpt = options.GetAllPairValues(SETTING_OPT);
 
             GenerateCerts(options, settingOpt);
             _componentService.Generate(options);
@@ -32,7 +32,7 @@ namespace CLI.Services
 
         private static OptionDictionary LoadConfig(OptionDictionary options)
         {
-            string? confPath = options.GetAllPairValues(CONFIG_OPT).FirstOrDefault();
+            string? confPath = options.GetAllPairValues(CONFIG_OPT).GetValues().FirstOrDefault();
             if (!string.IsNullOrEmpty(confPath))
             {
                 options = OptionDictionary.PopulateFromJson(confPath);
@@ -41,9 +41,9 @@ namespace CLI.Services
             return options;
         }
 
-        private void GenerateCerts(OptionDictionary options, List<string> settingOpt)
+        private void GenerateCerts(OptionDictionary options, OptionValues settingOpt)
         {
-            bool enableMtls = settingOpt.Contains(MTLS);
+            bool enableMtls = settingOpt.GetValues().Contains(MTLS);
 
             if (enableMtls)
             {
@@ -51,9 +51,9 @@ namespace CLI.Services
             }
         }
 
-        private static void RemoveHttps(OptionDictionary options, List<string> settingOpt)
+        private static void RemoveHttps(OptionDictionary options, OptionValues settingOpt)
         {
-            bool useHttps = settingOpt.Contains(HTTPS);
+            bool useHttps = settingOpt.GetValues().Contains(HTTPS);
             if (useHttps)
             {
                 options.Remove(SETTING_OPT, HTTPS);

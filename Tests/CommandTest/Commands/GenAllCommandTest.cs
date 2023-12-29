@@ -173,7 +173,7 @@ namespace CLITests.Commands
                 File.Exists(CERT_DIR + crt).Should().BeTrue($"File {crt} should exist but was not found.");
             }
 
-            foreach (string comp in options.GetAllPairValues(GenAllSettings.ComponentOptionName[0]))
+            foreach (string comp in options.GetAllPairValues(GenAllSettings.ComponentOptionName[0]).GetValues())
             {
                 consoleOutput.Should().Contain(comp);
                 File.Exists(COMPONENT_DIR + comp + FILE_EXT).Should().BeTrue($"File {comp + FILE_EXT} should exist but was not found.");

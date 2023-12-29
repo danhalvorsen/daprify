@@ -14,9 +14,9 @@ namespace CLI.Services
         protected override List<string> CreateFiles(OptionDictionary options, IPath workingDir)
         {
             string config = _templateFactory.CreateTemplate<ConfigTemplate>();
-            List<string> settingOpt = options.GetAllPairValues(SETTING_OPT);
+            OptionValues settingOpt = options.GetAllPairValues(SETTING_OPT);
 
-            foreach (string argument in settingOpt)
+            foreach (string argument in settingOpt.GetValues())
             {
                 config = GetArgumentTemplate(argument, config);
             }

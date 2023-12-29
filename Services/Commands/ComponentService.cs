@@ -11,9 +11,9 @@ namespace CLI.Services
         protected override List<string> CreateFiles(OptionDictionary options, IPath workingDir)
         {
             List<string> generatedYamls = [];
-            List<string> componentOpt = options.GetAllPairValues(COMPONENT_NAME.ToLower());
+            OptionValues componentOpt = options.GetAllPairValues(COMPONENT_NAME.ToLower());
 
-            foreach (string argument in componentOpt)
+            foreach (string argument in componentOpt.GetValues())
             {
                 string yaml = GetArgumentTemplate(argument, null!);
                 DirectoryService.WriteFile(workingDir, $"{argument}.yaml", yaml);

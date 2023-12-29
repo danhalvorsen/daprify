@@ -40,10 +40,10 @@ namespace CLI.Services
 
         private void GetServices(OptionDictionary options)
         {
-            List<string> projectPathOpt = options.GetAllPairValues(PROJECT_OPT);
-            MyPath projectRoot = projectPathOpt.Count > 0 ? new(projectPathOpt[0]) : new(string.Empty);
+            OptionValues projectPathOpt = options.GetAllPairValues(PROJECT_OPT);
+            MyPath projectRoot = projectPathOpt.Count() > 0 ? new(projectPathOpt.GetValues().First()) : new(string.Empty);
 
-            IEnumerable<MyPath> solutionPaths = MyPath.FromStringList(options.GetAllPairValues(SOLUTION_OPT));
+            IEnumerable<MyPath> solutionPaths = MyPath.FromStringList(options.GetAllPairValues(SOLUTION_OPT).GetValues());
             IEnumerable<Solution> solutions = solutionPaths.Select(path => new Solution(_query, _projectProvider, path));
 
             _projects = SolutionService.GetDaprServicesFromSln(projectRoot, solutions);
