@@ -5,6 +5,11 @@ namespace CLITests.Assert
     public class Asserts
     {
 
+        public static void VerifyEmpty(IEnumerable<string> sut)
+        {
+            sut.Should().BeEmpty();
+        }
+
         public static void VerifyBool(bool sut, bool expected)
         {
             sut.Should().Be(expected);
@@ -59,7 +64,7 @@ namespace CLITests.Assert
             sut.Should().ContainSingle();
         }
 
-        public static void VerifyHaveCount<T>(IEnumerable<T> sut, int expectedCount)
+        public static void VerifyCount<T>(IEnumerable<T> sut, int expectedCount)
         {
             sut.Should().HaveCount(expectedCount);
         }
