@@ -18,18 +18,19 @@ namespace CLI.Services
             return executingDir;
         }
 
-        public static string SetDirectory(string dirPath)
+        public static MyPath SetDirectory(string dirPath)
         {
-            string baseDir = CheckProjectType(Directory.GetCurrentDirectory());
-            string workingDir = Path.Combine(baseDir, DAPR, dirPath);
-            Directory.CreateDirectory(workingDir);
+            MyPath baseDir = CheckProjectType(GetCurrentDirectory());
+            MyPath workingDir = MyPath.Combine(baseDir.ToString(), DAPR, dirPath);
+
+            Directory.CreateDirectory(workingDir.ToString());
             return workingDir;
         }
 
-        public static string CheckProjectType(string dirPath)
+        public static MyPath CheckProjectType(IPath dirPath)
         {
             string? isTestProject = Environment.GetEnvironmentVariable("isTestProject");
-            return isTestProject == "true" ? Directory.GetCurrentDirectory() : GetGitRootDirectory(dirPath);
+            return isTestProject == "true" ? GetCurrentDirectory() : GetGitRootDirectory(dirPath);
         }
 
         /// <summary>
@@ -37,11 +38,16 @@ namespace CLI.Services
         /// If no Git repository is found, the parent directory of the current directory is returned.
         /// </summary>
         /// <returns>The root directory of the Git repository.</returns>
-        public static string GetGitRootDirectory(string dirPath)
+        public static MyPath GetGitRootDirectory(IPath dirPath)
         {
-            string startingPath = Path.GetDirectoryName(dirPath) ?? throw new DirectoryNotFoundException($"Could not find the directory: {dirPath}");
+            string startingPath = Path.GetDirectoryName(dirPath.ToString()) ?? throw new DirectoryNotFoundException($"Could not find the directory: {dirPath}");
+            string gitRoot = RunGitCommand(startingPath);
+            return string.IsNullOrWhiteSpace(gitRoot) ? new(Directory.GetParent(GetCurrentDirectory().ToString())!.FullName) : new(gitRoot.Trim());
+        }
 
-            using Process process = new()
+        private static string RunGitCommand(string workingDirectory)
+        {
+            using var process = new Process
             {
                 StartInfo = new ProcessStartInfo
                 {
@@ -50,71 +56,49 @@ namespace CLI.Services
                     RedirectStandardOutput = true,
                     UseShellExecute = false,
                     CreateNoWindow = true,
-                    WorkingDirectory = startingPath
+                    WorkingDirectory = workingDirectory
                 }
             };
             process.Start();
             string output = process.StandardOutput.ReadToEnd();
             process.WaitForExit();
 
-            return process.ExitCode == 0 ? output.Trim() : Directory.GetParent(Directory.GetCurrentDirectory())!.FullName;
+            return process.ExitCode == 0 ? output : string.Empty;
         }
 
-        public static string? GetFileInDirectory(string dirPath, string fileType)
+        public static MyPath CreateTempDirectory(IEnumerable<IPath>? paths = null)
         {
-            return Directory.GetFiles(dirPath, fileType).FirstOrDefault();
-        }
+            MyPath tempPath = new(Path.GetTempPath());
+            tempPath = paths?.Aggregate(tempPath, (current, next) => MyPath.Combine(current.ToString(), next.ToString())) ?? tempPath;
 
-        public static string CreateTempDirectory(List<string>? paths = null)
-        {
-            string tempPath = Path.GetTempPath();
-
-            if (!Directory.Exists(tempPath))
-            {
-                throw new DirectoryNotFoundException("Directory does not exist: " + tempPath);
-            }
-
-            if (paths != null)
-            {
-                tempPath = paths.Aggregate(tempPath, Path.Combine);
-            }
-
-            Directory.CreateDirectory(tempPath);
+            Directory.CreateDirectory(tempPath.ToString());
             return tempPath;
         }
 
-        public static void DeleteDirectory(string directoryPath)
+
+        public static void DeleteDirectory(IPath directoryPath)
         {
-            if (Directory.Exists(directoryPath))
+            if (Directory.Exists(directoryPath.ToString()))
             {
-                Directory.Delete(directoryPath, true);
+                Directory.Delete(directoryPath.ToString(), true);
             }
         }
 
-        public static void WriteFile(string workingDir, string fileName, string content)
+        public static void WriteFile(IPath workingDir, string fileName, string content)
         {
-            string filePath = Path.Combine(workingDir, fileName);
-            File.WriteAllText(filePath, content);
+            MyPath filePath = MyPath.Combine(workingDir.ToString(), fileName);
+            File.WriteAllText(filePath.ToString(), content);
         }
 
-        public static void AppendFile(string workingDir, string fileName, string content)
+        public static void AppendFile(IPath workingDir, string fileName, string content)
         {
-            string filePath = Path.Combine(workingDir, fileName);
-            File.AppendAllText(filePath, content);
+            MyPath filePath = MyPath.Combine(workingDir.ToString(), fileName);
+            File.AppendAllText(filePath.ToString(), content);
         }
 
-        public static string? GetInputFile(OptionDictionary options, string wildcard = "xxx.xxx", string dir = "./")
+        public static MyPath GetCurrentDirectory()
         {
-            List<string>? input = options.GetAllPairValues("in");
-            if (input != null && input.Count == 1)
-            {
-                return input[0];
-            }
-            else
-            {
-                string? filename = GetFileInDirectory(dir, wildcard);
-                return filename;
-            }
+            return new(Directory.GetCurrentDirectory());
         }
     }
 }

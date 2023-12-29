@@ -25,7 +25,7 @@ namespace CLITests.Commands
         private const string FILE_EXT = ".yaml", DAPR_DIR = "Dapr", COMPOSE_FILE = "docker-compose.yml", DOCKER_DIR = "Docker/",
                             CONFIG_FILE = "config.yaml", CONFIG_DIR = "Config/", CERT_DIR = "Certs/",
                             ENV_FILE = "Dapr.Env", ENV_DIR = "Env/", COMPONENT_DIR = "Components/";
-        private readonly string _confPath;
+        private readonly MyPath _confPath;
         private readonly List<string> componentArgs = ["pubsub", "statestore"];
         private readonly List<string> settingArgs = ["mtls", "tracing"];
         private readonly List<string> certFiles = ["ca.crt", "issuer.crt", "issuer.key"];
@@ -47,8 +47,8 @@ namespace CLITests.Commands
             Console.SetOut(_consoleOutput);
 
             string testDir = DirectoryService.FindDirectoryUpwards("CommandTest").FullName;
-            _confPath = Path.Combine(testDir, "../Utils/Mocks/config-mock.json");
-            Directory.SetCurrentDirectory(DirectoryService.CreateTempDirectory());
+            _confPath = MyPath.Combine(testDir, "../Utils/Mocks/config-mock.json");
+            Directory.SetCurrentDirectory(DirectoryService.CreateTempDirectory().ToString());
             Environment.SetEnvironmentVariable("isTestProject", "true");
         }
 
@@ -64,7 +64,7 @@ namespace CLITests.Commands
             sut.Parse(argument).Invoke();
 
             // Assert
-            Directory.SetCurrentDirectory(Path.Combine(Directory.GetCurrentDirectory(), DAPR_DIR));
+            Directory.SetCurrentDirectory(MyPath.Combine(DirectoryService.GetCurrentDirectory().ToString(), DAPR_DIR).ToString());
             string consoleOutput = _consoleOutput.ToString();
 
             foreach (string crt in certFiles)
@@ -86,7 +86,7 @@ namespace CLITests.Commands
             sut.Parse(argument).Invoke();
 
             // Assert
-            Directory.SetCurrentDirectory(Path.Combine(Directory.GetCurrentDirectory(), DAPR_DIR));
+            Directory.SetCurrentDirectory(MyPath.Combine(DirectoryService.GetCurrentDirectory().ToString(), DAPR_DIR).ToString());
             File.Exists(ENV_DIR + ENV_FILE).Should().BeTrue($"File {ENV_FILE} should exist but was not found.");
         }
 
@@ -102,7 +102,7 @@ namespace CLITests.Commands
             sut.Parse(argument).Invoke();
 
             // Assert
-            Directory.SetCurrentDirectory(Path.Combine(Directory.GetCurrentDirectory(), DAPR_DIR));
+            Directory.SetCurrentDirectory(MyPath.Combine(DirectoryService.GetCurrentDirectory().ToString(), DAPR_DIR).ToString());
             string consoleOutput = _consoleOutput.ToString();
 
             foreach (string comp in componentArgs)
@@ -124,7 +124,7 @@ namespace CLITests.Commands
             sut.Parse(argument).Invoke();
 
             // Assert
-            Directory.SetCurrentDirectory(Path.Combine(Directory.GetCurrentDirectory(), DAPR_DIR));
+            Directory.SetCurrentDirectory(MyPath.Combine(DirectoryService.GetCurrentDirectory().ToString(), DAPR_DIR).ToString());
             string consoleOutput = _consoleOutput.ToString();
 
             consoleOutput.Should().Contain("config");
@@ -143,7 +143,7 @@ namespace CLITests.Commands
             sut.Parse(argument).Invoke();
 
             // Assert
-            Directory.SetCurrentDirectory(Path.Combine(Directory.GetCurrentDirectory(), DAPR_DIR));
+            Directory.SetCurrentDirectory(MyPath.Combine(DirectoryService.GetCurrentDirectory().ToString(), DAPR_DIR).ToString());
             File.Exists(DOCKER_DIR + COMPOSE_FILE).Should().BeTrue($"File {COMPOSE_FILE} should exist but was not found.");
         }
 
@@ -151,20 +151,20 @@ namespace CLITests.Commands
         public void Expected_Config_File_Generates_All()
         {
             // Arrange
-            string destDir = Path.Combine(Directory.GetCurrentDirectory(), "Mocks");
-            Directory.CreateDirectory(destDir);
+            MyPath destDir = MyPath.Combine(DirectoryService.GetCurrentDirectory().ToString(), "Mocks");
+            Directory.CreateDirectory(destDir.ToString());
 
-            string destPath = Path.Combine(destDir, "config-mock.json");
-            File.Copy(_confPath, destPath, true);
-            string[] argument = [_settings.CommandName, GenAllSettings.ConfigOptionName[0], destPath];
+            MyPath destPath = MyPath.Combine(destDir.ToString(), "config-mock.json");
+            File.Copy(_confPath.ToString(), destPath.ToString(), true);
+            string[] argument = [_settings.CommandName, GenAllSettings.ConfigOptionName[0], destPath.ToString()];
             CLICommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _optionValidatorFactory);
 
             // Act
             sut.Parse(argument).Invoke();
 
             // Assert
-            OptionDictionary options = OptionDictionary.PopulateFromJson(destPath);
-            Directory.SetCurrentDirectory(Path.Combine(Directory.GetCurrentDirectory(), DAPR_DIR));
+            OptionDictionary options = OptionDictionary.PopulateFromJson(destPath.ToString());
+            Directory.SetCurrentDirectory(MyPath.Combine(DirectoryService.GetCurrentDirectory().ToString(), DAPR_DIR).ToString());
             string consoleOutput = _consoleOutput.ToString();
 
             foreach (string crt in certFiles)
@@ -189,7 +189,7 @@ namespace CLITests.Commands
         public void Cleanup()
         {
             _consoleOutput.GetStringBuilder().Clear();
-            DirectoryService.DeleteDirectory(Directory.GetCurrentDirectory());
+            DirectoryService.DeleteDirectory(DirectoryService.GetCurrentDirectory());
             Directory.SetCurrentDirectory(_startingDir.FullName);
         }
     }

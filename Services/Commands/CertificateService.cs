@@ -8,15 +8,15 @@ namespace CLI.Services
     public class CertificateService() : CommandService(WORKING_DIR)
     {
         private const string WORKING_DIR = "Certs";
-        private const string GEN_CERT_SH = "gen_cert.sh";
-        private const string READ_WRITE_ENV = "read_write_env.sh";
+        private readonly Name genCert = new("gen_cert.sh");
+        private readonly Name readWriteEnv = new("read_write_env.sh");
 
         public override void Generate(OptionDictionary options)
         {
             StringBuilder errorOutput = new();
 
-            Process certProcess = GetProcess(GEN_CERT_SH);
-            Process envProcess = GetProcess(READ_WRITE_ENV);
+            Process certProcess = GetProcess(genCert);
+            Process envProcess = GetProcess(readWriteEnv);
 
             StartProcess(certProcess, errorOutput);
             certProcess.WaitForExit();
@@ -28,26 +28,26 @@ namespace CLI.Services
             }
         }
 
-        private static Process GetProcess(string scriptName)
+        private static Process GetProcess(Name scriptName)
         {
-            string certDir = DirectoryService.SetDirectory(WORKING_DIR);
+            IPath certDir = DirectoryService.SetDirectory(WORKING_DIR);
 
-            string scriptPath = BuildScriptPath(scriptName);
+            MyPath scriptPath = BuildScriptPath(scriptName);
             string arguments = BuildArguments(certDir, scriptPath);
             Process process = CreateProcess(arguments);
 
             return process;
         }
 
-        private static string BuildScriptPath(string scriptName)
+        private static MyPath BuildScriptPath(Name scriptName)
         {
             const string SCRIPT_DIR_NAME = "Scripts";
             DirectoryInfo cliDir = DirectoryService.FindDirectoryUpwards("daprify");
 
-            return Path.Combine(cliDir.FullName, SCRIPT_DIR_NAME, scriptName);
+            return MyPath.Combine(cliDir.FullName, SCRIPT_DIR_NAME, scriptName.ToString());
         }
 
-        private static string BuildArguments(string certDir, string scriptPath)
+        private static string BuildArguments(IPath certDir, IPath scriptPath)
         {
             return $"{scriptPath} {certDir}";
         }

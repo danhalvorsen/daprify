@@ -1,4 +1,5 @@
 using CLI.Commands;
+using CLI.Models;
 using CLI.Services;
 using CLI.Settings;
 using CLI.Templates;
@@ -34,7 +35,7 @@ namespace CLITests.Commands
             _service = new(_templateFactory);
             Console.SetOut(_consoleOutput);
 
-            Directory.SetCurrentDirectory(DirectoryService.CreateTempDirectory());
+            Directory.SetCurrentDirectory(DirectoryService.CreateTempDirectory().ToString());
             Environment.SetEnvironmentVariable("isTestProject", "true");
         }
 
@@ -50,7 +51,7 @@ namespace CLITests.Commands
             sut.Parse(argument).Invoke();
 
             // Assert
-            Directory.SetCurrentDirectory(Path.Combine(Directory.GetCurrentDirectory(), DAPR_DIR));
+            Directory.SetCurrentDirectory(MyPath.Combine(DirectoryService.GetCurrentDirectory().ToString(), DAPR_DIR).ToString());
             string consoleOutput = _consoleOutput.ToString();
 
             consoleOutput.Should().Contain("config");
@@ -62,7 +63,7 @@ namespace CLITests.Commands
         public void Cleanup()
         {
             _consoleOutput.GetStringBuilder().Clear();
-            DirectoryService.DeleteDirectory(Directory.GetCurrentDirectory());
+            DirectoryService.DeleteDirectory(DirectoryService.GetCurrentDirectory());
             Directory.SetCurrentDirectory(_startingDir.FullName);
         }
     }

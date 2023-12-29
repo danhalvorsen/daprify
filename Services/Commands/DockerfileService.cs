@@ -15,7 +15,7 @@ namespace CLI.Services
         IEnumerable<IProject> _projects = [];
 
 
-        protected override List<string> CreateFiles(OptionDictionary options, string workingDir)
+        protected override List<string> CreateFiles(OptionDictionary options, IPath workingDir)
         {
             GetServices(options);
             DockerfileTemplate dockerfileTemp = GetDockerfile();
@@ -24,7 +24,7 @@ namespace CLI.Services
             return ["Dockerfile"];
         }
 
-        private void GenDockerFile(DockerfileTemplate dockerfileTemp, string workingDir)
+        private void GenDockerFile(DockerfileTemplate dockerfileTemp, IPath workingDir)
         {
             foreach (IProject project in _projects)
             {

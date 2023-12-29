@@ -22,7 +22,7 @@ namespace CLI.Services
         private List<IProject> _projects = [];
 
 
-        protected override List<string> CreateFiles(OptionDictionary options, string workingDir)
+        protected override List<string> CreateFiles(OptionDictionary options, IPath workingDir)
         {
             GetServices(options);
 
@@ -48,10 +48,10 @@ namespace CLI.Services
         }
 
 
-        private string GetComposeStart(string workingDir)
+        private string GetComposeStart(IPath workingDir)
         {
-            string filepath = Path.Combine(workingDir, FILE_NAME);
-            return File.Exists(filepath) ? "\n\n" : _templateFactory.CreateTemplate<ComposeStartTemplate>();
+            MyPath filepath = MyPath.Combine(workingDir.ToString(), FILE_NAME);
+            return File.Exists(filepath.ToString()) ? "\n\n" : _templateFactory.CreateTemplate<ComposeStartTemplate>();
         }
 
 

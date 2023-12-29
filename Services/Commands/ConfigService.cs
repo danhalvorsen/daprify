@@ -11,7 +11,7 @@ namespace CLI.Services
         private const string CONFIG_YAML = "config.yaml";
 
 
-        protected override List<string> CreateFiles(OptionDictionary options, string workingDir)
+        protected override List<string> CreateFiles(OptionDictionary options, IPath workingDir)
         {
             string config = _templateFactory.CreateTemplate<ConfigTemplate>();
             List<string> settingOpt = options.GetAllPairValues(SETTING_OPT);
@@ -22,9 +22,7 @@ namespace CLI.Services
             }
 
             config = PlaceholderRegex().Replace(config, string.Empty);
-
-            string filePath = Path.Combine(workingDir, CONFIG_YAML);
-            File.WriteAllText(filePath, config);
+            DirectoryService.WriteFile(workingDir, CONFIG_YAML, config);
             return ["config"];
         }
 

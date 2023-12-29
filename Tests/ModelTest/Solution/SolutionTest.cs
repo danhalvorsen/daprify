@@ -10,7 +10,7 @@ namespace CLITests.Solutions
     [TestClass]
     public class TrySolution
     {
-        private const string SLN = "TempSolution.sln", SLN_DIR = "SolutionTest";
+        private const string SLN = "TempSolution.sln";
         private readonly int _numberOfProjects = 2;
         private readonly MockIQuery _mockIQuery = new();
         private MockIProjectProvider _mockIProjectProvider;
@@ -20,16 +20,17 @@ namespace CLITests.Solutions
         [TestInitialize]
         public void TestInitialize()
         {
+            MyPath slnDir = new("SolutionTest");
             _mockIProjectProvider = new MockIProjectProvider(_mockIQuery, _numberOfProjects);
-            _tempDir = new(DirectoryService.CreateTempDirectory([SLN_DIR]));
-            File.WriteAllText(Path.Combine(_tempDir.ToString(), SLN), "Microsoft Visual Studio Solution File, Format Version 12.00");
+            _tempDir = DirectoryService.CreateTempDirectory([slnDir]);
+            DirectoryService.WriteFile(_tempDir, SLN, "Microsoft Visual Studio Solution File, Format Version 12.00");
         }
 
         [TestMethod]
         public void Expect_Solution_Initialized_WithValid_Path()
         {
             // Arrange
-            MyPath currentDir = new(Directory.GetCurrentDirectory());
+            MyPath currentDir = DirectoryService.GetCurrentDirectory();
             RelativePath relativePath = new(currentDir, _tempDir);
 
             // Act
@@ -43,7 +44,7 @@ namespace CLITests.Solutions
         public void Expect_Solution_Initialized_With_Projects()
         {
             // Arrange
-            MyPath currentDir = new(Directory.GetCurrentDirectory());
+            MyPath currentDir = DirectoryService.GetCurrentDirectory();
             RelativePath relativePath = new(currentDir, _tempDir);
 
             // Act
@@ -58,7 +59,7 @@ namespace CLITests.Solutions
         public void Expect_IQuery_Called_Once()
         {
             // Arrange
-            MyPath currentDir = new(Directory.GetCurrentDirectory());
+            MyPath currentDir = DirectoryService.GetCurrentDirectory();
             RelativePath relativePath = new(currentDir, _tempDir);
 
             // Act
@@ -66,14 +67,14 @@ namespace CLITests.Solutions
 
             // Assert
             _mockIQuery.Verify(x => x.CheckPackageReference(It.IsAny<Project>(), It.IsAny<string>()), Times.Never);
-            _mockIQuery.Verify(x => x.GetFileInDirectory(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+            _mockIQuery.Verify(x => x.GetFileInDirectory(It.IsAny<IPath>(), It.IsAny<string>()), Times.Once);
         }
 
         [TestMethod]
         public void Expect_IProjectProvider_Never_Called()
         {
             // Arrange
-            MyPath currentDir = new(Directory.GetCurrentDirectory());
+            MyPath currentDir = DirectoryService.GetCurrentDirectory();
             RelativePath relativePath = new(currentDir, _tempDir);
 
             // Act
@@ -105,7 +106,7 @@ namespace CLITests.Solutions
         [TestCleanup]
         public void TestCleanup()
         {
-            string fullPath = Path.Combine(Directory.GetCurrentDirectory(), _tempDir.ToString());
+            IPath fullPath = MyPath.Combine(DirectoryService.GetCurrentDirectory().ToString(), _tempDir.ToString());
             DirectoryService.DeleteDirectory(fullPath);
         }
     }

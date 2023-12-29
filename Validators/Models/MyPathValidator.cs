@@ -1,4 +1,5 @@
 using CLI.Models;
+using CLI.Services;
 using FluentValidation;
 
 namespace CLI.Validation
@@ -21,8 +22,8 @@ namespace CLI.Validation
 
         private static MyPath GetPath(MyPath path)
         {
-            MyPath currentDir = new(Directory.GetCurrentDirectory());
-            MyPath combinedPath = MyPath.Combine(currentDir, path);
+            MyPath currentDir = DirectoryService.GetCurrentDirectory();
+            MyPath combinedPath = MyPath.Combine(currentDir.ToString(), path.ToString());
 
             return MyPath.GetFullPath(combinedPath);
         }

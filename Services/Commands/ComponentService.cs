@@ -8,16 +8,15 @@ namespace CLI.Services
         protected readonly TemplateFactory _templateFactory = templateFactory;
         private const string COMPONENT_NAME = "Components";
 
-        protected override List<string> CreateFiles(OptionDictionary options, string workingDir)
+        protected override List<string> CreateFiles(OptionDictionary options, IPath workingDir)
         {
             List<string> generatedYamls = [];
             List<string> componentOpt = options.GetAllPairValues(COMPONENT_NAME.ToLower());
 
-            foreach (var argument in componentOpt)
+            foreach (string argument in componentOpt)
             {
                 string yaml = GetArgumentTemplate(argument, null!);
-                string filePath = Path.Combine(workingDir, $"{argument}.yaml");
-                File.WriteAllText(filePath, yaml);
+                DirectoryService.WriteFile(workingDir, $"{argument}.yaml", yaml);
                 generatedYamls.Add(argument);
             }
 
