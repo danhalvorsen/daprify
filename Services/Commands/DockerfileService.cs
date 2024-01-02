@@ -8,8 +8,6 @@ namespace CLI.Services
         private readonly TemplateFactory _templateFactory = templateFactory;
         private readonly IProjectProvider _projectProvider = projectProvider;
         private const string DOCKER_NAME = "Docker";
-        private readonly Key _projectPathKey = new("project_path");
-        private readonly Key _solutionKey = new("solution_paths");
         private const string DOCKERFILE_EXT = ".Dockerfile";
         private readonly IQuery _query = query;
         IEnumerable<IProject> _projects = [];
@@ -24,6 +22,32 @@ namespace CLI.Services
             return ["Dockerfile"];
         }
 
+        private void GetServices(OptionDictionary options)
+        {
+            MyPath projectRoot = GetProjectRoot(options);
+            IEnumerable<Solution> solutions = GetSolutions(options);
+
+            _projects = SolutionService.GetDaprServicesFromSln(projectRoot, solutions);
+        }
+
+        private static MyPath GetProjectRoot(OptionDictionary options)
+        {
+            Key projectPathKey = new("project_path");
+            OptionValues projectPathOpt = options.GetAllPairValues(projectPathKey);
+            MyPath projectRoot = projectPathOpt.Count() > 0 ? new(projectPathOpt.GetStringEnumerable().First()) : new(string.Empty);
+
+            return projectRoot;
+        }
+
+        private IEnumerable<Solution> GetSolutions(OptionDictionary options)
+        {
+            Key solutionKey = new("solution_paths");
+            IEnumerable<MyPath> solutionPaths = MyPath.FromStringList(options.GetAllPairValues(solutionKey).GetValues());
+            IEnumerable<Solution> solutions = solutionPaths.Select(path => new Solution(_query, _projectProvider, path));
+
+            return solutions;
+        }
+
         private void GenDockerFile(DockerfileTemplate dockerfileTemp, IPath workingDir)
         {
             foreach (IProject project in _projects)
@@ -36,17 +60,6 @@ namespace CLI.Services
         private DockerfileTemplate GetDockerfile()
         {
             return _templateFactory.GetTemplateService<DockerfileTemplate>();
-        }
-
-        private void GetServices(OptionDictionary options)
-        {
-            OptionValues projectPathOpt = options.GetAllPairValues(_projectPathKey);
-            MyPath projectRoot = projectPathOpt.Count() > 0 ? new(projectPathOpt.GetStringEnumerable().First()) : new(string.Empty);
-
-            IEnumerable<MyPath> solutionPaths = MyPath.FromStringList(options.GetAllPairValues(_solutionKey).GetValues());
-            IEnumerable<Solution> solutions = solutionPaths.Select(path => new Solution(_query, _projectProvider, path));
-
-            _projects = SolutionService.GetDaprServicesFromSln(projectRoot, solutions);
         }
     }
 }

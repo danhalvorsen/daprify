@@ -11,10 +11,6 @@ namespace CLI.Services
         private readonly IProjectProvider _projectProvider = projectProvider;
         private const string DOCKER_NAME = "Docker";
         private const string FILE_NAME = "docker-compose.yml";
-        private readonly Key _componentKey = new("components");
-        private readonly Key _settingKey = new("settings");
-        private readonly Key _serviceKey = new("services");
-        private readonly Key _solutionPathKey = new("solution_paths");
         private bool _addMtls = false;
         private int _startPort = 1000;
         private readonly int _nextPort = 500;
@@ -24,7 +20,8 @@ namespace CLI.Services
 
         protected override List<string> CreateFiles(OptionDictionary options, IPath workingDir)
         {
-            GetServices(options);
+            GetServicesFromSln(options);
+            GetServicesFromOptions(options);
 
             string compose = GetComposeStart(workingDir) + GetServicesComposeSection(options);
             compose = AddComponents(options, compose);
@@ -37,17 +34,23 @@ namespace CLI.Services
         }
 
 
-        private void GetServices(OptionDictionary options)
+        private void GetServicesFromSln(OptionDictionary options)
         {
-            IEnumerable<Value> solutionPathValues = options.GetAllPairValues(_solutionPathKey).GetValues();
+            Key solutionPathKey = new("solution_paths");
+            IEnumerable<Value> solutionPathValues = options.GetAllPairValues(solutionPathKey).GetValues();
             if (solutionPathValues != null)
             {
-                IEnumerable<MyPath>? solutionPaths = MyPath.FromStringList(solutionPathValues);
+                IEnumerable<MyPath> solutionPaths = MyPath.FromStringList(solutionPathValues);
                 IEnumerable<Solution> solutions = solutionPaths.Select(path => new Solution(_query, _projectProvider, path));
                 _projects = SolutionService.GetDaprServicesFromSln(new(string.Empty), solutions).ToList();
             }
+        }
 
-            IEnumerable<Project> services = Project.FromStringList(options.GetAllPairValues(_serviceKey).GetValues());
+
+        private void GetServicesFromOptions(OptionDictionary options)
+        {
+            Key serviceKey = new("services");
+            IEnumerable<Project> services = Project.FromStringList(options.GetAllPairValues(serviceKey).GetValues());
             _projects.AddRange(services);
         }
 
@@ -61,13 +64,14 @@ namespace CLI.Services
 
         private string GetServicesComposeSection(OptionDictionary options)
         {
+            Key settingKey = new("settings");
             StringBuilder composeBuilder = new();
             foreach (IProject project in _projects)
             {
                 composeBuilder.Append(AddServiceToCompose(project.GetName()));
                 composeBuilder.Append(AddDaprServiceToCompose(project.GetName()));
 
-                foreach (string argument in options.GetAllPairValues(_settingKey).GetStringEnumerable())
+                foreach (string argument in options.GetAllPairValues(settingKey).GetStringEnumerable())
                 {
                     ReplaceSettings(argument, composeBuilder);
                 }
@@ -105,7 +109,8 @@ namespace CLI.Services
 
         private string AddComponents(OptionDictionary options, string compose)
         {
-            OptionValues componentOpt = options.GetAllPairValues(_componentKey);
+            Key componentKey = new("components");
+            OptionValues componentOpt = options.GetAllPairValues(componentKey);
             foreach (Value argument in componentOpt.GetValues())
             {
                 Value processedArg = PreProcessArgument(argument);
