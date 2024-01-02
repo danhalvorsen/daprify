@@ -30,19 +30,19 @@ namespace CLI.Validation
 
         public IEnumerable<MyPath> GetPaths(CommandResult commandResult, string optionName)
         {
-            List<string>? options = GetOptionValue(commandResult, optionName);
+            OptionValues? options = GetOptionValue(commandResult, optionName);
             if (options == null)
             {
                 return Enumerable.Empty<MyPath>();
             }
-            IEnumerable<MyPath> paths = MyPath.FromStringList(options);
+            IEnumerable<MyPath> paths = MyPath.FromStringList(options.GetValues());
             return paths;
         }
 
-        public List<string>? GetOptionValue(CommandResult commandResult, string optionName)
+        public OptionValues? GetOptionValue(CommandResult commandResult, string optionName)
         {
             var matchedOpt = _settings.Options.Find(o => o.Aliases.Contains(optionName));
-            return matchedOpt != null ? commandResult.GetValueForOption(matchedOpt) : default;
+            return matchedOpt != null ? new(commandResult.GetValueForOption(matchedOpt)) : default;
         }
     }
 }

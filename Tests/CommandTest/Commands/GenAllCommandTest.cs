@@ -26,9 +26,9 @@ namespace CLITests.Commands
                             CONFIG_FILE = "config.yaml", CONFIG_DIR = "Config/", CERT_DIR = "Certs/",
                             ENV_FILE = "Dapr.Env", ENV_DIR = "Env/", COMPONENT_DIR = "Components/";
         private readonly MyPath _confPath;
-        private readonly List<string> componentArgs = ["pubsub", "statestore"];
-        private readonly List<string> settingArgs = ["mtls", "tracing"];
-        private readonly List<string> certFiles = ["ca.crt", "issuer.crt", "issuer.key"];
+        private readonly OptionValues componentArgs = new(["pubsub", "statestore"]);
+        private readonly OptionValues settingArgs = new(["mtls", "tracing"]);
+        private readonly OptionValues certFiles = new(["ca.crt", "issuer.crt", "issuer.key"]);
 
         public TryGenAllCommandTests()
         {
@@ -57,7 +57,10 @@ namespace CLITests.Commands
         public void Expected_Certificates_Generated()
         {
             // Arrange
-            string[] argument = [_settings.CommandName, GenAllSettings.SettingOptionName[0], settingArgs[0], settingArgs[1]];
+            string[] argument = [_settings.CommandName,
+                                 GenAllSettings.SettingOptionName[0],
+                                 settingArgs.GetValues().ElementAt(0).ToString(),
+                                 settingArgs.GetValues().ElementAt(1).ToString()];
             CLICommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _optionValidatorFactory);
 
             // Act
@@ -67,7 +70,7 @@ namespace CLITests.Commands
             Directory.SetCurrentDirectory(MyPath.Combine(DirectoryService.GetCurrentDirectory().ToString(), DAPR_DIR).ToString());
             string consoleOutput = _consoleOutput.ToString();
 
-            foreach (string crt in certFiles)
+            foreach (string crt in certFiles.GetStringEnumerable())
             {
                 consoleOutput.Should().Contain(crt);
                 File.Exists(CERT_DIR + crt).Should().BeTrue($"File {crt} should exist but was not found.");
@@ -79,7 +82,10 @@ namespace CLITests.Commands
         public void Expected_Env_File_Generated()
         {
             // Arrange
-            string[] argument = [_settings.CommandName, GenAllSettings.SettingOptionName[0], settingArgs[0], settingArgs[1]];
+            string[] argument = [_settings.CommandName,
+                                 GenAllSettings.SettingOptionName[0],
+                                 settingArgs.GetValues().ElementAt(0).ToString(),
+                                 settingArgs.GetValues().ElementAt(1).ToString()];
             CLICommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _optionValidatorFactory);
 
             // Act
@@ -95,7 +101,9 @@ namespace CLITests.Commands
         public void Expected_Component_Generated()
         {
             // Arrange
-            string[] argument = [_settings.CommandName, GenAllSettings.ComponentOptionName[0], componentArgs[0], componentArgs[1]];
+            string[] argument = [_settings.CommandName, GenAllSettings.ComponentOptionName[0],
+                                componentArgs.GetValues().ElementAt(0).ToString(),
+                                componentArgs.GetValues().ElementAt(1).ToString()];
             CLICommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _optionValidatorFactory);
 
             // Act
@@ -105,7 +113,7 @@ namespace CLITests.Commands
             Directory.SetCurrentDirectory(MyPath.Combine(DirectoryService.GetCurrentDirectory().ToString(), DAPR_DIR).ToString());
             string consoleOutput = _consoleOutput.ToString();
 
-            foreach (string comp in componentArgs)
+            foreach (string comp in componentArgs.GetStringEnumerable())
             {
                 consoleOutput.Should().Contain(comp);
                 File.Exists(COMPONENT_DIR + comp + FILE_EXT).Should().BeTrue($"File {comp + FILE_EXT} should exist but was not found.");
@@ -135,8 +143,13 @@ namespace CLITests.Commands
         public void Expected_Compose_Generated()
         {
             // Arrange
-            string[] argument = [_settings.CommandName, GenAllSettings.ComponentOptionName[0], componentArgs[0], componentArgs[1],
-                                                        GenAllSettings.SettingOptionName[0], settingArgs[0], settingArgs[1]];
+            string[] argument = [_settings.CommandName,
+                                GenAllSettings.ComponentOptionName[0],
+                                componentArgs.GetValues().ElementAt(0).ToString(),
+                                componentArgs.GetValues().ElementAt(1).ToString(),
+                                GenAllSettings.SettingOptionName[0],
+                                settingArgs.GetValues().ElementAt(0).ToString(),
+                                settingArgs.GetValues().ElementAt(1).ToString()];
             CLICommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _optionValidatorFactory);
 
             // Act
@@ -167,15 +180,16 @@ namespace CLITests.Commands
             Directory.SetCurrentDirectory(MyPath.Combine(DirectoryService.GetCurrentDirectory().ToString(), DAPR_DIR).ToString());
             string consoleOutput = _consoleOutput.ToString();
 
-            foreach (string crt in certFiles)
+            foreach (string crt in certFiles.GetStringEnumerable())
             {
                 consoleOutput.Should().Contain(crt);
                 File.Exists(CERT_DIR + crt).Should().BeTrue($"File {crt} should exist but was not found.");
             }
 
-            foreach (string comp in options.GetAllPairValues(GenAllSettings.ComponentOptionName[0]))
+            Key key = new(GenAllSettings.ComponentOptionName[1].Replace("-", ""));
+            foreach (string comp in options.GetAllPairValues(key).GetStringEnumerable())
             {
-                consoleOutput.Should().Contain(comp);
+                consoleOutput.Should().Contain(comp.ToString());
                 File.Exists(COMPONENT_DIR + comp + FILE_EXT).Should().BeTrue($"File {comp + FILE_EXT} should exist but was not found.");
             }
 

@@ -11,16 +11,13 @@ namespace CLI.Services
         private readonly ComposeService _composeService = composeService;
         private readonly ConfigService _configService = configService;
         private readonly DockerfileService _dockerfileService = dockerfileService;
-        private const string CONFIG_OPT = "config";
-        private const string SETTING_OPT = "settings";
-        private const string MTLS = "mtls";
-        private const string HTTPS = "https";
+        private readonly Key _settingKey = new("settings");
 
 
         public void Generate(OptionDictionary options)
         {
             options = LoadConfig(options);
-            List<string> settingOpt = options.GetAllPairValues(SETTING_OPT);
+            OptionValues settingOpt = options.GetAllPairValues(_settingKey);
 
             GenerateCerts(options, settingOpt);
             _componentService.Generate(options);
@@ -32,18 +29,20 @@ namespace CLI.Services
 
         private static OptionDictionary LoadConfig(OptionDictionary options)
         {
-            string? confPath = options.GetAllPairValues(CONFIG_OPT).FirstOrDefault();
-            if (!string.IsNullOrEmpty(confPath))
+            Key configKey = new("config");
+            Value? config = options.GetAllPairValues(configKey).GetValues().FirstOrDefault();
+            if (config != null)
             {
-                options = OptionDictionary.PopulateFromJson(confPath);
+                options = OptionDictionary.PopulateFromJson(config.ToString());
             }
 
             return options;
         }
 
-        private void GenerateCerts(OptionDictionary options, List<string> settingOpt)
+        private void GenerateCerts(OptionDictionary options, OptionValues settingOpt)
         {
-            bool enableMtls = settingOpt.Contains(MTLS);
+            Value mtls = new("mtls");
+            bool enableMtls = settingOpt.Contain(mtls);
 
             if (enableMtls)
             {
@@ -51,12 +50,13 @@ namespace CLI.Services
             }
         }
 
-        private static void RemoveHttps(OptionDictionary options, List<string> settingOpt)
+        private void RemoveHttps(OptionDictionary options, OptionValues settingOpt)
         {
-            bool useHttps = settingOpt.Contains(HTTPS);
+            Value https = new("https");
+            bool useHttps = settingOpt.GetValues().Contains(https);
             if (useHttps)
             {
-                options.Remove(SETTING_OPT, HTTPS);
+                options.Remove(_settingKey, https);
             }
         }
     }

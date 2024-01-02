@@ -16,7 +16,7 @@ namespace CLITests.Projects
         public void FromStringList_CreatesProjectsFromNames()
         {
             // Arrange
-            List<string> names = ["Project1", "Project2"];
+            List<Value> names = [new("TempProject"), new("TempProject2")];
 
             // Act
             IEnumerable<Project> sut = Project.FromStringList(names);
@@ -25,7 +25,7 @@ namespace CLITests.Projects
             Asserts.VerifyItemCount(sut, names.Count);
             for (int i = 0; i < names.Count; i++)
             {
-                Asserts.VerifyString(sut.Select(p => p.GetName().ToString()).ElementAt(i), names[i]);
+                Asserts.VerifyString(sut.Select(p => p.GetName().ToString()).ElementAt(i), names.ElementAt(i).ToString());
             }
         }
 
@@ -97,7 +97,7 @@ namespace CLITests.Projects
         public void FromStringList_EmptyList_ReturnsNoProjects()
         {
             // Arrange
-            List<string> names = [];
+            List<Value> names = [];
 
             // Act
             IEnumerable<Project> sut = Project.FromStringList(names);

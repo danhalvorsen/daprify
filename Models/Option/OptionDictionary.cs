@@ -3,37 +3,27 @@ using System.Text.Json;
 
 namespace CLI.Models
 {
-    public class OptionDictionary() : IEnumerable<KeyValuePair<string, List<string>>>
+    public class OptionDictionary() : IEnumerable<KeyValuePair<Key, OptionValues>>
     {
-        private readonly Dictionary<string, List<string>> _optionDictionary = [];
+        private readonly Dictionary<Key, OptionValues> _optionDictionary = [];
 
-        public void Add(string optionName, List<string> optionValues)
+        public void Add(Key key, OptionValues optionValues)
         {
-            _optionDictionary[optionName] = optionValues;
+            _optionDictionary[key] = optionValues;
         }
 
-        public void Remove(string key, string value)
+        public void Remove(Key key, Value value)
         {
-            _ = _optionDictionary[key].Remove(value);
+            _optionDictionary[key].RemoveValue(value);
         }
 
-        public List<string> GetAllValues()
+        public OptionValues GetAllPairValues(Key key)
         {
-            List<string> allValues = [];
-            foreach (var pair in _optionDictionary)
-            {
-                allValues.AddRange(pair.Value);
-            }
-            return allValues;
-        }
-
-        public List<string> GetAllPairValues(string optionName)
-        {
-            if (_optionDictionary.TryGetValue(optionName, out List<string>? value))
+            if (_optionDictionary.TryGetValue(key, out OptionValues? value))
             {
                 return value;
             }
-            return [];
+            return new();
         }
 
         public static OptionDictionary PopulateFromJson(string filePath)
@@ -50,13 +40,15 @@ namespace CLI.Models
             OptionDictionary options = [];
             foreach (var pair in optionsDict)
             {
-                options.Add(pair.Key, pair.Value);
+                OptionValues optionValues = new(pair.Value);
+                Key key = new(pair.Key);
+                options.Add(key, optionValues);
             }
 
             return options;
         }
 
-        public IEnumerator<KeyValuePair<string, List<string>>> GetEnumerator()
+        public IEnumerator<KeyValuePair<Key, OptionValues>> GetEnumerator()
         {
             return _optionDictionary.GetEnumerator();
         }

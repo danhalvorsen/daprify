@@ -97,7 +97,7 @@ namespace ValidatorTest
             ValidationResult result = _validator.Validate(paths);
 
             // Assert
-            Asserts.VerifyHaveCount(result.Errors, paths.Count());
+            Asserts.VerifyCount(result.Errors, paths.Count());
             Asserts.VerifyContain(result.Errors[0].ErrorMessage, "Could not find the specified path");
             Asserts.VerifyContain(result.Errors[0].ErrorMessage, invalidPath1.ToString());
             Asserts.VerifyContain(result.Errors[1].ErrorMessage, "Could not find the specified path");

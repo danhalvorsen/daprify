@@ -1,4 +1,4 @@
-# Dapr Certificate Generator CLI Tool
+# Daprify
 
 ## Description
 

@@ -23,7 +23,7 @@ namespace CLITests.Commands
         private readonly DirectoryInfo _startingDir = new(Directory.GetCurrentDirectory());
 
         private const string FILE_EXT = ".yaml", COMPONENTS_DIR = "Dapr/Components";
-        private readonly List<string> arguments = ["pubsub", "statestore",];
+        private readonly OptionValues arguments = new(["pubsub", "statestore"]);
 
         public TryComponentCommandTests()
         {
@@ -43,7 +43,9 @@ namespace CLITests.Commands
         public void Expected_Components_Generated()
         {
             // Arrange
-            string[] argument = [_settings.CommandName, ComponentSettings.OptionName[0], arguments[0], arguments[1]];
+            string[] argument = [_settings.CommandName, ComponentSettings.OptionName[0],
+                                 arguments.GetValues().ElementAt(0).ToString(),
+                                 arguments.GetValues().ElementAt(1).ToString()];
             CLICommand<ComponentService, ComponentSettings> sut = new(_service, _settings, _optionValidatorFactory);
 
             // Act
@@ -53,7 +55,7 @@ namespace CLITests.Commands
             string consoleOutput = _consoleOutput.ToString();
             Directory.SetCurrentDirectory(MyPath.Combine(DirectoryService.GetCurrentDirectory().ToString(), COMPONENTS_DIR).ToString());
 
-            foreach (string arg in arguments)
+            foreach (string arg in arguments.GetStringEnumerable())
             {
                 consoleOutput.Should().Contain(arg);
                 File.Exists(arg + FILE_EXT).Should().BeTrue($"File {arg} should exist but was not found.");
