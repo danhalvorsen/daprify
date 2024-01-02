@@ -2,19 +2,26 @@ namespace CLI.Models
 {
     public class OptionValues
     {
-        public IEnumerable<string> _values;
+        private IEnumerable<Value> _values;
 
-        public OptionValues(IEnumerable<string> values)
+        public OptionValues() { }
+
+        public OptionValues(List<Value> values)
         {
             SetValues(values);
         }
 
-        private void SetValues(IEnumerable<string> values)
+        public OptionValues(List<string> stringValues)
+        {
+            _values = stringValues.Select(v => new Value(v)) ?? throw new ArgumentNullException(nameof(stringValues), "The option values cannot be null!");
+        }
+
+        private void SetValues(IEnumerable<Value> values)
         {
             _values = values;
         }
 
-        public IEnumerable<string> GetValues()
+        public IEnumerable<Value> GetValues()
         {
             return _values;
         }
@@ -22,6 +29,21 @@ namespace CLI.Models
         public int Count()
         {
             return _values.Count();
+        }
+
+        public void RemoveValue(Value value)
+        {
+            _values = _values.Where(v => !v.Equals(value)).ToList();
+        }
+
+        public IEnumerable<string> GetStringEnumerable()
+        {
+            return _values.Select(v => v.ToString());
+        }
+
+        public bool Contain(Value value)
+        {
+            return _values.Contains(value);
         }
     }
 }
