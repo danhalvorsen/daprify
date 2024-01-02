@@ -48,10 +48,10 @@ namespace CLI.Models
             _name = new(Path.GetFileNameWithoutExtension(_path.ToString()));
         }
 
-        public static IEnumerable<Project> FromStringList(IEnumerable<string> names)
+        public static IEnumerable<Project> FromStringList(IEnumerable<Value> names)
         {
             Query query = new();
-            return names.Select(name => new Project(query, new(name)));
+            return names.Select(name => new Project(query, new(name.ToString())));
         }
 
         public Name GetName() => _name;

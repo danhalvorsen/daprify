@@ -8,8 +8,8 @@ namespace CLI.Services
         private readonly TemplateFactory _templateFactory = templateFactory;
         private readonly IProjectProvider _projectProvider = projectProvider;
         private const string DOCKER_NAME = "Docker";
-        private const string PROJECT_OPT = "project_path";
-        private const string SOLUTION_OPT = "solution_paths";
+        private readonly Key _projectPathKey = new("project_path");
+        private readonly Key _solutionKey = new("solution_paths");
         private const string DOCKERFILE_EXT = ".Dockerfile";
         private readonly IQuery _query = query;
         IEnumerable<IProject> _projects = [];
@@ -40,10 +40,10 @@ namespace CLI.Services
 
         private void GetServices(OptionDictionary options)
         {
-            OptionValues projectPathOpt = options.GetAllPairValues(PROJECT_OPT);
-            MyPath projectRoot = projectPathOpt.Count() > 0 ? new(projectPathOpt.GetValues().First()) : new(string.Empty);
+            OptionValues projectPathOpt = options.GetAllPairValues(_projectPathKey);
+            MyPath projectRoot = projectPathOpt.Count() > 0 ? new(projectPathOpt.GetStringEnumerable().First()) : new(string.Empty);
 
-            IEnumerable<MyPath> solutionPaths = MyPath.FromStringList(options.GetAllPairValues(SOLUTION_OPT).GetValues());
+            IEnumerable<MyPath> solutionPaths = MyPath.FromStringList(options.GetAllPairValues(_solutionKey).GetValues());
             IEnumerable<Solution> solutions = solutionPaths.Select(path => new Solution(_query, _projectProvider, path));
 
             _projects = SolutionService.GetDaprServicesFromSln(projectRoot, solutions);

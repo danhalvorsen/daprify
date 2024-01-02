@@ -17,9 +17,14 @@ namespace CLI.Models
             SetPath(path);
         }
 
-        public static IEnumerable<MyPath> FromStringList(IEnumerable<string> paths)
+        public MyPath(Value value)
         {
-            return paths.Select(p => new MyPath(p));
+            SetPath(value.ToString());
+        }
+
+        public static IEnumerable<MyPath> FromStringList(IEnumerable<Value> paths)
+        {
+            return paths.Select(p => new MyPath(p.ToString()));
         }
 
         public void SetPath(string path)

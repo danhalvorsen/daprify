@@ -3,29 +3,29 @@ using CLI.Templates;
 
 namespace CLI.Services
 {
-    public class ComponentService(TemplateFactory templateFactory) : CommandService(COMPONENT_NAME)
+    public class ComponentService(TemplateFactory templateFactory) : CommandService("Components")
     {
         protected readonly TemplateFactory _templateFactory = templateFactory;
-        private const string COMPONENT_NAME = "Components";
+        private readonly Key _componentKey = new("components");
 
         protected override List<string> CreateFiles(OptionDictionary options, IPath workingDir)
         {
             List<string> generatedYamls = [];
-            OptionValues componentOpt = options.GetAllPairValues(COMPONENT_NAME.ToLower());
+            OptionValues componentOpt = options.GetAllPairValues(_componentKey);
 
-            foreach (string argument in componentOpt.GetValues())
+            foreach (Value argument in componentOpt.GetValues())
             {
                 string yaml = GetArgumentTemplate(argument, null!);
                 DirectoryService.WriteFile(workingDir, $"{argument}.yaml", yaml);
-                generatedYamls.Add(argument);
+                generatedYamls.Add(argument.ToString());
             }
 
             return generatedYamls;
         }
 
-        protected override string GetArgumentTemplate(string argument, string template)
+        protected override string GetArgumentTemplate(Value argument, string template)
         {
-            return argument.ToLower() switch
+            return argument.ToString().ToLower() switch
             {
                 "bindings" => _templateFactory.CreateTemplate<BindingsTemplate>(),
                 "configstore" => _templateFactory.CreateTemplate<ConfigStoreTemplate>(),

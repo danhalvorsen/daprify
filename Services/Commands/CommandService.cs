@@ -24,7 +24,7 @@ namespace CLI.Services
 
         protected virtual List<string> CreateFiles(OptionDictionary options, IPath workingDir) => [];
 
-        protected virtual string GetArgumentTemplate(string argument, string template) => "";
+        protected virtual string GetArgumentTemplate(Value argument, string template) => "";
 
         protected string FormatOutput(List<string> generatedFiles)
         {

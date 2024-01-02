@@ -7,16 +7,16 @@ namespace CLI.Services
     {
         protected readonly TemplateFactory _templateFactory = templateFactory;
         private const string CONFIG_NAME = "Config";
-        private const string SETTING_OPT = "settings";
         private const string CONFIG_YAML = "config.yaml";
 
 
         protected override List<string> CreateFiles(OptionDictionary options, IPath workingDir)
         {
+            Key settingKey = new("settings");
             string config = _templateFactory.CreateTemplate<ConfigTemplate>();
-            OptionValues settingOpt = options.GetAllPairValues(SETTING_OPT);
+            OptionValues settingOpt = options.GetAllPairValues(settingKey);
 
-            foreach (string argument in settingOpt.GetValues())
+            foreach (var argument in settingOpt.GetValues())
             {
                 config = GetArgumentTemplate(argument, config);
             }
@@ -26,9 +26,9 @@ namespace CLI.Services
             return ["config"];
         }
 
-        protected override string GetArgumentTemplate(string argument, string template)
+        protected override string GetArgumentTemplate(Value argument, string template)
         {
-            string argTemplate = argument.ToLower() switch
+            string argTemplate = argument.ToString().ToLower() switch
             {
                 "logging" => _templateFactory.CreateTemplate<LoggingTemplate>(),
                 "metric" => _templateFactory.CreateTemplate<MetricTemplate>(),

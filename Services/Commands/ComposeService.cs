@@ -11,10 +11,10 @@ namespace CLI.Services
         private readonly IProjectProvider _projectProvider = projectProvider;
         private const string DOCKER_NAME = "Docker";
         private const string FILE_NAME = "docker-compose.yml";
-        private const string COMPONENT_OPT = "components";
-        private const string SETTING_OPT = "settings";
-        private const string SERVICE_OPT = "services";
-        private const string SOLUTION_OPT = "solution_paths";
+        private readonly Key _componentKey = new("components");
+        private readonly Key _settingKey = new("settings");
+        private readonly Key _serviceKey = new("services");
+        private readonly Key _solutionPathKey = new("solution_paths");
         private bool _addMtls = false;
         private int _startPort = 1000;
         private readonly int _nextPort = 500;
@@ -39,11 +39,15 @@ namespace CLI.Services
 
         private void GetServices(OptionDictionary options)
         {
-            IEnumerable<MyPath> solutionPaths = MyPath.FromStringList(options.GetAllPairValues(SOLUTION_OPT).GetValues());
-            IEnumerable<Solution> solutions = solutionPaths.Select(path => new Solution(_query, _projectProvider, path));
-            _projects = SolutionService.GetDaprServicesFromSln(new(string.Empty), solutions).ToList();
+            IEnumerable<Value> solutionPathValues = options.GetAllPairValues(_solutionPathKey).GetValues();
+            if (solutionPathValues != null)
+            {
+                IEnumerable<MyPath>? solutionPaths = MyPath.FromStringList(solutionPathValues);
+                IEnumerable<Solution> solutions = solutionPaths.Select(path => new Solution(_query, _projectProvider, path));
+                _projects = SolutionService.GetDaprServicesFromSln(new(string.Empty), solutions).ToList();
+            }
 
-            IEnumerable<Project> services = Project.FromStringList(options.GetAllPairValues(SERVICE_OPT).GetValues());
+            IEnumerable<Project> services = Project.FromStringList(options.GetAllPairValues(_serviceKey).GetValues());
             _projects.AddRange(services);
         }
 
@@ -63,7 +67,7 @@ namespace CLI.Services
                 composeBuilder.Append(AddServiceToCompose(project.GetName()));
                 composeBuilder.Append(AddDaprServiceToCompose(project.GetName()));
 
-                foreach (string argument in options.GetAllPairValues(SETTING_OPT).GetValues())
+                foreach (string argument in options.GetAllPairValues(_settingKey).GetStringEnumerable())
                 {
                     ReplaceSettings(argument, composeBuilder);
                 }
@@ -101,10 +105,10 @@ namespace CLI.Services
 
         private string AddComponents(OptionDictionary options, string compose)
         {
-            OptionValues componentOpt = options.GetAllPairValues(COMPONENT_OPT);
-            foreach (string argument in componentOpt.GetValues())
+            OptionValues componentOpt = options.GetAllPairValues(_componentKey);
+            foreach (Value argument in componentOpt.GetValues())
             {
-                string processedArg = PreProcessArgument(argument);
+                Value processedArg = PreProcessArgument(argument);
                 compose = GetArgumentTemplate(processedArg, compose);
             }
             return compose;
@@ -123,20 +127,20 @@ namespace CLI.Services
         }
 
 
-        private static string PreProcessArgument(string argument)
+        private static Value PreProcessArgument(Value argument)
         {
-            return argument.ToLower() switch
+            return argument.ToString().ToLower() switch
             {
-                "pubsub" => "rabbitmq",
-                "statestore" => "redis",
+                "pubsub" => new("rabbitmq"),
+                "statestore" => new("redis"),
                 _ => argument
             };
         }
 
 
-        protected override string GetArgumentTemplate(string argument, string template)
+        protected override string GetArgumentTemplate(Value argument, string template)
         {
-            string argTemplate = argument.ToLower() switch
+            string argTemplate = argument.ToString().ToLower() switch
             {
                 "dashboard" => _templateFactory.CreateTemplate<DaprDashboardTemplate>(),
                 "placement" => _templateFactory.CreateTemplate<PlacementTemplate>(),
@@ -149,7 +153,7 @@ namespace CLI.Services
 
             if (argTemplate != null)
             {
-                _components.Add(argument);
+                _components.Add(argument.ToString());
             }
 
             return template + argTemplate;

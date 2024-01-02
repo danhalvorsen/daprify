@@ -65,7 +65,7 @@ namespace CLI.Commands
                 var values = context.ParseResult.GetValueForOption(option);
                 if (values != null)
                 {
-                    _optionArguments.Add(option.Name, values);
+                    _optionArguments.Add(new(option.Name), new(values));
                 }
             }
         }
