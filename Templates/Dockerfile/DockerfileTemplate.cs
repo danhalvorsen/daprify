@@ -2,9 +2,9 @@ using CLI.Models;
 
 namespace CLI.Templates
 {
-    public class DockerfileTemplate() : HandlebarTemplate(TEMPLATE_STR)
+    public class DockerfileTemplate() : TemplateBase
     {
-        private const string TEMPLATE_STR =
+        protected override string TemplateString =>
 @"FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 WORKDIR /src
 
@@ -26,7 +26,6 @@ COPY --from=build-env /app/publish .
 # Set the entry point for the container
 ENTRYPOINT [""dotnet"", ""{{ServiceName}}.dll""]";
 
-        protected override string TemplateString => TEMPLATE_STR;
 
         public string Render(MyPath servicePath, Name serviceName)
         {

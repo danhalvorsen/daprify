@@ -6,11 +6,12 @@ namespace CLITests.Mocks
 {
     public class MockServiceProvider : Mock<IServiceProvider>
     {
-        private readonly ComposeDaprTemplate composeTemplate = new();
-        private readonly ComposeServiceTemplate composeServiceTemplate = new();
+        private readonly ComposeDaprTemplate composeTemplate;
+        private readonly ComposeComponentTemplate composeComponentTemplate;
+        private readonly ComposeServiceTemplate composeServiceTemplate;
         private readonly ComposeStartTemplate composeStartTemplate = new();
         private readonly DockerfileTemplate dockerfileTemplate = new();
-        private readonly ConfigTemplate configTemplate = new();
+        private readonly ConfigTemplate configTemplate;
         private readonly EnvTemplate envTemplate = new();
         private readonly MtlsCompTemplate mTlsCompTemplate = new();
         private readonly MTlsTemplate mTlsTemplate = new();
@@ -24,6 +25,13 @@ namespace CLITests.Mocks
 
         public MockServiceProvider()
         {
+            TemplateFactory templateFactory = new(this.Object);
+            composeTemplate = new(templateFactory);
+            composeComponentTemplate = new(templateFactory);
+            composeServiceTemplate = new(templateFactory);
+            configTemplate = new(templateFactory);
+
+            Setup(x => x.GetService(typeof(ComposeComponentTemplate))).Returns(composeComponentTemplate);
             Setup(x => x.GetService(typeof(ComposeDaprTemplate))).Returns(composeTemplate);
             Setup(x => x.GetService(typeof(ComposeServiceTemplate))).Returns(composeServiceTemplate);
             Setup(x => x.GetService(typeof(ComposeStartTemplate))).Returns(composeStartTemplate);

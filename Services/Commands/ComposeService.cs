@@ -14,21 +14,23 @@ namespace CLI.Services
         private bool _addMtls = false;
         private int _startPort = 1000;
         private readonly int _nextPort = 500;
-        private static readonly List<string> _components = [];
         private List<IProject> _projects = [];
 
 
         protected override List<string> CreateFiles(OptionDictionary options, IPath workingDir)
         {
+            StringBuilder composeBuilder = new();
+
             GetServicesFromSln(options);
             GetServicesFromOptions(options);
 
-            string compose = GetComposeStart(workingDir) + GetServicesComposeSection(options);
-            compose = AddComponents(options, compose);
-            compose = AddDependsOn(compose);
+            composeBuilder.Append(GetComposeStart(workingDir));
+            AppendServices(options, composeBuilder);
+            AppendComponents(options, composeBuilder);
+            AppendSentry(composeBuilder);
 
-            compose = PlaceholderRegex().Replace(compose, string.Empty);
-            DirectoryService.AppendFile(workingDir, FILE_NAME, compose);
+            string compose = PlaceholderRegex().Replace(composeBuilder.ToString(), string.Empty);
+            DirectoryService.WriteFile(workingDir, FILE_NAME, compose);
 
             return ["docker-compose"];
         }
@@ -38,11 +40,13 @@ namespace CLI.Services
         {
             Key solutionPathKey = new("solution_paths");
             IEnumerable<Value> solutionPathValues = options.GetAllPairValues(solutionPathKey).GetValues();
+
             if (solutionPathValues != null)
             {
                 IEnumerable<MyPath> solutionPaths = MyPath.FromStringList(solutionPathValues);
                 IEnumerable<Solution> solutions = solutionPaths.Select(path => new Solution(_query, _projectProvider, path));
-                _projects = SolutionService.GetDaprServicesFromSln(new(string.Empty), solutions).ToList();
+                IEnumerable<IProject> projects = SolutionService.GetDaprServicesFromSln(new(string.Empty), solutions);
+                _projects.AddRange(projects);
             }
         }
 
@@ -50,7 +54,7 @@ namespace CLI.Services
         private void GetServicesFromOptions(OptionDictionary options)
         {
             Key serviceKey = new("services");
-            IEnumerable<Project> services = Project.FromStringList(options.GetAllPairValues(serviceKey).GetValues());
+            IEnumerable<IProject> services = Project.FromStringList(options.GetAllPairValues(serviceKey).GetValues());
             _projects.AddRange(services);
         }
 
@@ -62,109 +66,26 @@ namespace CLI.Services
         }
 
 
-        private string GetServicesComposeSection(OptionDictionary options)
+        private void AppendServices(OptionDictionary options, StringBuilder composeBuilder)
         {
-            Key settingKey = new("settings");
-            StringBuilder composeBuilder = new();
+            ComposeServiceTemplate composeService = _templateFactory.GetTemplateService<ComposeServiceTemplate>();
+            ComposeDaprTemplate composeDapr = _templateFactory.GetTemplateService<ComposeDaprTemplate>();
+
             foreach (IProject project in _projects)
             {
-                composeBuilder.Append(AddServiceToCompose(project.GetName()));
-                composeBuilder.Append(AddDaprServiceToCompose(project.GetName()));
-
-                foreach (string argument in options.GetAllPairValues(settingKey).GetStringEnumerable())
-                {
-                    ReplaceSettings(argument, composeBuilder);
-                }
-                composeBuilder.Replace("{{port}}", SetServicePort());
+                string port = SetServicePort();
+                composeBuilder.Append(composeService.Render(options, project, port));
+                composeBuilder.Append(composeDapr.Render(options, project, port));
             }
-            CheckMtls(composeBuilder);
-            return composeBuilder.ToString();
         }
 
-        private string AddServiceToCompose(Name service)
+        private void AppendComponents(OptionDictionary options, StringBuilder composeBuilder)
         {
-            string serviceTemp = _templateFactory.CreateTemplate<ComposeServiceTemplate>();
-            return serviceTemp.Replace("{{service}}", service.ToString().ToLower())
-                              .Replace("{{Service}}", service.ToString());
+            ComposeComponentTemplate composeComponent = _templateFactory.GetTemplateService<ComposeComponentTemplate>();
+            composeBuilder.Append(composeComponent.Render(options));
         }
 
-
-        private string AddDaprServiceToCompose(Name service)
-        {
-            string daprTemp = _templateFactory.CreateTemplate<ComposeDaprTemplate>();
-            return daprTemp.Replace("{{service}}", service.ToString().ToLower());
-        }
-
-
-        private void ReplaceSettings(string argument, StringBuilder template)
-        {
-            _ = argument.ToLower() switch
-            {
-                "https" => ReplaceHttps(template),
-                "mtls" => ReplaceMtls(template),
-                _ => null!
-            };
-        }
-
-
-        private string AddComponents(OptionDictionary options, string compose)
-        {
-            Key componentKey = new("components");
-            OptionValues componentOpt = options.GetAllPairValues(componentKey);
-            foreach (Value argument in componentOpt.GetValues())
-            {
-                Value processedArg = PreProcessArgument(argument);
-                compose = GetArgumentTemplate(processedArg, compose);
-            }
-            return compose;
-        }
-
-
-        private static string AddDependsOn(string compose)
-        {
-            const string INDENT = "    ";
-            StringBuilder dependsOnBuilder = new();
-            dependsOnBuilder.AppendLine("depends_on:");
-
-            _components.ForEach(component => dependsOnBuilder.AppendLine($"{INDENT}  - {component}"));
-
-            return compose.Replace("{{depends_on}}", dependsOnBuilder.ToString());
-        }
-
-
-        private static Value PreProcessArgument(Value argument)
-        {
-            return argument.ToString().ToLower() switch
-            {
-                "pubsub" => new("rabbitmq"),
-                "statestore" => new("redis"),
-                _ => argument
-            };
-        }
-
-
-        protected override string GetArgumentTemplate(Value argument, string template)
-        {
-            string argTemplate = argument.ToString().ToLower() switch
-            {
-                "dashboard" => _templateFactory.CreateTemplate<DaprDashboardTemplate>(),
-                "placement" => _templateFactory.CreateTemplate<PlacementTemplate>(),
-                "rabbitmq" => _templateFactory.CreateTemplate<RabbitMqTemplate>(),
-                "redis" => _templateFactory.CreateTemplate<RedisTemplate>(),
-                "sentry" => _templateFactory.CreateTemplate<SentryTemplate>(),
-                "zipkin" => _templateFactory.CreateTemplate<ZipkinTemplate>(),
-                _ => null!
-            };
-
-            if (argTemplate != null)
-            {
-                _components.Add(argument.ToString());
-            }
-
-            return template + argTemplate;
-        }
-
-        private void CheckMtls(StringBuilder template)
+        private void AppendSentry(StringBuilder template)
         {
             if (_addMtls)
             {
@@ -178,19 +99,6 @@ namespace CLI.Services
             int port = _startPort;
             _startPort += _nextPort; // Increment the service port by 500
             return port.ToString();
-        }
-
-        private StringBuilder ReplaceHttps(StringBuilder template)
-        {
-            return template.Replace("{{dapr-https}}", _templateFactory.CreateTemplate<HttpsDaprTemplate>())
-                           .Replace("{{https}}", _templateFactory.CreateTemplate<HttpsServiceTemplate>());
-        }
-
-        private StringBuilder ReplaceMtls(StringBuilder template)
-        {
-            _addMtls = true;
-            return template.Replace("{{mtls}}", _templateFactory.CreateTemplate<MtlsCompTemplate>())
-                           .Replace("{{env_file}}", _templateFactory.CreateTemplate<EnvTemplate>());
         }
     }
 }

@@ -1,5 +1,5 @@
-using System.Text.RegularExpressions;
 using CLI.Models;
+using System.Text.RegularExpressions;
 
 namespace CLI.Services
 {
@@ -24,8 +24,6 @@ namespace CLI.Services
 
         protected virtual List<string> CreateFiles(OptionDictionary options, IPath workingDir) => [];
 
-        protected virtual string GetArgumentTemplate(Value argument, string template) => "";
-
         protected string FormatOutput(List<string> generatedFiles)
         {
             if (generatedFiles.Count == 0)
@@ -37,8 +35,7 @@ namespace CLI.Services
             return $"The {_directoryName.ToLower()} files: {fileList} were generated successfully.";
         }
 
-
-        [GeneratedRegex(@"^.*\{\{.*?\}\}.*(\r?\n|\r)?", RegexOptions.Multiline | RegexOptions.Compiled)]
+        [GeneratedRegex(@"^\s*.*\{\{\s*\}\}.*(\r?\n|\r)?", RegexOptions.Multiline | RegexOptions.Compiled)]
         public static partial Regex PlaceholderRegex();
     }
 }

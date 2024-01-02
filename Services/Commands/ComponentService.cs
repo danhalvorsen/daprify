@@ -23,7 +23,7 @@ namespace CLI.Services
             return generatedYamls;
         }
 
-        protected override string GetArgumentTemplate(Value argument, string template)
+        private string GetArgumentTemplate(Value argument, string template)
         {
             return argument.ToString().ToLower() switch
             {
