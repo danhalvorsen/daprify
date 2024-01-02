@@ -16,8 +16,8 @@ namespace CLI.Templates
             OptionValues componentOpt = options.GetAllPairValues(componentKey);
 
             var componentTemplates = componentOpt.GetValues()
-                .Select(argument => PreProcessArgument(argument))
-                .Select(processedArg => GetArgumentTemplate(processedArg))
+                .Select(PreProcessArgument)
+                .Select(GetArgumentTemplate)
                 .Where(template => !string.IsNullOrEmpty(template));
 
             var data = new
@@ -48,7 +48,7 @@ namespace CLI.Templates
                 "redis" => _templateFactory.CreateTemplate<RedisTemplate>(),
                 "sentry" => _templateFactory.CreateTemplate<SentryTemplate>(),
                 "zipkin" => _templateFactory.CreateTemplate<ZipkinTemplate>(),
-                _ => throw new ArgumentException($"Unknown component: {argument}")
+                _ => string.Empty
             };
         }
     }
