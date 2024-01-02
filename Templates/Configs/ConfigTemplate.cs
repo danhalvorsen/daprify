@@ -41,7 +41,7 @@ spec:
     {
       if (settings.GetStringEnumerable().Contains(settingName))
       {
-        string argTemplate = settingName.ToLower() switch
+        return settingName switch
         {
           "logging" => _templateFactory.CreateTemplate<LoggingTemplate>(),
           "metric" => _templateFactory.CreateTemplate<MetricTemplate>(),
@@ -50,8 +50,6 @@ spec:
           "tracing" => _templateFactory.CreateTemplate<TracingTemplate>(),
           _ => throw new ArgumentException("Invalid setting name:" + settingName, nameof(settingName))
         };
-
-        return argTemplate;
       }
       else
       {
