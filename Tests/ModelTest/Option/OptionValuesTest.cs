@@ -7,23 +7,36 @@ namespace CLITests.Options
     public class TryOptionValues
     {
         [TestMethod]
-        public void Expect_ValuesMatchInitialization()
+        public void Expect_Constructor_WithStringList_InitializesCorrectly()
         {
             // Arrange
-            IEnumerable<string> expectedValues = ["value1", "value2", "value3"];
+            List<string> expectedValues = ["value1", "value2", "value3"];
 
             // Act
             OptionValues sut = new(expectedValues);
 
             // Assert
-            Asserts.VerifyEnumerableString(sut.GetValues(), expectedValues);
+            Asserts.VerifyEnumerableString(sut.GetStringEnumerable(), expectedValues);
+        }
+
+        [TestMethod]
+        public void Expect_Constructor_WithValueList_InitializesCorrectly()
+        {
+            // Arrange
+            List<Value> valueList = [new("value1"), new("value2"), new("value3")];
+
+            // Act
+            OptionValues sut = new(valueList);
+
+            // Assert
+            Asserts.VerifyEnumerableValue(sut.GetValues(), valueList);
         }
 
         [TestMethod]
         public void Expect_CorrectCount()
         {
             // Arrange
-            IEnumerable<string> expectedValues = ["value1", "value2", "value3"];
+            List<string> expectedValues = ["value1", "value2", "value3"];
             OptionValues sut = new(expectedValues);
 
             // Act
@@ -34,16 +47,48 @@ namespace CLITests.Options
         }
 
         [TestMethod]
-        public void Expect_EmptyOnNoInitialization()
+        public void RemoveValue_RemovesSpecifiedValue()
         {
             // Arrange
-            OptionValues optionValues = new(new List<string>());
+            List<Value> initialValues = [new("value1"), new("value2"), new("value3")];
+            Value valueToRemove = new("value2");
+            OptionValues sut = new(initialValues);
 
             // Act
-            IEnumerable<string> sut = optionValues.GetValues();
+            sut.RemoveValue(valueToRemove);
 
             // Assert
-            Asserts.VerifyEmpty(sut);
+            Asserts.VerifyFalse(sut.GetValues().Contains(valueToRemove));
+        }
+
+        [TestMethod]
+        public void Contain_ReturnsTrueForContainedValue()
+        {
+            // Arrange
+            Value valueToCheck = new("value1");
+            List<Value> initialValues = [valueToCheck, new("value2"), new("value3")];
+            OptionValues sut = new(initialValues);
+
+            // Act
+            bool contains = sut.Contain(valueToCheck);
+
+            // Assert
+            Asserts.VerifyTrue(contains);
+        }
+
+        [TestMethod]
+        public void Contain_ReturnsFalseForNonExistentValue()
+        {
+            // Arrange
+            Value valueToCheck = new("nonexistent");
+            List<Value> initialValues = [new("value1"), new("value2"), new("value3")];
+            OptionValues sut = new(initialValues);
+
+            // Act
+            bool contains = sut.Contain(valueToCheck);
+
+            // Assert
+            Asserts.VerifyFalse(contains);
         }
     }
 }
