@@ -1,3 +1,4 @@
+using CLI.Models;
 using FluentAssertions;
 
 namespace CLITests.Assert
@@ -35,6 +36,11 @@ namespace CLITests.Assert
         }
 
         public static void VerifyEnumerableString(IEnumerable<string> sut, IEnumerable<string> expected)
+        {
+            sut.Should().BeEquivalentTo(expected);
+        }
+
+        public static void VerifyEnumerableValue(IEnumerable<Value> sut, IEnumerable<Value> expected)
         {
             sut.Should().BeEquivalentTo(expected);
         }

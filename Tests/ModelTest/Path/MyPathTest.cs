@@ -26,7 +26,7 @@ namespace CLITests.Paths
             // Act & Assert
             static void act()
             {
-                MyPath unused = new(null!);
+                MyPath unused = new((string)null!);
             }
 
             // Assert
@@ -64,7 +64,7 @@ namespace CLITests.Paths
         public void Expect_FromStringList_WithValidList_ShouldReturnMyPathList()
         {
             // Arrange
-            List<string> paths = ["C:\\path1", "C:\\path2"];
+            List<Value> paths = [new("C:\\path1"), new("C:\\path2")];
 
             // Act
             List<MyPath> sut = MyPath.FromStringList(paths).ToList();
