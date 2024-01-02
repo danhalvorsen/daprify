@@ -31,10 +31,7 @@ spec:
         tracing = GetSettingTemplate("tracing", settings),
       };
 
-      string result = _template(data);
-      result = PlaceholderRegex().Replace(result, string.Empty);
-
-      return result;
+      return _template(data);
     }
 
     private string GetSettingTemplate(string settingName, OptionValues settings)

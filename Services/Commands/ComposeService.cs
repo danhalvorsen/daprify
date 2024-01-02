@@ -29,7 +29,8 @@ namespace CLI.Services
             AppendComponents(options, composeBuilder);
             AppendSentry(composeBuilder);
 
-            DirectoryService.WriteFile(workingDir, FILE_NAME, composeBuilder.ToString());
+            string compose = PlaceholderRegex().Replace(composeBuilder.ToString(), string.Empty);
+            DirectoryService.WriteFile(workingDir, FILE_NAME, compose);
 
             return ["docker-compose"];
         }

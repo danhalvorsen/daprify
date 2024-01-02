@@ -17,6 +17,7 @@ namespace CLI.Services
             OptionValues settingOpt = options.GetAllPairValues(settingKey);
 
             string config = configService.Render(settingOpt);
+            config = PlaceholderRegex().Replace(config, string.Empty);
 
             DirectoryService.WriteFile(workingDir, CONFIG_YAML, config);
             return ["config"];

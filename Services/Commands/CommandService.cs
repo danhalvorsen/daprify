@@ -1,8 +1,9 @@
 using CLI.Models;
+using System.Text.RegularExpressions;
 
 namespace CLI.Services
 {
-    public abstract class CommandService(string directoryName) : IService
+    public abstract partial class CommandService(string directoryName) : IService
     {
         protected readonly string _directoryName = directoryName;
 
@@ -33,5 +34,8 @@ namespace CLI.Services
             string fileList = string.Join(", ", generatedFiles);
             return $"The {_directoryName.ToLower()} files: {fileList} were generated successfully.";
         }
+
+        [GeneratedRegex(@"^\s*.*\{\{\s*\}\}.*(\r?\n|\r)?", RegexOptions.Multiline | RegexOptions.Compiled)]
+        public static partial Regex PlaceholderRegex();
     }
 }

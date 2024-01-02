@@ -10,7 +10,7 @@ namespace CLI.Templates
     }
 
 
-    public abstract partial class TemplateBase : ITemplateBase
+    public abstract class TemplateBase : ITemplateBase
     {
         protected HandlebarsTemplate<object, object> _template;
 
@@ -25,8 +25,5 @@ namespace CLI.Templates
         {
             return TemplateString;
         }
-
-        [GeneratedRegex(@"^\s*.*\{\{\s*\}\}.*(\r?\n|\r)?", RegexOptions.Multiline | RegexOptions.Compiled)]
-        public static partial Regex PlaceholderRegex();
     }
 }

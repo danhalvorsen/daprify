@@ -41,10 +41,7 @@ namespace CLI.Templates
         dependencies = GetDependsOn(options)
       };
 
-      string result = _template(data);
-      result = PlaceholderRegex().Replace(result, string.Empty);
-
-      return result;
+      return _template(data);
     }
 
     private static IEnumerable<string> GetDependsOn(OptionDictionary options)

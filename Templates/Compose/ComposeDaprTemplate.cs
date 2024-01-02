@@ -47,10 +47,7 @@ namespace CLI.Templates
         env_file = mtlsSetting != "{{}}" ? GetSettingTemplate("env", settings) : "{{}}"
       };
 
-      string result = _template(data);
-      result = PlaceholderRegex().Replace(result, string.Empty);
-
-      return result;
+      return _template(data);
     }
 
 
