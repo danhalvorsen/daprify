@@ -1,4 +1,5 @@
 using Daprify.Models;
+using Serilog;
 using System.Text.RegularExpressions;
 
 namespace Daprify.Services
@@ -12,28 +13,25 @@ namespace Daprify.Services
             try
             {
                 IPath workingDir = DirectoryService.SetDirectory(_directoryName);
+                Log.Verbose("Successfully created working directory: {working}", workingDir);
                 List<string> generatedFiles = CreateFiles(options, workingDir);
 
-                Console.WriteLine(FormatOutput(generatedFiles));
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Command executed successfully!");
+                Console.ResetColor();
+                Console.WriteLine("Generated files:");
+                foreach (string file in generatedFiles)
+                {
+                    Console.WriteLine($"    - {file}");
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"An error occurred: {ex.Message}");
+                Log.Error($"An error occurred: {ex.Message}");
             }
         }
 
         protected virtual List<string> CreateFiles(OptionDictionary options, IPath workingDir) => [];
-
-        protected string FormatOutput(List<string> generatedFiles)
-        {
-            if (generatedFiles.Count == 0)
-            {
-                return $"No {_directoryName.ToLower()} files were generated.";
-            }
-
-            string fileList = string.Join(", ", generatedFiles);
-            return $"The {_directoryName.ToLower()} files: {fileList} were generated successfully.";
-        }
 
         [GeneratedRegex(@"^\s*.*\{\{\s*\}\}.*(\r?\n|\r)?", RegexOptions.Multiline | RegexOptions.Compiled)]
         public static partial Regex PlaceholderRegex();

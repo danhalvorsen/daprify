@@ -42,6 +42,7 @@ namespace Daprify.Commands
 
         private void Execute(InvocationContext context)
         {
+            Console.WriteLine("Executing Command...");
             AddLogging(context);
             ValidateCommand(context.ParseResult.CommandResult);
             GetOptionArguments(context);
