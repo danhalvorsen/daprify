@@ -1,6 +1,7 @@
 using Daprify.Models;
 using Daprify.Services;
 using FluentValidation;
+using Serilog;
 
 namespace Daprify.Validation
 {
@@ -17,6 +18,8 @@ namespace Daprify.Validation
                         string error = ErrorMessage.NotFoundErrorFunc("path", fullPath);
                         context.AddFailure(error);
                     }
+                    else
+                    { Log.Verbose("Validation success: Path {Path} exists", fullPath); }
                 });
         }
 
@@ -30,6 +33,7 @@ namespace Daprify.Validation
 
         private static bool BeAValidPath(MyPath path)
         {
+            Log.Verbose("Validating if path {Path} exists", path);
             return Directory.Exists(path.ToString());
         }
     }
