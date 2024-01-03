@@ -1,7 +1,7 @@
-using CLI.Models;
+using Daprify.Models;
 using System.Text.RegularExpressions;
 
-namespace CLI.Services
+namespace Daprify.Services
 {
     public abstract partial class CommandService(string directoryName) : IService
     {

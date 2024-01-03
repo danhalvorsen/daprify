@@ -1,4 +1,4 @@
-namespace CLI.Templates
+namespace Daprify.Templates
 {
     public class MTlsTemplate : TemplateBase
     {

@@ -1,8 +1,8 @@
-using CLI.Models;
-using CLITests.Assert;
+using Daprify.Models;
+using DaprifyTests.Assert;
 using FluentAssertions;
 
-namespace CLITests.Paths
+namespace DaprifyTests.Paths
 {
     [TestClass]
     public class TryMyPath

@@ -1,6 +1,6 @@
 using System.CommandLine;
 
-namespace CLI.Settings
+namespace Daprify.Settings
 {
     public interface ISettings
     {

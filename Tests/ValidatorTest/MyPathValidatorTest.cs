@@ -1,10 +1,10 @@
-using CLI.Models;
-using CLI.Services;
-using CLI.Validation;
-using CLITests.Assert;
+using Daprify.Models;
+using Daprify.Services;
+using Daprify.Validation;
+using DaprifyTests.Assert;
 using FluentValidation.Results;
 
-namespace ValidatorTest
+namespace DaprifyTests.Validation
 {
     [TestClass]
     public class TryMyPathValidator

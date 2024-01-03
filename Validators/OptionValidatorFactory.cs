@@ -1,6 +1,6 @@
-using CLI.Settings;
+using Daprify.Settings;
 
-namespace CLI.Validation
+namespace Daprify.Validation
 {
     public interface IOptionValidatorFactory
     {

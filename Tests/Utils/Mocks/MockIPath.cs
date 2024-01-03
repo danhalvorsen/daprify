@@ -1,7 +1,7 @@
-using CLI.Models;
+using Daprify.Models;
 using Moq;
 
-namespace CLITests.Mocks
+namespace DaprifyTests.Mocks
 {
     public class MockIPath : Mock<IPath>
     {

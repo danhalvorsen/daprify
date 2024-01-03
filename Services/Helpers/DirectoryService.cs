@@ -1,8 +1,8 @@
-using CLI.Models;
+using Daprify.Models;
 using System.Diagnostics;
 using System.Reflection;
 
-namespace CLI.Services
+namespace Daprify.Services
 {
     public static class DirectoryService
     {

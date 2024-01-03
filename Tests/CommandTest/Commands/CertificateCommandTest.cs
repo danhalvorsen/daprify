@@ -1,13 +1,13 @@
-using CLI.Commands;
-using CLI.Models;
-using CLI.Services;
-using CLI.Settings;
-using CLI.Validation;
+using Daprify.Commands;
+using Daprify.Models;
+using Daprify.Services;
+using Daprify.Settings;
+using Daprify.Validation;
 using FluentAssertions;
 using System.CommandLine;
 using System.CommandLine.Parsing;
 
-namespace CLITests.Commands
+namespace DaprifyTests.Commands
 {
     [TestClass]
     public class TryCertificateCommandTests
@@ -37,7 +37,7 @@ namespace CLITests.Commands
         {
             // Arrange
             string[] argument = [_settings.CommandName];
-            CLICommand<CertificateService, CertificateSettings> sut = new(_service, _settings, _optionValidatorFactory);
+            DaprifyCommand<CertificateService, CertificateSettings> sut = new(_service, _settings, _optionValidatorFactory);
 
             // Act
             sut.Parse(argument).Invoke();
@@ -58,7 +58,7 @@ namespace CLITests.Commands
         {
             // Arrange
             string[] argument = [_settings.CommandName];
-            CLICommand<CertificateService, CertificateSettings> sut = new(_service, _settings, _optionValidatorFactory);
+            DaprifyCommand<CertificateService, CertificateSettings> sut = new(_service, _settings, _optionValidatorFactory);
 
             // Act
             sut.Parse(argument).Invoke();

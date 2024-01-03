@@ -1,8 +1,8 @@
 
-using CLI.Templates;
+using Daprify.Templates;
 using Moq;
 
-namespace CLITests.Mocks
+namespace DaprifyTests.Mocks
 {
     public class MockServiceProvider : Mock<IServiceProvider>
     {

@@ -1,7 +1,7 @@
-using CLI.Models;
-using CLI.Templates;
+using Daprify.Models;
+using Daprify.Templates;
 
-namespace CLI.Services
+namespace Daprify.Services
 {
     public class DockerfileService(IQuery query, IProjectProvider projectProvider, TemplateFactory templateFactory) : CommandService(DOCKER_NAME)
     {

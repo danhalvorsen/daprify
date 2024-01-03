@@ -1,4 +1,4 @@
-namespace CLI.Models
+namespace Daprify.Models
 {
     public class Name
     {

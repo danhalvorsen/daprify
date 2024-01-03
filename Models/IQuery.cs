@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 
-namespace CLI.Models
+namespace Daprify.Models
 {
     public interface IQuery
     {

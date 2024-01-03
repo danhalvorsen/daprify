@@ -1,6 +1,6 @@
-using CLI.Models;
+using Daprify.Models;
 
-namespace CLI.Services
+namespace Daprify.Services
 {
     public static class SolutionService
     {

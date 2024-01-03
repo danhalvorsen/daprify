@@ -1,4 +1,4 @@
-namespace CLITests.Commands
+namespace DaprifyTests.Commands
 {
     public interface ICommandLineInterface
     {

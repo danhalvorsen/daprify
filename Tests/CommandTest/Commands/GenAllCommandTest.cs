@@ -1,15 +1,15 @@
-using CLI.Commands;
-using CLI.Models;
-using CLI.Services;
-using CLI.Settings;
-using CLI.Templates;
-using CLI.Validation;
-using CLITests.Mocks;
+using Daprify.Commands;
+using Daprify.Models;
+using Daprify.Services;
+using Daprify.Settings;
+using Daprify.Templates;
+using Daprify.Validation;
+using DaprifyTests.Mocks;
 using FluentAssertions;
 using System.CommandLine;
 using System.CommandLine.Parsing;
 
-namespace CLITests.Commands
+namespace DaprifyTests.Commands
 {
     [TestClass]
     public class TryGenAllCommandTests
@@ -61,7 +61,7 @@ namespace CLITests.Commands
                                  GenAllSettings.SettingOptionName[0],
                                  settingArgs.GetValues().ElementAt(0).ToString(),
                                  settingArgs.GetValues().ElementAt(1).ToString()];
-            CLICommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _optionValidatorFactory);
+            DaprifyCommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _optionValidatorFactory);
 
             // Act
             sut.Parse(argument).Invoke();
@@ -86,7 +86,7 @@ namespace CLITests.Commands
                                  GenAllSettings.SettingOptionName[0],
                                  settingArgs.GetValues().ElementAt(0).ToString(),
                                  settingArgs.GetValues().ElementAt(1).ToString()];
-            CLICommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _optionValidatorFactory);
+            DaprifyCommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _optionValidatorFactory);
 
             // Act
             sut.Parse(argument).Invoke();
@@ -104,7 +104,7 @@ namespace CLITests.Commands
             string[] argument = [_settings.CommandName, GenAllSettings.ComponentOptionName[0],
                                 componentArgs.GetValues().ElementAt(0).ToString(),
                                 componentArgs.GetValues().ElementAt(1).ToString()];
-            CLICommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _optionValidatorFactory);
+            DaprifyCommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _optionValidatorFactory);
 
             // Act
             sut.Parse(argument).Invoke();
@@ -126,7 +126,7 @@ namespace CLITests.Commands
         {
             // Arrange
             string[] argument = [_settings.CommandName];
-            CLICommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _optionValidatorFactory);
+            DaprifyCommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _optionValidatorFactory);
 
             // Act
             sut.Parse(argument).Invoke();
@@ -150,7 +150,7 @@ namespace CLITests.Commands
                                 GenAllSettings.SettingOptionName[0],
                                 settingArgs.GetValues().ElementAt(0).ToString(),
                                 settingArgs.GetValues().ElementAt(1).ToString()];
-            CLICommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _optionValidatorFactory);
+            DaprifyCommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _optionValidatorFactory);
 
             // Act
             sut.Parse(argument).Invoke();
@@ -170,7 +170,7 @@ namespace CLITests.Commands
             MyPath destPath = MyPath.Combine(destDir.ToString(), "config-mock.json");
             File.Copy(_confPath.ToString(), destPath.ToString(), true);
             string[] argument = [_settings.CommandName, GenAllSettings.ConfigOptionName[0], destPath.ToString()];
-            CLICommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _optionValidatorFactory);
+            DaprifyCommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _optionValidatorFactory);
 
             // Act
             sut.Parse(argument).Invoke();

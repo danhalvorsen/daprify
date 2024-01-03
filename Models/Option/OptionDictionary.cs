@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Text.Json;
 
-namespace CLI.Models
+namespace Daprify.Models
 {
     public class OptionDictionary() : IEnumerable<KeyValuePair<Key, OptionValues>>
     {

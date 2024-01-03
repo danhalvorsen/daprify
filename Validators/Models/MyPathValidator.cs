@@ -1,8 +1,8 @@
-using CLI.Models;
-using CLI.Services;
+using Daprify.Models;
+using Daprify.Services;
 using FluentValidation;
 
-namespace CLI.Validation
+namespace Daprify.Validation
 {
     public class MyPathValidator : AbstractValidator<IEnumerable<MyPath>>
     {

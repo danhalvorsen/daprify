@@ -1,6 +1,6 @@
-using CLI.Models;
-using CLITests.Assert;
-namespace CLITests.Paths
+using Daprify.Models;
+using DaprifyTests.Assert;
+namespace DaprifyTests.Paths
 {
     [TestClass]
     public class TryRelativePath

@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Text;
-using CLI.Models;
+using Daprify.Models;
 
-namespace CLI.Services
+namespace Daprify.Services
 {
 
     public class CertificateService() : CommandService(WORKING_DIR)

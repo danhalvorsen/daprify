@@ -1,15 +1,15 @@
-using CLI.Commands;
-using CLI.Models;
-using CLI.Services;
-using CLI.Settings;
-using CLI.Templates;
-using CLI.Validation;
-using CLITests.Mocks;
+using Daprify.Commands;
+using Daprify.Models;
+using Daprify.Services;
+using Daprify.Settings;
+using Daprify.Templates;
+using Daprify.Validation;
+using DaprifyTests.Mocks;
 using FluentAssertions;
 using System.CommandLine;
 using System.CommandLine.Parsing;
 
-namespace CLITests.Commands
+namespace DaprifyTests.Commands
 {
     [TestClass]
     public class TryComposeCommandTests
@@ -49,7 +49,7 @@ namespace CLITests.Commands
             // Arrange
             string[] argument = [_settings.CommandName, ComposeSettings.ServiceOptionName[0], serviceArguments[0], serviceArguments[1],
                                                         ComposeSettings.ComponentOptionName[0], componentArguments[0], componentArguments[1]];
-            CLICommand<ComposeService, ComposeSettings> sut = new(_service, _settings, _optionValidatorFactory);
+            DaprifyCommand<ComposeService, ComposeSettings> sut = new(_service, _settings, _optionValidatorFactory);
 
             // Act
             sut.Parse(argument).Invoke();
