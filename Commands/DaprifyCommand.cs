@@ -1,16 +1,16 @@
-using CLI.Models;
-using CLI.Services;
-using CLI.Settings;
-using CLI.Validation;
+using Daprify.Models;
+using Daprify.Services;
+using Daprify.Settings;
+using Daprify.Validation;
 using FluentValidation;
 using FluentValidation.Results;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
 
-namespace CLI.Commands
+namespace Daprify.Commands
 {
-    public class CLICommand<Service, Settings> : Command
+    public class DaprifyCommand<Service, Settings> : Command
         where Service : IService
         where Settings : ISettings
     {
@@ -19,7 +19,7 @@ namespace CLI.Commands
         private readonly OptionValidator _validator;
         private readonly OptionDictionary _optionArguments = [];
 
-        public CLICommand(Service service, Settings settings, IOptionValidatorFactory validatorFactory)
+        public DaprifyCommand(Service service, Settings settings, IOptionValidatorFactory validatorFactory)
             : base(settings.CommandName, settings.CommandDescription + settings.CommandExample)
         {
             _service = service;

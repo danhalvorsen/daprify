@@ -1,4 +1,4 @@
-namespace CLI.Validation
+namespace Daprify.Validation
 {
     public static class ErrorMessage
     {

@@ -1,8 +1,8 @@
 using Microsoft.Extensions.Hosting;
 
-namespace CLI
+namespace Daprify
 {
-    public static class CLIHost
+    public static class DaprifyHost
     {
         public static IHostBuilder CreateHostBuilder(string[] args)
         {

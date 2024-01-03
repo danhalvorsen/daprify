@@ -1,5 +1,5 @@
 
-namespace CLI.Models
+namespace Daprify.Models
 {
     public class Key(string key)
     {

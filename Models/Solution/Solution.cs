@@ -1,6 +1,6 @@
 using Microsoft.Build.Construction;
 
-namespace CLI.Models
+namespace Daprify.Models
 {
     public interface ISolution
     {

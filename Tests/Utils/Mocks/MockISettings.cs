@@ -1,4 +1,4 @@
-using CLI.Settings;
+using Daprify.Settings;
 using Moq;
 
 namespace ValidatorTest

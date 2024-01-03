@@ -1,9 +1,9 @@
-using CLI.Models;
-using CLI.Services;
-using CLITests.Assert;
-using CLITests.Mocks;
+using Daprify.Models;
+using Daprify.Services;
+using DaprifyTests.Assert;
+using DaprifyTests.Mocks;
 
-namespace CLITests.Projects
+namespace DaprifyTests.Projects
 {
     [TestClass]
     public class TrySecondProjectCtor

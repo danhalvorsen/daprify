@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CLI.Templates
+namespace Daprify.Templates
 {
     public interface ITemplateFactory
     {

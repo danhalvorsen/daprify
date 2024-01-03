@@ -1,8 +1,8 @@
-namespace CLI.Templates
+namespace Daprify.Templates
 {
-    public class CryptoTemplate : TemplateBase
-    {
-        protected override string TemplateString =>
+  public class CryptoTemplate : TemplateBase
+  {
+    protected override string TemplateString =>
 @"apiVersion: dapr.io/v1alpha1
 kind: Component
 metadata:
@@ -44,5 +44,5 @@ spec:
 
 # For more information: https://docs.dapr.io/reference/components-reference/supported-cryptography/
 ";
-    }
+  }
 }

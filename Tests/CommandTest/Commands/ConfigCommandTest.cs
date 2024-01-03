@@ -1,15 +1,15 @@
-using CLI.Commands;
-using CLI.Models;
-using CLI.Services;
-using CLI.Settings;
-using CLI.Templates;
-using CLI.Validation;
-using CLITests.Mocks;
+using Daprify.Commands;
+using Daprify.Models;
+using Daprify.Services;
+using Daprify.Settings;
+using Daprify.Templates;
+using Daprify.Validation;
+using DaprifyTests.Mocks;
 using FluentAssertions;
 using System.CommandLine;
 using System.CommandLine.Parsing;
 
-namespace CLITests.Commands
+namespace DaprifyTests.Commands
 {
     [TestClass]
     public class TryConfigCommandTests
@@ -45,7 +45,7 @@ namespace CLITests.Commands
         {
             // Arrange
             string[] argument = [_settings.CommandName];
-            CLICommand<ConfigService, ConfigSettings> sut = new(_service, _settings, _optionValidatorFactory);
+            DaprifyCommand<ConfigService, ConfigSettings> sut = new(_service, _settings, _optionValidatorFactory);
 
             // Act
             sut.Parse(argument).Invoke();

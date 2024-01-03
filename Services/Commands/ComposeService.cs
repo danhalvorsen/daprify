@@ -1,8 +1,8 @@
-using CLI.Models;
-using CLI.Templates;
+using Daprify.Models;
+using Daprify.Templates;
 using System.Text;
 
-namespace CLI.Services
+namespace Daprify.Services
 {
     public class ComposeService(IQuery query, IProjectProvider projectProvider, TemplateFactory templateFactory) : CommandService(DOCKER_NAME)
     {

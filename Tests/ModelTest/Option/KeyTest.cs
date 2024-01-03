@@ -1,7 +1,7 @@
-using CLI.Models;
-using CLITests.Assert;
+using Daprify.Models;
+using DaprifyTests.Assert;
 
-namespace CLITests.Options
+namespace DaprifyTests.Options
 {
     [TestClass]
     public class TryKey

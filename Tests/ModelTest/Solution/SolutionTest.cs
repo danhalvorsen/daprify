@@ -1,11 +1,11 @@
-using CLI.Models;
-using CLI.Services;
-using CLITests.Assert;
-using CLITests.Mocks;
+using Daprify.Models;
+using Daprify.Services;
+using DaprifyTests.Assert;
+using DaprifyTests.Mocks;
 using FluentAssertions;
 using Moq;
 
-namespace CLITests.Solutions
+namespace DaprifyTests.Solutions
 {
     [TestClass]
     public class TrySolution

@@ -2,7 +2,7 @@
 using FluentAssertions;
 using Moq;
 
-namespace CLITests.Commands
+namespace DaprifyTests.Commands
 {
     [TestClass]
     public class TryCommandInterface

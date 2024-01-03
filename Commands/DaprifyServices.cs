@@ -1,13 +1,13 @@
-using CLI.Commands;
-using CLI.Services;
-using CLI.Settings;
+using Daprify.Commands;
+using Daprify.Services;
+using Daprify.Settings;
 using Microsoft.Extensions.DependencyInjection;
 using System.CommandLine;
 using System.Reflection;
 
-namespace CLI
+namespace Daprify
 {
-    public static class CLIServices
+    public static class DaprifyServices
     {
 
         // TODO: Add the commands to implement Command and not AsSelf()
@@ -33,12 +33,12 @@ namespace CLI
 
         public static void AddCommands(this IServiceCollection services)
         {
-            services.AddTransient<Command, CLICommand<GenAllService, GenAllSettings>>();
-            services.AddTransient<Command, CLICommand<CertificateService, CertificateSettings>>();
-            services.AddTransient<Command, CLICommand<ConfigService, ConfigSettings>>();
-            services.AddTransient<Command, CLICommand<ComponentService, ComponentSettings>>();
-            services.AddTransient<Command, CLICommand<DockerfileService, DockerfileSettings>>();
-            services.AddTransient<Command, CLICommand<ComposeService, ComposeSettings>>();
+            services.AddTransient<Command, DaprifyCommand<GenAllService, GenAllSettings>>();
+            services.AddTransient<Command, DaprifyCommand<CertificateService, CertificateSettings>>();
+            services.AddTransient<Command, DaprifyCommand<ConfigService, ConfigSettings>>();
+            services.AddTransient<Command, DaprifyCommand<ComponentService, ComponentSettings>>();
+            services.AddTransient<Command, DaprifyCommand<DockerfileService, DockerfileSettings>>();
+            services.AddTransient<Command, DaprifyCommand<ComposeService, ComposeSettings>>();
         }
     }
 }

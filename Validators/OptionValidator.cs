@@ -1,9 +1,9 @@
-using CLI.Models;
-using CLI.Settings;
+using Daprify.Models;
+using Daprify.Settings;
 using FluentValidation;
 using System.CommandLine.Parsing;
 
-namespace CLI.Validation
+namespace Daprify.Validation
 {
     public class OptionValidator : AbstractValidator<CommandResult>
     {
@@ -42,7 +42,13 @@ namespace CLI.Validation
         public OptionValues? GetOptionValue(CommandResult commandResult, string optionName)
         {
             var matchedOpt = _settings.Options.Find(o => o.Aliases.Contains(optionName));
-            return matchedOpt != null ? new(commandResult.GetValueForOption(matchedOpt)) : default;
+            if (matchedOpt == null)
+            {
+                return null;
+            }
+
+            var optionValues = commandResult.GetValueForOption(matchedOpt);
+            return optionValues != null ? new(optionValues) : null;
         }
     }
 }

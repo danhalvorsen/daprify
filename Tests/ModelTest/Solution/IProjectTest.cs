@@ -1,9 +1,9 @@
-using CLI.Models;
-using CLITests.Assert;
-using CLITests.Mocks;
+using Daprify.Models;
+using DaprifyTests.Assert;
+using DaprifyTests.Mocks;
 using Moq;
 
-namespace CLITests.Projects
+namespace DaprifyTests.Projects
 {
     [TestClass]
     public class TryIProject

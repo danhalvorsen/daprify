@@ -1,7 +1,7 @@
-using CLI.Models;
+using Daprify.Models;
 using FluentAssertions;
 
-namespace CLITests.Assert
+namespace DaprifyTests.Assert
 {
     public class Asserts
     {

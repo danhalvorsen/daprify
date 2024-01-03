@@ -1,6 +1,6 @@
-using CLI.Models;
+using Daprify.Models;
 
-namespace CLI.Templates
+namespace Daprify.Templates
 {
     public class ComposeComponentTemplate(TemplateFactory templateFactory) : TemplateBase
     {

@@ -1,7 +1,7 @@
 using HandlebarsDotNet;
 using System.Text.RegularExpressions;
 
-namespace CLI.Templates
+namespace Daprify.Templates
 {
 
     public interface ITemplateBase

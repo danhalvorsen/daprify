@@ -1,6 +1,6 @@
-using CLI.Models;
+using Daprify.Models;
 
-namespace CLI.Services
+namespace Daprify.Services
 {
     public class GenAllService(CertificateService certificateService, ComponentService componentService,
                              ComposeService composeService, ConfigService configService,

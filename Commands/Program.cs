@@ -2,13 +2,13 @@
 using System.CommandLine;
 using Microsoft.Extensions.Hosting;
 
-namespace CLI
+namespace Daprify
 {
     public static class Program
     {
         static void Main(string[] args)
         {
-            IHost host = CLIHost.CreateHostBuilder(args).Build() ?? throw new ArgumentNullException(nameof(args));
+            IHost host = DaprifyHost.CreateHostBuilder(args).Build() ?? throw new ArgumentNullException(nameof(args));
 
             IEnumerable<Command> commands = host.Services.GetServices<Command>();
             RootCommand rootCommand = new("CLI for creating configuration files for Dapr services.");
