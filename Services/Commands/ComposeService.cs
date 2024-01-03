@@ -54,8 +54,12 @@ namespace Daprify.Services
         private void GetServicesFromOptions(OptionDictionary options)
         {
             Key serviceKey = new("services");
-            IEnumerable<IProject> services = Project.FromStringList(options.GetAllPairValues(serviceKey).GetValues());
-            _projects.AddRange(services);
+            IEnumerable<Value>? serviceValues = options.GetAllPairValues(serviceKey).GetValues();
+            if (serviceValues != null)
+            {
+                IEnumerable<IProject> services = Project.FromStringList(serviceValues);
+                _projects.AddRange(services);
+            }
         }
 
 

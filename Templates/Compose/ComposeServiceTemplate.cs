@@ -55,7 +55,7 @@ namespace Daprify.Templates
 
     private string GetHttps(OptionValues settings, string servicePort)
     {
-      if (settings.GetStringEnumerable().Contains("https"))
+      if (settings.GetValues() != null && settings.GetStringEnumerable().Contains("https"))
       {
         HttpsServiceTemplate httpsTemplate = _templateFactory.GetTemplateService<HttpsServiceTemplate>();
         return httpsTemplate.Render(servicePort);

@@ -53,7 +53,7 @@ namespace Daprify.Templates
 
     private string GetSettingTemplate(string settingName, OptionValues settings)
     {
-      if (settings.GetStringEnumerable().Contains(settingName) || settingName == "env")
+      if (settings.GetValues() != null && settings.GetStringEnumerable().Contains(settingName) || settingName == "env")
       {
         return settingName switch
         {
