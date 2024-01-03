@@ -48,7 +48,7 @@ namespace Daprify.Validation
             var matchedOpt = _settings.Options.Find(o => o.Aliases.Contains(optionName));
             if (matchedOpt == null)
             {
-                Log.Error("No matched option found for {OptionName}", optionName);
+                Log.Warning("No matched option found for {OptionName}", optionName);
                 return null;
             }
 

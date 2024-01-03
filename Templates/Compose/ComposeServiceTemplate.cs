@@ -1,4 +1,5 @@
 using Daprify.Models;
+using Serilog;
 
 namespace Daprify.Templates
 {
@@ -40,6 +41,7 @@ namespace Daprify.Templates
         https = GetHttps(settings, servicePort),
         dependencies = GetDependsOn(options)
       };
+      Log.Verbose("Adding service template to docker-compose for service: {service}", project.GetName());
 
       return _template(data);
     }

@@ -1,5 +1,6 @@
 
 using Microsoft.Build.Construction;
+using Serilog;
 
 namespace Daprify.Models
 {
@@ -15,12 +16,16 @@ namespace Daprify.Models
         public IEnumerable<Project> GetProjects(Solution solution)
         {
             SolutionFile file = solution.GetSolutionFile();
+            Log.Verbose("Trying to get projects from solution: {solution}", solution.GetPath());
 
             var filteredProjects = file.ProjectsInOrder.Where(project =>
                                         project.ProjectType == SolutionProjectType.KnownToBeMSBuildFormat &&
                                         !project.ProjectName.Contains("Test", StringComparison.OrdinalIgnoreCase));
 
-            return filteredProjects.Select(project => new Project(_query, solution, project.AbsolutePath));
+            var projects = filteredProjects.Select(project => new Project(_query, solution, project.AbsolutePath));
+            Log.Verbose("Found projects: {NewLine}{Paths}", Environment.NewLine, string.Join(Environment.NewLine, projects.Select(project => project.GetPath())));
+
+            return projects;
         }
     }
 }

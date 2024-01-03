@@ -1,4 +1,5 @@
 using Daprify.Models;
+using Serilog;
 
 namespace Daprify.Services
 {
@@ -15,7 +16,6 @@ namespace Daprify.Services
 
             List<IProject> slnProjects = FindProjects(solutions);
             slnProjects = GetDaprServices(slnProjects);
-            CheckDaprProjects(slnProjects);
 
             return UpdateProjectPaths(projectRoot, slnProjects);
         }
@@ -27,15 +27,21 @@ namespace Daprify.Services
 
         private static List<IProject> GetDaprServices(List<IProject> projects)
         {
-            return projects.Where(project => project.CheckPackageReference(DAPR)).ToList();
-        }
+            Log.Verbose("Searching for projects with Dapr package reference...");
+            var daprProjects = projects.Where(project => project.CheckPackageReference(DAPR)).ToList();
 
-        private static void CheckDaprProjects(List<IProject> daprProjects)
-        {
             if (daprProjects.Count == 0)
             {
-                Console.WriteLine("No Dapr services found in the solution! \nUse the --services option to specify the services to generate certificates for.");
+                Log.Error("No projects with Dapr package reference found!");
+                Log.Information("Use the --services option to specify the services");
+                Log.Information("Shutting down...");
+                Environment.Exit(1);
             }
+            else
+            {
+                Log.Verbose("Found projects with Dapr package reference:{NewLine}{Paths}", Environment.NewLine, string.Join(Environment.NewLine, daprProjects.Select(project => project.GetPath())));
+            }
+            return daprProjects;
         }
 
         private static List<IProject> UpdateProjectPaths(MyPath projectRoot, List<IProject> projects)
