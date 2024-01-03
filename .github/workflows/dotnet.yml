@@ -32,8 +32,8 @@ jobs:
       - name: Test
         run: |
           dotnet test --no-build --verbosity normal \
-          --filter "FullyQualifiedName!=CLITests.Commands.TryCertificateCommandTests.Expected_Certificates_Generated \
-          & FullyQualifiedName!=CLITests.Commands.TryCertificateCommandTests.Expected_Env_File_Generated \
-          & FullyQualifiedName!=CLITests.Commands.TryGenAllCommandTests.Expected_Certificates_Generated \
-          & FullyQualifiedName!=CLITests.Commands.TryGenAllCommandTests.Expected_Env_File_Generated \
-          & FullyQualifiedName!=CLITests.Commands.TryGenAllCommandTests.Expected_Config_File_Generates_All"
+          --filter "FullyQualifiedName!=DaprifyTests.Commands.TryCertificateCommandTests.Expected_Certificates_Generated \
+          & FullyQualifiedName!=DaprifyTests.Commands.TryCertificateCommandTests.Expected_Env_File_Generated \
+          & FullyQualifiedName!=DaprifyTests.Commands.TryGenAllCommandTests.Expected_Certificates_Generated \
+          & FullyQualifiedName!=DaprifyTests.Commands.TryGenAllCommandTests.Expected_Env_File_Generated \
+          & FullyQualifiedName!=DaprifyTests.Commands.TryGenAllCommandTests.Expected_Config_File_Generates_All"
