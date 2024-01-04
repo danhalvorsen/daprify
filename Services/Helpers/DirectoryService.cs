@@ -114,16 +114,32 @@ namespace Daprify.Services
         {
             MyPath filePath = MyPath.Combine(workingDir.ToString(), fileName);
             Log.Verbose("Writing content to file: {filePath}", filePath);
-            File.WriteAllText(filePath.ToString(), content);
-            Log.Verbose("Content successfully written to file.");
+            try
+            {
+                File.WriteAllText(filePath.ToString(), content);
+                Log.Verbose("Content successfully written to file.");
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error writing content to file: {filePath}. Exception: {ex}", filePath, ex);
+                throw;
+            }
         }
 
         public static void AppendFile(IPath workingDir, string fileName, string content)
         {
             MyPath filePath = MyPath.Combine(workingDir.ToString(), fileName);
             Log.Verbose("Appending content to existing file: {filePath}", filePath);
-            File.AppendAllText(filePath.ToString(), content);
-            Log.Verbose("Content successfully appended to existing file.");
+            try
+            {
+                File.AppendAllText(filePath.ToString(), content);
+                Log.Verbose("Content successfully appended to existing file.");
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error appending content to existing file: {filePath}. Exception: {ex}", filePath, ex);
+                throw;
+            }
         }
 
         public static MyPath GetCurrentDirectory()

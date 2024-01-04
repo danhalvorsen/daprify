@@ -1,5 +1,6 @@
 using Daprify.Models;
 using Daprify.Templates;
+using Serilog;
 
 namespace Daprify.Services
 {
@@ -15,16 +16,18 @@ namespace Daprify.Services
 
             foreach (Value argument in componentOpt.GetValues())
             {
-                string yaml = GetArgumentTemplate(argument, null!);
-                DirectoryService.WriteFile(workingDir, $"{argument}.yaml", yaml);
+                Log.Verbose("Starting to create template for component: {component}", argument);
+                string yaml = GetArgumentTemplate(argument);
+                DirectoryService.WriteFile(workingDir, $"{argument}.yml", yaml);
                 generatedYamls.Add(argument.ToString());
             }
 
             return generatedYamls;
         }
 
-        private string GetArgumentTemplate(Value argument, string template)
+        private string GetArgumentTemplate(Value argument)
         {
+            Log.Verbose("Getting template for component: {component}", argument);
             return argument.ToString().ToLower() switch
             {
                 "bindings" => _templateFactory.CreateTemplate<BindingsTemplate>(),
