@@ -14,7 +14,7 @@ namespace Daprify.Settings
         public static string SolutionOptionDescription { get; set; } = "The path to your .Net solution file (from executing path). Used to generate dockerfile for all projects in the sln file.";
 
         private static readonly Option<List<string>> ProjectOption = new(ProjectOptionName, ProjectOptionDescription);
-        private static readonly Option<List<string>> SolutionOption = new(SolutionOptionName, SolutionOptionDescription) { AllowMultipleArgumentsPerToken = true };
+        private static readonly Option<List<string>> SolutionOption = new(SolutionOptionName, SolutionOptionDescription) { AllowMultipleArgumentsPerToken = true, IsRequired = true };
         public List<Option<List<string>>> Options { get; set; } = [ProjectOption, SolutionOption];
     }
 }

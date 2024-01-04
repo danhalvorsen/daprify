@@ -1,4 +1,5 @@
 using Daprify.Models;
+using Serilog;
 
 namespace Daprify.Templates
 {
@@ -34,6 +35,8 @@ ENTRYPOINT [""dotnet"", ""{{ServiceName}}.dll""]";
                 ServicePath = servicePath.ToString(),
                 ServiceName = serviceName.ToString(),
             };
+
+            Log.Verbose("Getting Dockerfile template for {ServiceName}", serviceName);
             return _template(data);
         }
     }
