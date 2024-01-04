@@ -21,6 +21,7 @@ namespace Daprify.Services
 
         public static MyPath SetDirectory(string dirPath)
         {
+            Log.Verbose("Setting working directory...");
             MyPath baseDir = CheckProjectType(GetCurrentDirectory());
             MyPath workingDir = MyPath.Combine(baseDir.ToString(), DAPR, dirPath);
 

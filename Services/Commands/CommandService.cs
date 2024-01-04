@@ -26,7 +26,7 @@ namespace Daprify.Services
             }
         }
 
-        private void PrintExecuting()
+        public void PrintExecuting()
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"Executing command: {GetType().Name[..^7]}");

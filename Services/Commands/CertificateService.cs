@@ -13,7 +13,7 @@ namespace Daprify.Services
 
         public override void Generate(OptionDictionary options)
         {
-            Log.Verbose("Starting to generate certificates...");
+            PrintExecuting();
 
             IPath certDir = DirectoryService.SetDirectory(WORKING_DIR);
             Process certProcess = GetProcess(certDir, genCert);
