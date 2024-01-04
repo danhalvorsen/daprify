@@ -16,8 +16,6 @@ namespace Daprify.Services
 
         protected override List<string> CreateFiles(OptionDictionary options, IPath workingDir)
         {
-            Log.Verbose("Starting to create Dockerfiles.");
-
             GetServices(options);
             DockerfileTemplate dockerfileTemp = GetDockerfile();
             GenDockerFile(dockerfileTemp, workingDir);
