@@ -14,24 +14,32 @@ namespace Daprify.Services
             {
                 IPath workingDir = DirectoryService.SetDirectory(_directoryName);
                 Log.Verbose("Successfully created working directory: {working}", workingDir);
-                List<string> generatedFiles = CreateFiles(options, workingDir);
+                IEnumerable<string> generatedFiles = CreateFiles(options, workingDir);
 
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Command executed successfully!");
-                Console.ResetColor();
-                Console.WriteLine("Generated files:");
-                foreach (string file in generatedFiles)
-                {
-                    Console.WriteLine($"    - {file}");
-                }
+                WriteOutput(generatedFiles);
             }
             catch (Exception ex)
             {
-                Log.Error($"An error occurred: {ex.Message}");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Erorr: {ex.Message}");
+                Console.ResetColor();
             }
         }
 
-        protected virtual List<string> CreateFiles(OptionDictionary options, IPath workingDir) => [];
+        public virtual void WriteOutput(IEnumerable<string> generatedFiles)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Command executed successfully!");
+            Console.ResetColor();
+            Console.WriteLine("Generated files:");
+            foreach (string file in generatedFiles)
+            {
+                Console.WriteLine($"    - {file}");
+            }
+        }
+
+
+        protected virtual IEnumerable<string> CreateFiles(OptionDictionary options, IPath workingDir) => [];
 
         [GeneratedRegex(@"^\s*.*\{\{\s*\}\}.*(\r?\n|\r)?", RegexOptions.Multiline | RegexOptions.Compiled)]
         public static partial Regex PlaceholderRegex();

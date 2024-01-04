@@ -1,11 +1,6 @@
-#!/bin/bash
+#!bash
 
 base_dir="$1"
-
-# working_dir="$base_dir/Dapr/Certs"
-
-# Create directory if it doesn't exist
-# mkdir -p "$working_dir"
 
 ca_crt="$base_dir/ca.crt"
 ca_key="$base_dir/ca.key"
@@ -20,6 +15,10 @@ create_certificate() {
   local ca_key=$5
 
   step certificate create cluster.local "$crt_file" "$key_file" --ca "$ca_crt" --ca-key "$ca_key" --profile "$profile" --no-password --insecure
+  if [ $? -ne 0 ]; then
+    echo "Error creating certificates"
+    exit 1
+  fi
 }
 
 create_certificate "root-ca" "$ca_crt" "$ca_key" "" ""
@@ -27,3 +26,7 @@ create_certificate "intermediate-ca" "$issuer_crt" "$issuer_key" "$ca_crt" "$ca_
 
 # Remove the CA key as it is not needed for Dapr
 rm "$ca_key"
+if [ $? -ne 0 ]; then
+  echo "Error removing CA key"
+  exit 1
+fi
