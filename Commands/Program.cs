@@ -17,7 +17,6 @@ namespace Daprify
 
             IEnumerable<Command> commands = host.Services.GetServices<Command>();
             RootCommand rootCommand = new("CLI for creating configuration files for Dapr services.");
-            rootCommand.AddGlobalOption(new Option<bool>("--verbose", "Enable verbose output"));
 
             commands.ToList().ForEach(rootCommand.AddCommand);
 
