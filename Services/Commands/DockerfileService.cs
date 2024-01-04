@@ -1,5 +1,6 @@
 using Daprify.Models;
 using Daprify.Templates;
+using Serilog;
 
 namespace Daprify.Services
 {
@@ -10,7 +11,7 @@ namespace Daprify.Services
         private const string DOCKER_NAME = "Docker";
         private const string DOCKERFILE_EXT = ".Dockerfile";
         private readonly IQuery _query = query;
-        IEnumerable<IProject> _projects = [];
+        private readonly List<IProject> _projects = [];
 
 
         protected override List<string> CreateFiles(OptionDictionary options, IPath workingDir)
@@ -19,33 +20,48 @@ namespace Daprify.Services
             DockerfileTemplate dockerfileTemp = GetDockerfile();
             GenDockerFile(dockerfileTemp, workingDir);
 
-            return ["Dockerfile"];
+            return _projects.Select(project => project.GetName() + DOCKERFILE_EXT).ToList();
         }
 
         private void GetServices(OptionDictionary options)
         {
             MyPath projectRoot = GetProjectRoot(options);
-            IEnumerable<Solution> solutions = GetSolutions(options);
-
-            _projects = SolutionService.GetDaprServicesFromSln(projectRoot, solutions);
+            GetSolutions(options, projectRoot);
         }
 
         private static MyPath GetProjectRoot(OptionDictionary options)
         {
-            Key projectPathKey = new("project_path");
-            OptionValues projectPathOpt = options.GetAllPairValues(projectPathKey);
-            MyPath projectRoot = projectPathOpt.Count() > 0 ? new(projectPathOpt.GetStringEnumerable().First()) : new(string.Empty);
+            Log.Verbose("Getting project root for Dockerfile generation.");
 
+            Key projectPathKey = new("project_path");
+            var projectPathOpt = options.GetAllPairValues(projectPathKey).GetValues();
+
+            MyPath projectRoot = new(string.Empty);
+            if (projectPathOpt != null && projectPathOpt.Count() > 1)
+            {
+                projectRoot = new(projectPathOpt.First());
+            }
+
+            Log.Verbose("Project root determined: {ProjectRoot}", projectRoot.ToString() == string.Empty ? "Could not find any project root!" : projectRoot);
             return projectRoot;
         }
 
-        private IEnumerable<Solution> GetSolutions(OptionDictionary options)
+        private void GetSolutions(OptionDictionary options, MyPath projectRoot)
         {
+            Log.Verbose("Retrieving solutions for Dockerfile generation.");
             Key solutionKey = new("solution_paths");
-            IEnumerable<MyPath> solutionPaths = MyPath.FromStringList(options.GetAllPairValues(solutionKey).GetValues());
-            IEnumerable<Solution> solutions = solutionPaths.Select(path => new Solution(_query, _projectProvider, path));
+            var solutionOpt = options.GetAllPairValues(solutionKey).GetValues();
 
-            return solutions;
+            if (solutionOpt != null)
+            {
+                Log.Verbose("Searching for solutions...");
+
+                IEnumerable<MyPath> solutionPaths = MyPath.FromStringList(solutionOpt);
+                IEnumerable<Solution> solutions = solutionPaths.Select(path => new Solution(_query, _projectProvider, path));
+
+                IEnumerable<IProject> projects = SolutionService.GetDaprServicesFromSln(projectRoot, solutions);
+                _projects.AddRange(projects);
+            }
         }
 
         private void GenDockerFile(DockerfileTemplate dockerfileTemp, IPath workingDir)
@@ -59,7 +75,10 @@ namespace Daprify.Services
 
         private DockerfileTemplate GetDockerfile()
         {
-            return _templateFactory.GetTemplateService<DockerfileTemplate>();
+            Log.Verbose("Getting Dockerfile template.");
+            DockerfileTemplate dockerfileTemplate = _templateFactory.GetTemplateService<DockerfileTemplate>();
+            Log.Verbose("Dockerfile template retrieved.");
+            return dockerfileTemplate;
         }
     }
 }

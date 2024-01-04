@@ -1,3 +1,4 @@
+using Serilog;
 using System.Xml.Linq;
 
 namespace Daprify.Models
@@ -68,7 +69,9 @@ namespace Daprify.Models
 
         public void SetRelativeProjectPath(IPath basePath)
         {
+            Log.Verbose("Setting relative root project path for project: {project}", _name);
             _relativeProjPath = new RelativePath(basePath, _path);
+            Log.Verbose("Relative root project path set for project: {project}", _relativeProjPath);
         }
 
         public bool CheckPackageReference(string dependency) => _query.CheckPackageReference(this, dependency);

@@ -1,4 +1,5 @@
 using Daprify.Models;
+using Serilog;
 using System.Text.RegularExpressions;
 
 namespace Daprify.Services
@@ -11,29 +12,50 @@ namespace Daprify.Services
         {
             try
             {
+                PrintExecuting();
                 IPath workingDir = DirectoryService.SetDirectory(_directoryName);
-                List<string> generatedFiles = CreateFiles(options, workingDir);
+                IEnumerable<string> generatedFiles = CreateFiles(options, workingDir);
 
-                Console.WriteLine(FormatOutput(generatedFiles));
+                PrintFinish(generatedFiles);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"An error occurred: {ex.Message}");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Error: {ex.Message}");
+                Console.ResetColor();
             }
         }
 
-        protected virtual List<string> CreateFiles(OptionDictionary options, IPath workingDir) => [];
-
-        protected string FormatOutput(List<string> generatedFiles)
+        public void PrintExecuting()
         {
-            if (generatedFiles.Count == 0)
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine($"Executing command: {GetType().Name[..^7]}");
+            Console.ResetColor();
+        }
+
+        public virtual void PrintFinish(IEnumerable<string> generatedFiles)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Command executed successfully!");
+            Console.ResetColor();
+
+            if (generatedFiles == null || !generatedFiles.Any())
             {
-                return $"No {_directoryName.ToLower()} files were generated.";
+
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("No files generated!");
+                Console.ResetColor();
+                return;
             }
 
-            string fileList = string.Join(", ", generatedFiles);
-            return $"The {_directoryName.ToLower()} files: {fileList} were generated successfully.";
+            Console.WriteLine("Generated files:");
+            foreach (string file in generatedFiles)
+            {
+                Console.WriteLine($"    - {file}");
+            }
         }
+
+        protected virtual IEnumerable<string> CreateFiles(OptionDictionary options, IPath workingDir) => [];
 
         [GeneratedRegex(@"^\s*.*\{\{\s*\}\}.*(\r?\n|\r)?", RegexOptions.Multiline | RegexOptions.Compiled)]
         public static partial Regex PlaceholderRegex();

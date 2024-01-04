@@ -1,4 +1,5 @@
 using Daprify.Models;
+using Serilog;
 
 namespace Daprify.Templates
 {
@@ -24,6 +25,7 @@ namespace Daprify.Templates
             {
                 components = componentTemplates
             };
+            Log.Verbose("Adding component templates to docker-compose: {Components}", componentOpt.GetValues());
 
             return _template(data);
         }

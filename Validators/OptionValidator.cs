@@ -1,6 +1,7 @@
 using Daprify.Models;
 using Daprify.Settings;
 using FluentValidation;
+using Serilog;
 using System.CommandLine.Parsing;
 
 namespace Daprify.Validation
@@ -31,11 +32,14 @@ namespace Daprify.Validation
         public IEnumerable<MyPath> GetPaths(CommandResult commandResult, string optionName)
         {
             OptionValues? options = GetOptionValue(commandResult, optionName);
-            if (options == null)
+            if (options == null || !options.GetValues().Any())
             {
+                Log.Warning("No values found to validate for option {OptionName}", optionName);
                 return Enumerable.Empty<MyPath>();
             }
             IEnumerable<MyPath> paths = MyPath.FromStringList(options.GetValues());
+
+            Log.Verbose("Found values to validate for option {OptionName}: {OptionValues}", optionName, paths);
             return paths;
         }
 
@@ -44,6 +48,7 @@ namespace Daprify.Validation
             var matchedOpt = _settings.Options.Find(o => o.Aliases.Contains(optionName));
             if (matchedOpt == null)
             {
+                Log.Warning("Command does not have option {OptionName} to validate", optionName);
                 return null;
             }
 

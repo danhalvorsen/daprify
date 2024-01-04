@@ -1,4 +1,5 @@
 using Daprify.Models;
+using Serilog;
 
 namespace Daprify.Templates
 {
@@ -30,14 +31,16 @@ spec:
         mtls = GetSettingTemplate("mtls", settings),
         tracing = GetSettingTemplate("tracing", settings),
       };
+      Log.Verbose("Adding settings to template...");
 
       return _template(data);
     }
 
     private string GetSettingTemplate(string settingName, OptionValues settings)
     {
-      if (settings.GetStringEnumerable().Contains(settingName))
+      if (settings.GetValues() != null && settings.GetStringEnumerable().Contains(settingName))
       {
+        Log.Verbose("Getting template for setting: {setting}", settingName);
         return settingName switch
         {
           "logging" => _templateFactory.CreateTemplate<LoggingTemplate>(),

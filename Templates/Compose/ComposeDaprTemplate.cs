@@ -1,4 +1,5 @@
 using Daprify.Models;
+using Serilog;
 
 namespace Daprify.Templates
 {
@@ -46,6 +47,7 @@ namespace Daprify.Templates
         mtls = mtlsSetting,
         env_file = mtlsSetting != "{{}}" ? GetSettingTemplate("env", settings) : "{{}}"
       };
+      Log.Verbose("Adding dapr template to docker-compose for service: {service}", project.GetName());
 
       return _template(data);
     }
@@ -53,7 +55,7 @@ namespace Daprify.Templates
 
     private string GetSettingTemplate(string settingName, OptionValues settings)
     {
-      if (settings.GetStringEnumerable().Contains(settingName) || settingName == "env")
+      if (settings.GetValues() != null && settings.GetStringEnumerable().Contains(settingName) || settingName == "env")
       {
         return settingName switch
         {

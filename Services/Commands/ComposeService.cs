@@ -1,5 +1,6 @@
 using Daprify.Models;
 using Daprify.Templates;
+using Serilog;
 using System.Text;
 
 namespace Daprify.Services
@@ -11,11 +12,9 @@ namespace Daprify.Services
         private readonly IProjectProvider _projectProvider = projectProvider;
         private const string DOCKER_NAME = "Docker";
         private const string FILE_NAME = "docker-compose.yml";
-        private bool _addMtls = false;
         private int _startPort = 1000;
         private readonly int _nextPort = 500;
-        private List<IProject> _projects = [];
-
+        private readonly List<IProject> _projects = [];
 
         protected override List<string> CreateFiles(OptionDictionary options, IPath workingDir)
         {
@@ -27,14 +26,19 @@ namespace Daprify.Services
             composeBuilder.Append(GetComposeStart(workingDir));
             AppendServices(options, composeBuilder);
             AppendComponents(options, composeBuilder);
-            AppendSentry(composeBuilder);
+            AppendSentry(options, composeBuilder);
 
-            string compose = PlaceholderRegex().Replace(composeBuilder.ToString(), string.Empty);
-            DirectoryService.WriteFile(workingDir, FILE_NAME, compose);
+            string compose = RemovePlaceholders(composeBuilder);
+            DirectoryService.AppendFile(workingDir, FILE_NAME, compose);
 
-            return ["docker-compose"];
+            return [FILE_NAME];
         }
 
+        private static string RemovePlaceholders(StringBuilder composeBuilder)
+        {
+            Log.Verbose("Removing placeholders from the template...");
+            return PlaceholderRegex().Replace(composeBuilder.ToString(), string.Empty);
+        }
 
         private void GetServicesFromSln(OptionDictionary options)
         {
@@ -43,8 +47,11 @@ namespace Daprify.Services
 
             if (solutionPathValues != null)
             {
+                Log.Verbose("Searching for solutions...");
+
                 IEnumerable<MyPath> solutionPaths = MyPath.FromStringList(solutionPathValues);
                 IEnumerable<Solution> solutions = solutionPaths.Select(path => new Solution(_query, _projectProvider, path));
+
                 IEnumerable<IProject> projects = SolutionService.GetDaprServicesFromSln(new(string.Empty), solutions);
                 _projects.AddRange(projects);
             }
@@ -54,15 +61,29 @@ namespace Daprify.Services
         private void GetServicesFromOptions(OptionDictionary options)
         {
             Key serviceKey = new("services");
-            IEnumerable<IProject> services = Project.FromStringList(options.GetAllPairValues(serviceKey).GetValues());
-            _projects.AddRange(services);
+            IEnumerable<Value>? serviceValues = options.GetAllPairValues(serviceKey).GetValues();
+            if (serviceValues != null)
+            {
+                IEnumerable<IProject> services = Project.FromStringList(serviceValues);
+                Log.Verbose("Found services from service option: {services}", services.Select(service => service.GetName()));
+                _projects.AddRange(services);
+            }
         }
 
 
         private string GetComposeStart(IPath workingDir)
         {
             MyPath filepath = MyPath.Combine(workingDir.ToString(), FILE_NAME);
-            return File.Exists(filepath.ToString()) ? "\n\n" : _templateFactory.CreateTemplate<ComposeStartTemplate>();
+            if (File.Exists(filepath.ToString()))
+            {
+                Log.Verbose("Found existing docker-compose.yml file, appending to it...");
+                return "\n\n";
+            }
+            else
+            {
+                Log.Verbose("No existing docker-compose.yml file found, creating new one...");
+                return _templateFactory.CreateTemplate<ComposeStartTemplate>();
+            }
         }
 
 
@@ -76,6 +97,7 @@ namespace Daprify.Services
                 string port = SetServicePort();
                 composeBuilder.Append(composeService.Render(options, project, port));
                 composeBuilder.Append(composeDapr.Render(options, project, port));
+                Log.Verbose("Successfully added templates for service: {service}", project.GetName());
             }
         }
 
@@ -83,14 +105,18 @@ namespace Daprify.Services
         {
             ComposeComponentTemplate composeComponent = _templateFactory.GetTemplateService<ComposeComponentTemplate>();
             composeBuilder.Append(composeComponent.Render(options));
+            Log.Verbose("Successfully added templates for components");
         }
 
-        private void AppendSentry(StringBuilder template)
+        private void AppendSentry(OptionDictionary options, StringBuilder template)
         {
-            if (_addMtls)
+            Log.Verbose("Checking if mtls is given as input...");
+            Key sentryKey = new("settings");
+            OptionValues settings = options.GetAllPairValues(sentryKey);
+            if (settings.GetValues() != null && settings.GetStringEnumerable().Contains("mtls"))
             {
+                Log.Verbose("mtls is given as input, adding sentry template...");
                 template.Append(_templateFactory.CreateTemplate<SentryTemplate>());
-                _addMtls = false;
             }
         }
 

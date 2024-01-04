@@ -1,4 +1,5 @@
 using Microsoft.Build.Construction;
+using Serilog;
 
 namespace Daprify.Models
 {
@@ -30,6 +31,7 @@ namespace Daprify.Models
             _path = new(slnPath);
             _solution = SolutionFile.Parse(_path.ToString());
             _projectProvider = projectProvider;
+            Log.Verbose("Found solution: {solution}", this.GetPath());
         }
 
         public IPath GetPath() => _path;

@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
-using System.Text;
 using Daprify.Models;
+using Serilog;
 
 namespace Daprify.Services
 {
@@ -13,29 +13,26 @@ namespace Daprify.Services
 
         public override void Generate(OptionDictionary options)
         {
-            StringBuilder errorOutput = new();
+            PrintExecuting();
 
-            Process certProcess = GetProcess(genCert);
-            Process envProcess = GetProcess(readWriteEnv);
+            IPath certDir = DirectoryService.SetDirectory(WORKING_DIR);
+            Process certProcess = GetProcess(certDir, genCert);
+            Process envProcess = GetProcess(certDir, readWriteEnv);
 
-            StartProcess(certProcess, errorOutput);
-            certProcess.WaitForExit();
-
-            if (certProcess.ExitCode == 0)
-            {
-                StartProcess(envProcess, errorOutput);
-                envProcess.WaitForExit();
-            }
+            StartProcess(certProcess);
+            CreateEnvFile(certProcess, envProcess);
         }
 
-        private static Process GetProcess(Name scriptName)
+
+        private static Process GetProcess(IPath certDir, Name scriptName)
         {
-            IPath certDir = DirectoryService.SetDirectory(WORKING_DIR);
+            Log.Verbose("Getting process for script: {scriptName}...", scriptName);
 
             MyPath scriptPath = BuildScriptPath(scriptName);
             string arguments = BuildArguments(certDir, scriptPath);
             Process process = CreateProcess(arguments);
 
+            Log.Verbose("Process created");
             return process;
         }
 
@@ -43,20 +40,25 @@ namespace Daprify.Services
         {
             const string SCRIPT_DIR_NAME = "Scripts";
             DirectoryInfo cliDir = DirectoryService.FindDirectoryUpwards("daprify");
+            MyPath scriptPath = MyPath.Combine(cliDir.FullName, SCRIPT_DIR_NAME, scriptName.ToString());
 
-            return MyPath.Combine(cliDir.FullName, SCRIPT_DIR_NAME, scriptName.ToString());
+            Log.Verbose("Script path: {scriptPath}", scriptPath);
+            return scriptPath;
         }
 
         private static string BuildArguments(IPath certDir, IPath scriptPath)
         {
-            return $"{scriptPath} {certDir}";
+            string arguments = $"{scriptPath} {certDir}";
+            Log.Verbose("Script arguments: {arguments}", arguments);
+            return arguments;
         }
 
         private static Process CreateProcess(string arguments)
         {
+            Log.Verbose("Creating script process...");
             var startInfo = new ProcessStartInfo
             {
-                FileName = "/bin/bash",
+                FileName = "bash",
                 Arguments = arguments,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -67,13 +69,15 @@ namespace Daprify.Services
             return new Process { StartInfo = startInfo };
         }
 
-        private static void StartProcess(Process process, StringBuilder errorOutput)
+        private static void StartProcess(Process process)
         {
+            Log.Verbose("Starting script process...");
             process.Start();
             process.BeginOutputReadLine();
             process.BeginErrorReadLine();
             process.OutputDataReceived += OnOutputDataReceived;
-            process.ErrorDataReceived += (sender, e) => CollectErrorData(e, errorOutput);
+            process.ErrorDataReceived += (sender, e) => CollectErrorData(e);
+            process.WaitForExit();
         }
 
         private static void OnOutputDataReceived(object sender, DataReceivedEventArgs e)
@@ -84,13 +88,35 @@ namespace Daprify.Services
             }
         }
 
-        private static void CollectErrorData(DataReceivedEventArgs e, StringBuilder errorOutput)
+        private static void CollectErrorData(DataReceivedEventArgs e)
         {
             if (!string.IsNullOrEmpty(e.Data))
             {
-                errorOutput.AppendLine(e.Data);
                 Console.WriteLine(e.Data);
             }
+        }
+
+        private static void CreateEnvFile(Process certProcess, Process envProcess)
+        {
+            if (certProcess.ExitCode == 0)
+            {
+                PrintSuccess("certificates");
+                Log.Verbose("Starting to create environment file");
+
+                StartProcess(envProcess);
+
+                if (envProcess.ExitCode == 0)
+                {
+                    PrintSuccess("environmental file");
+                }
+            }
+        }
+
+        private static void PrintSuccess(string name)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"Successfully created {name}");
+            Console.ResetColor();
         }
     }
 }
