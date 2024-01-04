@@ -22,7 +22,7 @@ namespace DaprifyTests.Commands
         private readonly TemplateFactory _templateFactory;
         private readonly DirectoryInfo _startingDir = new(Directory.GetCurrentDirectory());
 
-        private const string FILE_EXT = ".yaml", COMPONENTS_DIR = "Dapr/Components";
+        private const string FILE_EXT = ".yml", COMPONENTS_DIR = "Dapr/Components";
         private readonly OptionValues arguments = new(["pubsub", "statestore"]);
 
         public TryComponentCommandTests()

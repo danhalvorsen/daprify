@@ -22,7 +22,7 @@ namespace DaprifyTests.Commands
         private readonly TemplateFactory _templateFactory;
         private readonly DirectoryInfo _startingDir = new(Directory.GetCurrentDirectory());
 
-        private const string EXPECTED_FILENAME = "config.yaml", DAPR_DIR = "Dapr", CONFIG_FILE = "config.yaml", CONFIG_DIR = "Config/";
+        private const string EXPECTED_FILENAME = "config.yaml", DAPR_DIR = "Dapr", CONFIG_FILE = "config.yml", CONFIG_DIR = "Config/";
         private readonly List<string> arguments = ["mtls", "tracing",];
 
         public TryConfigCommandTests()
