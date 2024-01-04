@@ -24,14 +24,20 @@ namespace Daprify.Services
             MyPath baseDir = CheckProjectType(GetCurrentDirectory());
             MyPath workingDir = MyPath.Combine(baseDir.ToString(), DAPR, dirPath);
 
-            Log.Verbose("Creating working directory, if not already existing: {workingDir}", workingDir);
-            Directory.CreateDirectory(workingDir.ToString());
+            bool dirExists = Directory.Exists(workingDir.ToString());
+            Log.Verbose(dirExists ? "Working directory already exists: {workingDir}" : "Creating working directory: {workingDir}", workingDir);
+
+            if (!dirExists)
+            {
+                Directory.CreateDirectory(workingDir.ToString());
+                Log.Verbose("Working directory successfully created: {workingDir}", workingDir);
+            }
             return workingDir;
         }
 
         public static MyPath CheckProjectType(IPath dirPath)
         {
-            Log.Verbose("Checking project type...");
+            Log.Verbose("Checking where the program is executed from...");
             string? isTestProject = Environment.GetEnvironmentVariable("isTestProject");
             if (isTestProject == "true")
             {
@@ -40,7 +46,7 @@ namespace Daprify.Services
             }
             else
             {
-                Log.Verbose("Program is not a test project.");
+                Log.Verbose("Program executing normally.");
                 return GetGitRootDirectory(dirPath);
             }
         }

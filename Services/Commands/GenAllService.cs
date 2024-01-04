@@ -1,4 +1,5 @@
 using Daprify.Models;
+using Serilog;
 
 namespace Daprify.Services
 {
@@ -30,10 +31,14 @@ namespace Daprify.Services
         private static OptionDictionary LoadConfig(OptionDictionary options)
         {
             Key configKey = new("config");
-            Value? config = options.GetAllPairValues(configKey).GetValues().FirstOrDefault();
+            Log.Verbose("Checking for config file...");
+            IEnumerable<Value> config = options.GetAllPairValues(configKey).GetValues();
+
             if (config != null)
             {
-                options = OptionDictionary.PopulateFromJson(config.ToString());
+                string configPath = config.First().ToString();
+                Log.Verbose("Loading config from {config}", configPath);
+                options = OptionDictionary.PopulateFromJson(configPath);
             }
 
             return options;
@@ -42,9 +47,9 @@ namespace Daprify.Services
         private void GenerateCerts(OptionDictionary options, OptionValues settingOpt)
         {
             Value mtls = new("mtls");
-            bool enableMtls = settingOpt.Contain(mtls);
+            var enableMtls = settingOpt.GetValues();
 
-            if (enableMtls)
+            if (enableMtls != null && enableMtls.Contains(mtls))
             {
                 _certificateService.Generate(options);
             }
@@ -53,8 +58,8 @@ namespace Daprify.Services
         private void RemoveHttps(OptionDictionary options, OptionValues settingOpt)
         {
             Value https = new("https");
-            bool useHttps = settingOpt.GetValues().Contains(https);
-            if (useHttps)
+            var useHttps = settingOpt.GetValues();
+            if (useHttps != null && useHttps.Contains(https))
             {
                 options.Remove(_settingKey, https);
             }

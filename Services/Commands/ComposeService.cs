@@ -51,7 +51,6 @@ namespace Daprify.Services
 
                 IEnumerable<MyPath> solutionPaths = MyPath.FromStringList(solutionPathValues);
                 IEnumerable<Solution> solutions = solutionPaths.Select(path => new Solution(_query, _projectProvider, path));
-                Log.Verbose("Found solutions: {solutions}", solutions.Select(solution => solution.GetPath()));
 
                 IEnumerable<IProject> projects = SolutionService.GetDaprServicesFromSln(new(string.Empty), solutions);
                 _projects.AddRange(projects);

@@ -18,7 +18,7 @@ namespace Daprify.Commands
         private readonly Settings _settings;
         private readonly OptionValidator _validator;
         private readonly OptionDictionary _optionArguments = [];
-        private readonly Option<bool> _verboseOption = new("--verbose", "Enable verbose logging");
+        private readonly Option<bool> _verboseOption = new(["--v", "--verbose"], "Enable verbose logging");
 
         public DaprifyCommand(Service service, Settings settings, IOptionValidatorFactory validatorFactory)
             : base(settings.CommandName, settings.CommandDescription + settings.CommandExample)
@@ -42,7 +42,7 @@ namespace Daprify.Commands
 
         private void Execute(InvocationContext context)
         {
-            Console.WriteLine("Executing Command...");
+            Console.WriteLine("Starting to execute command...");
             AddLogging(context);
             ValidateCommand(context.ParseResult.CommandResult);
             GetOptionArguments(context);

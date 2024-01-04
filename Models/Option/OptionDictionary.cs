@@ -1,3 +1,4 @@
+using Serilog;
 using System.Collections;
 using System.Text.Json;
 
@@ -10,6 +11,7 @@ namespace Daprify.Models
         public void Add(Key key, OptionValues optionValues)
         {
             _optionDictionary[key] = optionValues;
+            Log.Verbose("Added option {key} with values {values}", key, optionValues.GetStringEnumerable());
         }
 
         public void Remove(Key key, Value value)
@@ -42,6 +44,7 @@ namespace Daprify.Models
             {
                 OptionValues optionValues = new(pair.Value);
                 Key key = new(pair.Key);
+                Log.Verbose("Adding option {key} with values {values}", key, optionValues.GetStringEnumerable());
                 options.Add(key, optionValues);
             }
 

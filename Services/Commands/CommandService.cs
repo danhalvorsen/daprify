@@ -12,32 +12,48 @@ namespace Daprify.Services
         {
             try
             {
+                PrintExecuting();
                 IPath workingDir = DirectoryService.SetDirectory(_directoryName);
-                Log.Verbose("Successfully created working directory: {working}", workingDir);
                 IEnumerable<string> generatedFiles = CreateFiles(options, workingDir);
 
-                WriteOutput(generatedFiles);
+                PrintFinish(generatedFiles);
             }
             catch (Exception ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"Erorr: {ex.Message}");
+                Console.WriteLine($"Error: {ex.Message}");
                 Console.ResetColor();
             }
         }
 
-        public virtual void WriteOutput(IEnumerable<string> generatedFiles)
+        private void PrintExecuting()
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine($"Executing command: {GetType().Name[..^7]}");
+            Console.ResetColor();
+        }
+
+        public virtual void PrintFinish(IEnumerable<string> generatedFiles)
         {
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Command executed successfully!");
             Console.ResetColor();
+
+            if (generatedFiles == null || !generatedFiles.Any())
+            {
+
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("No files generated!");
+                Console.ResetColor();
+                return;
+            }
+
             Console.WriteLine("Generated files:");
             foreach (string file in generatedFiles)
             {
                 Console.WriteLine($"    - {file}");
             }
         }
-
 
         protected virtual IEnumerable<string> CreateFiles(OptionDictionary options, IPath workingDir) => [];
 
