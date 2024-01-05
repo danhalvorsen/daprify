@@ -26,32 +26,15 @@ namespace Daprify.Services
         private void GetServices(OptionDictionary options)
         {
             MyPath projectRoot = CheckRootPath(options);
-            GetSolutions(options, projectRoot);
-        }
-
-        private void GetSolutions(OptionDictionary options, MyPath projectRoot)
-        {
-            Log.Verbose("Retrieving solutions for Dockerfile generation.");
-            Key solutionKey = new("solution_paths");
-            var solutionOpt = options.GetAllPairValues(solutionKey).GetValues();
-
-            if (solutionOpt != null)
-            {
-                Log.Verbose("Searching for solutions...");
-
-                IEnumerable<MyPath> solutionPaths = MyPath.FromStringList(solutionOpt);
-                IEnumerable<Solution> solutions = solutionPaths.Select(path => new Solution(_query, _projectProvider, path));
-
-                IEnumerable<IProject> projects = SolutionService.GetDaprServicesFromSln(projectRoot, solutions);
-                _projects.AddRange(projects);
-            }
+            _projects.AddRange(GetServicesFromSln(options, _query, _projectProvider, projectRoot));
+            _projects.AddRange(GetServicesFromOptions(options));
         }
 
         private void GenDockerFile(DockerfileTemplate dockerfileTemp, IPath workingDir)
         {
             foreach (IProject project in _projects)
             {
-                string dockerfile = dockerfileTemp.Render(project.GetRelativeProjPath(), project.GetName());
+                string dockerfile = dockerfileTemp.Render(project);
                 DirectoryService.WriteFile(workingDir, project.GetName() + DOCKERFILE_EXT, dockerfile);
             }
         }

@@ -69,6 +69,37 @@ namespace Daprify.Services
             return null!;
         }
 
+        public static IEnumerable<IProject> GetServicesFromSln(OptionDictionary options, IQuery query, IProjectProvider projectProvider, MyPath projectRoot)
+        {
+            return GetServices(options, "solution_paths", values =>
+            {
+                Log.Verbose("Searching for solutions...");
+                var solutionPaths = MyPath.FromStringList(values);
+                var solutions = solutionPaths.Select(path => new Solution(query, projectProvider, path));
+                return SolutionService.GetDaprServicesFromSln(projectRoot, solutions);
+            });
+        }
+
+        public static IEnumerable<IProject> GetServicesFromOptions(OptionDictionary options)
+        {
+            return GetServices(options, "services", values =>
+            {
+                var services = Project.FromStringList(values);
+                Log.Verbose("Found services from service option: {services}", services.Select(service => service.GetName()));
+                return services;
+            });
+        }
+
+        private static IEnumerable<IProject> GetServices(OptionDictionary options, string key, Func<IEnumerable<Value>, IEnumerable<IProject>> serviceExtractor)
+        {
+            IEnumerable<Value> values = options.GetAllPairValues(new Key(key)).GetValues();
+            if (values != null)
+            {
+                return serviceExtractor(values);
+            }
+            return Enumerable.Empty<IProject>();
+        }
+
         public virtual void PrintFinish(IEnumerable<string> generatedFiles)
         {
             Console.ForegroundColor = ConsoleColor.Green;
