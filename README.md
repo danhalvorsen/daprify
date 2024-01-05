@@ -11,9 +11,10 @@ Read more at **[Dapr Resources](#additional-resources)**
 ## Usage
 
 1. Define your project requirements in the `config.json` file located in `Daprify/Commands`.
-2. Run the available commands in your terminal. Outputs are saved to **Daprify/Dapr/**.
-3. Copy the **Dapr** directory into your own project's root directory.
-4. Run **docker-compose up -d** inside Dapr/Docker.
+2. Run the available commands in your terminal.
+3. If project_path or solution_paths is given the outputs are saved directly into your project's root in **<YOUR_PROJECT>/Dapr/**.
+4. If not, they are saved in **Daprify/Dapr/**. Copy the **Dapr** directory into your own project's root directory.
+5. Run **docker-compose up -d** inside Dapr/Docker.
 
 ### General Usage
 

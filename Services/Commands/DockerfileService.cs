@@ -25,25 +25,8 @@ namespace Daprify.Services
 
         private void GetServices(OptionDictionary options)
         {
-            MyPath projectRoot = GetProjectRoot(options);
+            MyPath projectRoot = CheckRootPath(options);
             GetSolutions(options, projectRoot);
-        }
-
-        private static MyPath GetProjectRoot(OptionDictionary options)
-        {
-            Log.Verbose("Getting project root for Dockerfile generation.");
-
-            Key projectPathKey = new("project_path");
-            var projectPathOpt = options.GetAllPairValues(projectPathKey).GetValues();
-
-            MyPath projectRoot = new(string.Empty);
-            if (projectPathOpt != null && projectPathOpt.Count() > 1)
-            {
-                projectRoot = new(projectPathOpt.First());
-            }
-
-            Log.Verbose("Project root determined: {ProjectRoot}", projectRoot.ToString() == string.Empty ? "Could not find any project root!" : projectRoot);
-            return projectRoot;
         }
 
         private void GetSolutions(OptionDictionary options, MyPath projectRoot)

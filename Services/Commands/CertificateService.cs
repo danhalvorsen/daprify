@@ -15,7 +15,8 @@ namespace Daprify.Services
         {
             PrintExecuting();
 
-            IPath certDir = DirectoryService.SetDirectory(WORKING_DIR);
+            MyPath projectPath = CheckRootPath(options);
+            IPath certDir = DirectoryService.SetDirectory(projectPath, WORKING_DIR);
             Process certProcess = GetProcess(certDir, genCert);
             Process envProcess = GetProcess(certDir, readWriteEnv);
 

@@ -5,6 +5,8 @@ namespace Daprify.Models
         IPath GetPath();
         void SetPath(string path);
         string ToString();
+        void SetDirectoryPath();
+        bool HasFileExtension();
     }
 
     public class MyPath : IPath
@@ -41,6 +43,16 @@ namespace Daprify.Models
             }
 
             throw new ArgumentNullException(nameof(path));
+        }
+
+        public void SetDirectoryPath()
+        {
+            _path = Path.GetDirectoryName(_path) ?? throw new ArgumentNullException(nameof(_path));
+        }
+
+        public bool HasFileExtension()
+        {
+            return Path.HasExtension(_path);
         }
 
         public override string ToString() => _path;

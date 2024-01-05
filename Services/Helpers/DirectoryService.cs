@@ -19,10 +19,10 @@ namespace Daprify.Services
             return executingDir;
         }
 
-        public static MyPath SetDirectory(string dirPath)
+        public static MyPath SetDirectory(MyPath projectPath, string dirPath)
         {
             Log.Verbose("Setting working directory...");
-            MyPath baseDir = CheckProjectType(GetCurrentDirectory());
+            MyPath baseDir = CheckProjectType(projectPath);
             MyPath workingDir = MyPath.Combine(baseDir.ToString(), DAPR, dirPath);
 
             bool dirExists = Directory.Exists(workingDir.ToString());
@@ -36,7 +36,7 @@ namespace Daprify.Services
             return workingDir;
         }
 
-        public static MyPath CheckProjectType(IPath dirPath)
+        public static MyPath CheckProjectType(IPath projectPath)
         {
             Log.Verbose("Checking where the program is executed from...");
             string? isTestProject = Environment.GetEnvironmentVariable("isTestProject");
@@ -48,7 +48,7 @@ namespace Daprify.Services
             else
             {
                 Log.Verbose("Program executing normally.");
-                return GetGitRootDirectory(dirPath);
+                return GetGitRootDirectory(projectPath);
             }
         }
 
@@ -57,12 +57,16 @@ namespace Daprify.Services
         /// If no Git repository is found, the parent directory of the current directory is returned.
         /// </summary>
         /// <returns>The root directory of the Git repository.</returns>
-        public static MyPath GetGitRootDirectory(IPath dirPath)
+        public static MyPath GetGitRootDirectory(IPath path)
         {
             Log.Verbose("Getting git root directory...");
-            string startingPath = Path.GetDirectoryName(dirPath.ToString()) ?? throw new DirectoryNotFoundException($"Could not find the directory: {dirPath}");
-            string gitRoot = RunGitCommand(startingPath);
+            if (path.HasFileExtension())
+            {
+                Log.Verbose("Path is a file. Setting directory path...");
+                path.SetDirectoryPath();
+            }
 
+            string gitRoot = RunGitCommand(path.ToString());
             if (string.IsNullOrWhiteSpace(gitRoot))
             {
                 Log.Warning("No Git root directory found.");
@@ -77,9 +81,9 @@ namespace Daprify.Services
             }
         }
 
-        private static string RunGitCommand(string workingDirectory)
+        private static string RunGitCommand(string path)
         {
-            Log.Verbose("Starting search from {workingDirectory}", workingDirectory);
+            Log.Verbose("Starting search from {path}", string.IsNullOrEmpty(path) ? GetCurrentDirectory() : path);
             using var process = new Process
             {
                 StartInfo = new ProcessStartInfo
@@ -89,7 +93,7 @@ namespace Daprify.Services
                     RedirectStandardOutput = true,
                     UseShellExecute = false,
                     CreateNoWindow = true,
-                    WorkingDirectory = workingDirectory
+                    WorkingDirectory = path
                 }
             };
             process.Start();
