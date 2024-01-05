@@ -9,8 +9,8 @@ namespace Daprify.Settings
         public static readonly List<string> DefaultValue = ["statestore", "secretstore"];
 
         public string CommandName => "gen_all";
-        public string CommandDescription => "Generates everything needed to use Dapr with docker-compose (components, config, certificates and docker-compose file(s))" +
-                                            "\nEasiest to specify all your project needs in at CLI/Commands/config.json and execute with --config config.json" +
+        public string CommandDescription => "Generates everything needed to use Dapr with docker (components, config, certificates, dockerfiles and docker-compose file(s))" +
+                                            "\nEasiest to specify all your project needs in at Daprify/Commands/config.json and execute with --config config.json" +
                                             "\nIf all your services has a PackageReference to Dapr use --solution_paths instead of --services." +
                                             "\nUse dotnet run gen_all -- -help to see all available options.";
         public string CommandExample => "\n\nExamples:\n  dotnet run gen_all --config config.json \n  dotnet run gen_all --components rabbitmq redis --services ServiceA ServiceB --settings mtls tracing --solution_paths ../../Backend";
