@@ -28,16 +28,27 @@ COPY --from=build-env /app/publish .
 ENTRYPOINT [""dotnet"", ""{{ServiceName}}.dll""]";
 
 
-        public string Render(MyPath servicePath, Name serviceName)
+        public string Render(IProject project)
         {
             var data = new
             {
-                ServicePath = servicePath.ToString(),
-                ServiceName = serviceName.ToString(),
+                ServicePath = GetRelativePath(project) + ".csproj",
+                ServiceName = project.GetName(),
             };
 
-            Log.Verbose("Getting Dockerfile template for {ServiceName}", serviceName);
+            Log.Verbose("Getting Dockerfile template for {ServiceName}", project.GetName());
             return _template(data);
         }
+
+        private static string GetRelativePath(IProject project)
+        {
+            RelativePath relPath = project.GetRelativeProjPath();
+            if (relPath != null)
+            {
+                return relPath.ToString();
+            }
+            return project.GetName().ToString();
+        }
+
     }
 }

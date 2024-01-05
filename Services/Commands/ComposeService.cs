@@ -20,8 +20,8 @@ namespace Daprify.Services
         {
             StringBuilder composeBuilder = new();
 
-            GetServicesFromSln(options);
-            GetServicesFromOptions(options);
+            _projects.AddRange(GetServicesFromSln(options, _query, _projectProvider, new(string.Empty)));
+            _projects.AddRange(GetServicesFromOptions(options));
 
             composeBuilder.Append(GetComposeStart(workingDir));
             AppendServices(options, composeBuilder);
@@ -40,35 +40,7 @@ namespace Daprify.Services
             return PlaceholderRegex().Replace(composeBuilder.ToString(), string.Empty);
         }
 
-        private void GetServicesFromSln(OptionDictionary options)
-        {
-            Key solutionPathKey = new("solution_paths");
-            IEnumerable<Value> solutionPathValues = options.GetAllPairValues(solutionPathKey).GetValues();
 
-            if (solutionPathValues != null)
-            {
-                Log.Verbose("Searching for solutions...");
-
-                IEnumerable<MyPath> solutionPaths = MyPath.FromStringList(solutionPathValues);
-                IEnumerable<Solution> solutions = solutionPaths.Select(path => new Solution(_query, _projectProvider, path));
-
-                IEnumerable<IProject> projects = SolutionService.GetDaprServicesFromSln(new(string.Empty), solutions);
-                _projects.AddRange(projects);
-            }
-        }
-
-
-        private void GetServicesFromOptions(OptionDictionary options)
-        {
-            Key serviceKey = new("services");
-            IEnumerable<Value>? serviceValues = options.GetAllPairValues(serviceKey).GetValues();
-            if (serviceValues != null)
-            {
-                IEnumerable<IProject> services = Project.FromStringList(serviceValues);
-                Log.Verbose("Found services from service option: {services}", services.Select(service => service.GetName()));
-                _projects.AddRange(services);
-            }
-        }
 
 
         private string GetComposeStart(IPath workingDir)
