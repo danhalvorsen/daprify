@@ -15,7 +15,7 @@ namespace DaprifyTests.Commands
         private readonly StringWriter _consoleOutput = new();
         private readonly CertificateService _service = new();
         private readonly CertificateSettings _settings = new();
-        private readonly OptionValidatorFactory _optionValidatorFactory;
+        private readonly ConfigValidator _validator;
         private readonly DirectoryInfo _startingDir = new(Directory.GetCurrentDirectory());
 
         private const string DAPR_DIR = "Dapr", CERT_DIR = "Certs/", ENV_FILE = "Dapr.Env", ENV_DIR = "Env/";
@@ -24,7 +24,7 @@ namespace DaprifyTests.Commands
         public TryCertificateCommandTests()
         {
             MyPathValidator myPathValidator = new();
-            _optionValidatorFactory = new(myPathValidator);
+            _validator = new(myPathValidator);
 
             Console.SetOut(_consoleOutput);
             Directory.SetCurrentDirectory(DirectoryService.CreateTempDirectory().ToString());
@@ -37,7 +37,7 @@ namespace DaprifyTests.Commands
         {
             // Arrange
             string[] argument = [_settings.CommandName];
-            DaprifyCommand<CertificateService, CertificateSettings> sut = new(_service, _settings, _optionValidatorFactory);
+            DaprifyCommand<CertificateService, CertificateSettings> sut = new(_service, _settings, _validator);
 
             // Act
             sut.Parse(argument).Invoke();
@@ -58,7 +58,7 @@ namespace DaprifyTests.Commands
         {
             // Arrange
             string[] argument = [_settings.CommandName];
-            DaprifyCommand<CertificateService, CertificateSettings> sut = new(_service, _settings, _optionValidatorFactory);
+            DaprifyCommand<CertificateService, CertificateSettings> sut = new(_service, _settings, _validator);
 
             // Act
             sut.Parse(argument).Invoke();

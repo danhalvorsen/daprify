@@ -17,7 +17,7 @@ namespace DaprifyTests.Commands
         private readonly StringWriter _consoleOutput = new();
         private readonly GenAllService _service;
         private readonly GenAllSettings _settings = new();
-        private readonly OptionValidatorFactory _optionValidatorFactory;
+        private readonly ConfigValidator _validator;
         private readonly MockServiceProvider _serviceProvider = new();
         private readonly TemplateFactory _templateFactory;
         private readonly DirectoryInfo _startingDir = new(Directory.GetCurrentDirectory());
@@ -33,7 +33,7 @@ namespace DaprifyTests.Commands
         public TryGenAllCommandTests()
         {
             MyPathValidator myPathValidator = new();
-            _optionValidatorFactory = new(myPathValidator);
+            _validator = new(myPathValidator);
 
             _templateFactory = new(_serviceProvider.Object);
             MockIQuery mockIQuery = new();
@@ -61,7 +61,7 @@ namespace DaprifyTests.Commands
                                  GenAllSettings.SettingOptionName[0],
                                  settingArgs.GetValues().ElementAt(0).ToString(),
                                  settingArgs.GetValues().ElementAt(1).ToString()];
-            DaprifyCommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _optionValidatorFactory);
+            DaprifyCommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _validator);
 
             // Act
             sut.Parse(argument).Invoke();
@@ -86,7 +86,7 @@ namespace DaprifyTests.Commands
                                  GenAllSettings.SettingOptionName[0],
                                  settingArgs.GetValues().ElementAt(0).ToString(),
                                  settingArgs.GetValues().ElementAt(1).ToString()];
-            DaprifyCommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _optionValidatorFactory);
+            DaprifyCommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _validator);
 
             // Act
             sut.Parse(argument).Invoke();
@@ -104,7 +104,7 @@ namespace DaprifyTests.Commands
             string[] argument = [_settings.CommandName, GenAllSettings.ComponentOptionName[0],
                                 componentArgs.GetValues().ElementAt(0).ToString(),
                                 componentArgs.GetValues().ElementAt(1).ToString()];
-            DaprifyCommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _optionValidatorFactory);
+            DaprifyCommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _validator);
 
             // Act
             sut.Parse(argument).Invoke();
@@ -126,7 +126,7 @@ namespace DaprifyTests.Commands
         {
             // Arrange
             string[] argument = [_settings.CommandName];
-            DaprifyCommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _optionValidatorFactory);
+            DaprifyCommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _validator);
 
             // Act
             sut.Parse(argument).Invoke();
@@ -150,7 +150,7 @@ namespace DaprifyTests.Commands
                                 GenAllSettings.SettingOptionName[0],
                                 settingArgs.GetValues().ElementAt(0).ToString(),
                                 settingArgs.GetValues().ElementAt(1).ToString()];
-            DaprifyCommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _optionValidatorFactory);
+            DaprifyCommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _validator);
 
             // Act
             sut.Parse(argument).Invoke();
@@ -170,7 +170,7 @@ namespace DaprifyTests.Commands
             MyPath destPath = MyPath.Combine(destDir.ToString(), "config-mock.json");
             File.Copy(_confPath.ToString(), destPath.ToString(), true);
             string[] argument = [_settings.CommandName, GenAllSettings.ConfigOptionName[0], destPath.ToString()];
-            DaprifyCommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _optionValidatorFactory);
+            DaprifyCommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _validator);
 
             // Act
             sut.Parse(argument).Invoke();
