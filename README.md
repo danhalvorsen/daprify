@@ -232,7 +232,9 @@ If there is need for other settings in your configuration file or editing the ge
 
 ## Generate dockerfiles
 
-This command generates dockerfiles for your .Net project. The dockerfiles are needed in the docker-compose.yml. In case of special needs in the dockerfiles, add these after they are generated. e.g if you have a option.json file needed inside the docker container.
+This command generates dockerfiles for your .Net project or specified services. The dockerfiles are needed in the docker-compose.yml. In case of special needs in the dockerfiles, add these after they are generated. e.g if you have a option.json file needed inside the docker container.
+
+**If you are using the --service option the path inside the dockerfile most likely not be correct!** You need to manually update this path relative to you project
 
 ```zsh
 dotnet run gen_dockerfiles -- [options]
@@ -251,10 +253,11 @@ Usage:
   Commands gen_dockerfiles [options]
 
 Options:
-  --pp, --project_path <project_path>                 The path to the root of your project (from executing path). Not needed if it's a git project. Used to find correct paths.
-  --solution_paths, --sp <solution_paths> (REQUIRED)  The path to your .Net solution file (from executing path). Used to generate dockerfile for all projects in the sln file.
-  --v, --verbose                                      Enable verbose logging
-  -?, -h, --help                                      Show help and usage information
+  --pp, --project_path <project_path>      The path to the root of your project (from executing path). Not needed if it's a git project. Used to find correct paths.
+  --se, --services <services>              The specific service(s) to generate docker-compose content to.
+  --solution_paths, --sp <solution_paths>  The path to your .Net solution file (from executing path). Used to generate dockerfile for all projects in the sln file.
+  --v, --verbose                           Enable verbose logging
+  -?, -h, --help                           Show help and usage information
 ```
 
 ## Generate docker-compose file
@@ -312,6 +315,7 @@ dotnet run gen_compose --components rabbitmq sentry --services Frontend Backend
 | `gen_config`      | `settings`       | logging, metric, middleware, mtls, tracing                           |
 | `gen_components`  | `components`     | bindings, configstore, crypto, lock, pubsub, secretstore, statestore |
 | `gen_dockerfiles` | `project_path`   |                                                                      |
+|                   | `services`       |                                                                      |
 |                   | `solution_paths` |                                                                      |
 | `gen_compose`     | `components`     | dashboard, placement, rabbitmq, redis, sentry, zipkin                |
 |                   | `settings`       | https, mtls,                                                         |
