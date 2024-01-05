@@ -13,7 +13,7 @@ namespace Daprify.Services
 
         public override void Generate(OptionDictionary options)
         {
-            PrintExecuting();
+            PrintMessage("start");
 
             MyPath projectPath = CheckRootPath(options);
             IPath certDir = DirectoryService.SetDirectory(projectPath, WORKING_DIR);
@@ -22,6 +22,8 @@ namespace Daprify.Services
 
             StartProcess(certProcess);
             CreateEnvFile(certProcess, envProcess);
+
+            PrintMessage("success");
         }
 
 

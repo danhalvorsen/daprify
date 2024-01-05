@@ -12,7 +12,7 @@ namespace Daprify.Services
         {
             try
             {
-                PrintExecuting();
+                PrintMessage("start");
                 MyPath projectPath = CheckRootPath(options);
                 IPath workingDir = DirectoryService.SetDirectory(projectPath, _directoryName);
                 IEnumerable<string> generatedFiles = CreateFiles(options, workingDir);
@@ -21,17 +21,8 @@ namespace Daprify.Services
             }
             catch (Exception ex)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"Error: {ex.Message}");
-                Console.ResetColor();
+                PrintMessage("exception", ex.Message);
             }
-        }
-
-        public void PrintExecuting()
-        {
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"Executing command: {GetType().Name[..^7]}");
-            Console.ResetColor();
         }
 
         public static MyPath CheckRootPath(OptionDictionary options)
@@ -102,16 +93,11 @@ namespace Daprify.Services
 
         public virtual void PrintFinish(IEnumerable<string> generatedFiles)
         {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("Command executed successfully!");
-            Console.ResetColor();
+            PrintMessage("success");
 
             if (generatedFiles == null || !generatedFiles.Any())
             {
-
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("No files generated!");
-                Console.ResetColor();
+                PrintMessage("no_files");
                 return;
             }
 
@@ -121,6 +107,32 @@ namespace Daprify.Services
                 Console.WriteLine($"    - {file}");
             }
         }
+
+        public void PrintMessage(string level, string? exception = null)
+        {
+            ConsoleColor color = level switch
+            {
+                "start" => ConsoleColor.Yellow,
+                "success" => ConsoleColor.Green,
+                "error" or "exception" => ConsoleColor.Red,
+                _ => ConsoleColor.White
+            };
+
+            string command = GetType().Name[..^7];
+            string msg = level switch
+            {
+                "start" => $"Executing command: {command}...",
+                "success" => $"Command: {command} executed successfully!",
+                "no_files" => "No files generated!",
+                "exception" => $"Error: {exception}",
+                _ => ""
+            };
+
+            Console.ForegroundColor = color;
+            Console.WriteLine(msg);
+            Console.ResetColor();
+        }
+
 
         protected virtual IEnumerable<string> CreateFiles(OptionDictionary options, IPath workingDir) => [];
 

@@ -1,7 +1,12 @@
 {
     "components": [
         "statestore", 
-        "secretstore"
+        "secretstore",
+        "dashboard",
+        "placement",
+        "rabbitmq",
+        "zipkin"
+
     ],
     "services": [
         "ServiceA", 
@@ -9,12 +14,17 @@
     ],
     "settings": [
         "mtls", 
-        "tracing"
+        "tracing",
+        "logging",
+        "metric",
+        "middleware",
+        "https"
     ],
     "project_path": [
         "../../Project"
     ],
     "solution_paths": [
-        "../../Project/Backend"
+        "../../Project/MicroService1",
+        "../../Project/MicroService2"
     ]
 }

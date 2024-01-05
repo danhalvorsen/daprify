@@ -18,8 +18,11 @@ namespace Daprify.Services
             {
                 Log.Verbose("Starting to create template for component: {component}", argument);
                 string yaml = GetArgumentTemplate(argument);
-                DirectoryService.WriteFile(workingDir, $"{argument}.yml", yaml);
-                generatedYamls.Add(argument.ToString());
+                if (yaml != null)
+                {
+                    DirectoryService.WriteFile(workingDir, $"{argument}.yml", yaml);
+                    generatedYamls.Add(argument.ToString());
+                }
             }
 
             return generatedYamls;
@@ -34,10 +37,10 @@ namespace Daprify.Services
                 "configstore" => _templateFactory.CreateTemplate<ConfigStoreTemplate>(),
                 "crypto" => _templateFactory.CreateTemplate<CryptoTemplate>(),
                 "lock" => _templateFactory.CreateTemplate<LockTemplate>(),
-                "pubsub" => _templateFactory.CreateTemplate<PubSubTemplate>(),
+                "pubsub" or "rabbitmq" => _templateFactory.CreateTemplate<PubSubTemplate>(),
                 "secretstore" => _templateFactory.CreateTemplate<SecretStoreTemplate>(),
-                "statestore" => _templateFactory.CreateTemplate<StateStoreTemplate>(),
-                _ => throw new ArgumentException("Invalid component name: " + argument, nameof(argument))
+                "statestore" or "redis" => _templateFactory.CreateTemplate<StateStoreTemplate>(),
+                _ => null!
             };
         }
     }
