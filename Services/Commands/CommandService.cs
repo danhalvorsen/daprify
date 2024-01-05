@@ -13,7 +13,8 @@ namespace Daprify.Services
             try
             {
                 PrintExecuting();
-                IPath workingDir = DirectoryService.SetDirectory(_directoryName);
+                MyPath projectPath = CheckRootPath(options);
+                IPath workingDir = DirectoryService.SetDirectory(projectPath, _directoryName);
                 IEnumerable<string> generatedFiles = CreateFiles(options, workingDir);
 
                 PrintFinish(generatedFiles);
@@ -31,6 +32,41 @@ namespace Daprify.Services
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine($"Executing command: {GetType().Name[..^7]}");
             Console.ResetColor();
+        }
+
+        public static MyPath CheckRootPath(OptionDictionary options)
+        {
+            MyPath path = GetFirstPathOption(options, "project_path");
+            if (path != null)
+            {
+                return path;
+            }
+
+            path = GetFirstPathOption(options, "solution_paths");
+            if (path != null)
+            {
+                path.SetDirectoryPath();
+                return path;
+            }
+
+            Log.Verbose("No project or solution path found");
+            return new MyPath(string.Empty);
+        }
+
+        private static MyPath GetFirstPathOption(OptionDictionary options, string keyName)
+        {
+            Key pathKey = new(keyName);
+            Log.Verbose($"Checking for {keyName}...");
+            var pathOpt = options.GetAllPairValues(pathKey).GetValues();
+
+            if (pathOpt != null && pathOpt.Any())
+            {
+                Value path = pathOpt.First();
+                Log.Verbose($"Found {keyName}: {path}");
+                return new MyPath(path);
+            }
+
+            return null!;
         }
 
         public virtual void PrintFinish(IEnumerable<string> generatedFiles)
