@@ -5,7 +5,7 @@ namespace Daprify.Services
 {
     public class GenAllService(CertificateService certificateService, ComponentService componentService,
                              ComposeService composeService, ConfigService configService,
-                             DockerfileService dockerfileService) : IService
+                             DockerfileService dockerfileService) : CommandService("GenAll")
     {
         private readonly CertificateService _certificateService = certificateService;
         private readonly ComponentService _componentService = componentService;
@@ -15,8 +15,9 @@ namespace Daprify.Services
         private readonly Key _settingKey = new("settings");
 
 
-        public void Generate(OptionDictionary options)
+        public override void Generate(OptionDictionary options)
         {
+            PrintMessage("start");
             options = LoadConfig(options);
             OptionValues settingOpt = options.GetAllPairValues(_settingKey);
 
@@ -26,6 +27,8 @@ namespace Daprify.Services
             _composeService.Generate(options);
             RemoveHttps(options, settingOpt);
             _configService.Generate(options);
+
+            PrintMessage("success");
         }
 
         private static OptionDictionary LoadConfig(OptionDictionary options)
