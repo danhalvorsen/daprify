@@ -3,6 +3,7 @@ using Daprify.Services;
 using DaprifyTests.Assert;
 using DaprifyTests.Mocks;
 using FluentAssertions;
+using Microsoft.Build.Construction;
 using Moq;
 
 namespace DaprifyTests.Solutions
@@ -24,6 +25,16 @@ namespace DaprifyTests.Solutions
             _mockIProjectProvider = new MockIProjectProvider(_mockIQuery, _numberOfProjects);
             _tempDir = DirectoryService.CreateTempDirectory([slnDir]);
             DirectoryService.WriteFile(_tempDir, SLN, "Microsoft Visual Studio Solution File, Format Version 12.00");
+        }
+
+        [TestMethod]
+        public void Expect_EmptyConstructor_InitializesSolution()
+        {
+            // Act
+            Solution solution = new();
+
+            // Assert
+            Asserts.VerifyNotNull(solution);
         }
 
         [TestMethod]
@@ -100,6 +111,21 @@ namespace DaprifyTests.Solutions
             // Assert
             act.Should().Throw<FileNotFoundException>()
                .WithMessage("*Could not find the solution file*");
+        }
+
+        [TestMethod]
+        public void Expect_GetSolutionFile_Returns_SolutionFile()
+        {
+            // Arrange
+            MyPath currentDir = DirectoryService.GetCurrentDirectory();
+            RelativePath relativePath = new(currentDir, _tempDir);
+            Solution sut = new(_mockIQuery.Object, _mockIProjectProvider.Object, relativePath);
+
+            // Act
+            SolutionFile solutionFile = sut.GetSolutionFile();
+
+            // Assert
+            Asserts.VerifyNotNull(solutionFile);
         }
 
 

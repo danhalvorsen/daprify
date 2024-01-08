@@ -1,6 +1,7 @@
 using Daprify.Models;
 using DaprifyTests.Assert;
 using FluentAssertions;
+using Moq;
 
 namespace DaprifyTests.Paths
 {
@@ -88,6 +89,99 @@ namespace DaprifyTests.Paths
 
             // Assert
             sut.Should().Be(path);
+        }
+
+        [TestMethod]
+        public void Expect_GetPath_Returns_MyPath()
+        {
+            // Arrange
+            Mock<MyPath> myPath = new();
+
+            // Act
+            IPath sut = myPath.Object.GetPath();
+
+            // Assert
+            sut.Should().Be(myPath.Object);
+        }
+
+        [TestMethod]
+        public void Expect_GetFullPath_WithValidPath_ShouldReturnFullPath()
+        {
+            // Act
+            static void act() => MyPath.GetFullPath(null!);
+
+            // Assert
+            Asserts.VerifyException<ArgumentNullException>(act);
+        }
+
+        [TestMethod]
+        public void Expect_SetDirectoryPath_WithValidPath_ShouldUpdatePath()
+        {
+            // Arrange
+            var currentDir = Directory.GetCurrentDirectory();
+            var dirName = Path.GetDirectoryName(currentDir);
+            MyPath sut = new(currentDir);
+
+            // Act
+            sut.SetDirectoryPath();
+
+            // Assert
+            Asserts.VerifyString(sut.ToString(), dirName!);
+        }
+
+        [TestMethod]
+        public void Expect_HasFileExtension_Returns_true()
+        {
+            // Arrange
+            MyPath sut = new("C:\\initial.txt");
+
+            // Act
+            bool result = sut.HasFileExtension();
+
+            // Assert
+            Asserts.VerifyTrue(result);
+        }
+
+        [TestMethod]
+        public void Expect_HasFileExtension_Returns_false()
+        {
+            // Arrange
+            MyPath sut = new("C:\\initial");
+
+            // Act
+            bool result = sut.HasFileExtension();
+
+            // Assert
+            Asserts.VerifyFalse(result);
+        }
+
+        [TestMethod]
+        public void Expect_Combine_TwoStrings_Throw_Error()
+        {
+            // Arrange
+            string path = null!;
+            string sut = "C:\\initial";
+
+            // Act
+            void act() => MyPath.Combine(sut, path);
+
+            // Assert
+            Asserts.VerifyException<ArgumentNullException>(act);
+        }
+
+        [TestMethod]
+        public void Expect_Combine_ThreeStrings_Throw_Error()
+        {
+            // Arrange
+            string path1 = null!;
+            string path2 = null!;
+            string sut = "C:\\initial";
+
+            // Act
+            void act() => MyPath.Combine(sut, path1, path2);
+
+            // Assert
+            Asserts.VerifyException<ArgumentNullException>(act);
         }
     }
 }

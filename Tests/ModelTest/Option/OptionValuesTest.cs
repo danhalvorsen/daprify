@@ -36,7 +36,7 @@ namespace DaprifyTests.Options
         }
 
         [TestMethod]
-        public void RemoveValue_RemovesSpecifiedValue()
+        public void Expect_RemoveValue_RemovesSpecifiedValue()
         {
             // Arrange
             Key key = new("key");
@@ -52,7 +52,7 @@ namespace DaprifyTests.Options
         }
 
         [TestMethod]
-        public void Contain_ReturnsTrueForContainedValue()
+        public void Expect_Contain_ReturnsTrueForContainedValue()
         {
             // Arrange
             Key key = new("key");
@@ -68,7 +68,7 @@ namespace DaprifyTests.Options
         }
 
         [TestMethod]
-        public void Contain_ReturnsFalseForNonExistentValue()
+        public void Expect_Contain_ReturnsFalseForNonExistentValue()
         {
             // Arrange
             Key key = new("key");
@@ -81,6 +81,24 @@ namespace DaprifyTests.Options
 
             // Assert
             Asserts.VerifyFalse(contains);
+        }
+
+        [TestMethod]
+        public void Expected_null_ThrowsException()
+        {
+            // Arrange
+            Key key = new("key");
+            List<string> expectedValues = null!;
+
+            // Act
+            void act()
+            {
+                _ = new OptionValues(key, expectedValues);
+            }
+
+            // Assert
+
+            Asserts.VerifyException<ArgumentNullException>(act);
         }
     }
 }
