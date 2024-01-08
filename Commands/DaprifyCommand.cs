@@ -80,20 +80,28 @@ namespace Daprify.Commands
                     continue;
                 }
 
-                ProcessOption(option.Name, values);
+                bool shouldExit = ProcessOption(option.Name, values);
+                if (shouldExit)
+                {
+                    break;
+                }
             }
         }
 
-        private void ProcessOption(string optionName, List<string> values)
+        private bool ProcessOption(string optionName, List<string> values)
         {
             if (optionName == "config")
             {
                 _options = LoadConfig(values.First());
+                return true;
             }
             else
             {
                 Log.Verbose("Registering option {Option} with values {Values}", optionName, values);
-                _options.Add(new(optionName), new(values));
+                Key key = new(optionName);
+                OptionValues optionValues = new(key, values);
+                _options.Add(key, optionValues);
+                return false;
             }
         }
 

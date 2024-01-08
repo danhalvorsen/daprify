@@ -1,4 +1,3 @@
-
 using Daprify.Models;
 using FluentValidation;
 
@@ -7,10 +6,12 @@ namespace Daprify.Validation
     public class ConfigValidator : AbstractValidator<OptionDictionary>
     {
         private readonly MyPathValidator _myPathValidator;
+        private readonly OptionValuesValidator _optionValuesValidator;
 
-        public ConfigValidator(MyPathValidator myPathValidator)
+        public ConfigValidator(MyPathValidator myPathValidator, OptionValuesValidator optionValuesValidator)
         {
             _myPathValidator = myPathValidator;
+            _optionValuesValidator = optionValuesValidator;
             DefineRules();
         }
 
@@ -18,6 +19,14 @@ namespace Daprify.Validation
         {
             Key projectPathKey = new("project_path");
             Key solutionPathKey = new("solution_paths"); ;
+            Key componentKey = new("components");
+            Key settingsKey = new("settings");
+
+            RuleFor(options => options.GetAllPairValues(componentKey))
+                .SetValidator(_optionValuesValidator);
+
+            RuleFor(options => options.GetAllPairValues(settingsKey))
+                .SetValidator(_optionValuesValidator);
 
             RuleFor(options => GetPath(options, projectPathKey))
                 .SetValidator(_myPathValidator);

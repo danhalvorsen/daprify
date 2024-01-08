@@ -10,6 +10,7 @@ namespace Daprify.Models
 
         public void Add(Key key, OptionValues optionValues)
         {
+            optionValues.SetKey(key);
             _optionDictionary[key] = optionValues;
             Log.Verbose("Added option {key} with values {values}", key, optionValues.GetStringEnumerable());
         }
@@ -25,7 +26,7 @@ namespace Daprify.Models
             {
                 return value;
             }
-            return new();
+            return new OptionValues(key);
         }
 
         public static OptionDictionary PopulateFromJson(string filePath)
@@ -39,8 +40,8 @@ namespace Daprify.Models
             OptionDictionary options = [];
             foreach (var pair in optionsDict)
             {
-                OptionValues optionValues = new(pair.Value);
                 Key key = new(pair.Key);
+                OptionValues optionValues = new(key, pair.Value);
                 Log.Verbose("Adding option {key} with values {values}", key, optionValues.GetStringEnumerable());
                 options.Add(key, optionValues);
             }

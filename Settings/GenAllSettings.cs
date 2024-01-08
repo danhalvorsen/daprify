@@ -4,8 +4,9 @@ namespace Daprify.Settings
 {
     public class GenAllSettings : ISettings
     {
-        public static List<string>? AvailableSettings => ["https", "logging", "metric", "middleware", "mtls", "tracing"];
-        public static List<string>? AvailableComponents => ["bindings", "configstore", "crypto", "lock", "pubsub", "secretstore", "statestore"];
+        public static List<string> AvailableSettings => ["https", "logging", "metric", "middleware", "mtls", "tracing"];
+        public static List<string> AvailableComponents => ["bindings", "configstore", "crypto", "lock", "pubsub", "secretstore", "statestore",
+                                                           "dashboard", "placement", "rabbitmq", "redis", "sentry", "zipkin"];
         public static readonly List<string> DefaultValue = ["statestore", "secretstore"];
 
         public string CommandName => "gen_all";

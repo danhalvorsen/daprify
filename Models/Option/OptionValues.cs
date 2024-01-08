@@ -3,27 +3,32 @@ namespace Daprify.Models
     public class OptionValues
     {
         private IEnumerable<Value> _values;
+        private Key _key;
 
-        public OptionValues() { }
-
-        public OptionValues(List<Value> values)
+        public OptionValues(Key key)
         {
-            SetValues(values);
+            _key = key;
         }
 
-        public OptionValues(List<string> stringValues)
+        public OptionValues(Key key, List<string> stringValues)
         {
+            _key = key;
             _values = stringValues.Select(v => new Value(v)) ?? throw new ArgumentNullException(nameof(stringValues), "The option values cannot be null!");
         }
 
-        private void SetValues(IEnumerable<Value> values)
+        public void SetKey(Key key)
         {
-            _values = values;
+            _key = key;
         }
 
         public IEnumerable<Value> GetValues()
         {
             return _values;
+        }
+
+        public Key GetKey()
+        {
+            return _key;
         }
 
         public int Count()
@@ -39,11 +44,6 @@ namespace Daprify.Models
         public IEnumerable<string> GetStringEnumerable()
         {
             return _values.Select(v => v.ToString());
-        }
-
-        public bool Contain(Value value)
-        {
-            return _values.Contains(value);
         }
     }
 }
