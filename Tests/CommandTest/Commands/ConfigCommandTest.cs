@@ -18,7 +18,7 @@ namespace DaprifyTests.Commands
         private readonly ConfigService _service;
         private readonly ConfigSettings _settings = new();
 
-        private readonly OptionValidatorFactory _optionValidatorFactory;
+        private readonly OptionDictionaryValidator _validator;
         private readonly TemplateFactory _templateFactory;
         private readonly DirectoryInfo _startingDir = new(Directory.GetCurrentDirectory());
 
@@ -28,7 +28,8 @@ namespace DaprifyTests.Commands
         public TryConfigCommandTests()
         {
             MyPathValidator myPathValidator = new();
-            _optionValidatorFactory = new(myPathValidator);
+            OptionValuesValidator optionValuesValidator = new();
+            _validator = new(myPathValidator, optionValuesValidator);
 
             MockServiceProvider _serviceProvider = new();
             _templateFactory = new(_serviceProvider.Object);
@@ -45,7 +46,7 @@ namespace DaprifyTests.Commands
         {
             // Arrange
             string[] argument = [_settings.CommandName];
-            DaprifyCommand<ConfigService, ConfigSettings> sut = new(_service, _settings, _optionValidatorFactory);
+            DaprifyCommand<ConfigService, ConfigSettings> sut = new(_service, _settings, _validator);
 
             // Act
             sut.Parse(argument).Invoke();

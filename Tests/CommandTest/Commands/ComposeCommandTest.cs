@@ -18,7 +18,7 @@ namespace DaprifyTests.Commands
         private readonly ComposeService _service;
         private readonly ComposeSettings _settings = new();
 
-        private readonly OptionValidatorFactory _optionValidatorFactory;
+        private readonly OptionDictionaryValidator _validator;
         private readonly TemplateFactory _templateFactory;
         private readonly DirectoryInfo _startingDir = new(Directory.GetCurrentDirectory());
 
@@ -29,7 +29,8 @@ namespace DaprifyTests.Commands
         public TryComposeCommandTests()
         {
             MyPathValidator myPathValidator = new();
-            _optionValidatorFactory = new(myPathValidator);
+            OptionValuesValidator optionValuesValidator = new();
+            _validator = new(myPathValidator, optionValuesValidator);
 
             MockServiceProvider _serviceProvider = new();
             MockIQuery mockIQuery = new();
@@ -49,7 +50,7 @@ namespace DaprifyTests.Commands
             // Arrange
             string[] argument = [_settings.CommandName, ComposeSettings.ServiceOptionName[0], serviceArguments[0], serviceArguments[1],
                                                         ComposeSettings.ComponentOptionName[0], componentArguments[0], componentArguments[1]];
-            DaprifyCommand<ComposeService, ComposeSettings> sut = new(_service, _settings, _optionValidatorFactory);
+            DaprifyCommand<ComposeService, ComposeSettings> sut = new(_service, _settings, _validator);
 
             // Act
             sut.Parse(argument).Invoke();

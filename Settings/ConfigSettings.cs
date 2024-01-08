@@ -4,7 +4,7 @@ namespace Daprify.Settings
 {
     public class ConfigSettings : ISettings
     {
-        public static List<string>? AvailableSettings => ["logging", "metric", "middleware", "mtls", "tracing"];
+        public static List<string> AvailableSettings => ["logging", "metric", "middleware", "mtls", "tracing"];
 
         public string CommandName => "gen_config";
         public string CommandDescription => "Generates configuration file used by every Dapr service";

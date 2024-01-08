@@ -34,7 +34,7 @@ namespace Daprify.Validation
         private static bool BeAValidPath(MyPath path)
         {
             Log.Verbose("Validating if path {Path} exists", path);
-            return Directory.Exists(path.ToString());
+            return Directory.Exists(path.ToString()) || File.Exists(path.ToString());
         }
     }
 }

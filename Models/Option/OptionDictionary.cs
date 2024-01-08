@@ -10,6 +10,7 @@ namespace Daprify.Models
 
         public void Add(Key key, OptionValues optionValues)
         {
+            optionValues.SetKey(key);
             _optionDictionary[key] = optionValues;
             Log.Verbose("Added option {key} with values {values}", key, optionValues.GetStringEnumerable());
         }
@@ -25,15 +26,12 @@ namespace Daprify.Models
             {
                 return value;
             }
-            return new();
+            return new OptionValues(key);
         }
 
         public static OptionDictionary PopulateFromJson(string filePath)
         {
-            if (!File.Exists(filePath))
-            {
-                throw new FileNotFoundException($"The config file at {filePath} was not found");
-            }
+            VerifyFilepath(filePath);
 
             string json = File.ReadAllText(filePath);
             Dictionary<string, List<string>> optionsDict = JsonSerializer.Deserialize<Dictionary<string, List<string>>>(json) ??
@@ -42,14 +40,28 @@ namespace Daprify.Models
             OptionDictionary options = [];
             foreach (var pair in optionsDict)
             {
-                OptionValues optionValues = new(pair.Value);
                 Key key = new(pair.Key);
+                OptionValues optionValues = new(key, pair.Value);
                 Log.Verbose("Adding option {key} with values {values}", key, optionValues.GetStringEnumerable());
                 options.Add(key, optionValues);
             }
 
             return options;
         }
+
+        private static void VerifyFilepath(string filePath)
+        {
+            if (!File.Exists(filePath))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"The config file at {Path.GetFullPath(filePath)} was not found");
+                Console.ResetColor();
+                Console.WriteLine("Shutting down...");
+
+                Environment.Exit(1);
+            }
+        }
+
 
         public IEnumerator<KeyValuePair<Key, OptionValues>> GetEnumerator()
         {

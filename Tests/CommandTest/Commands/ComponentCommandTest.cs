@@ -17,18 +17,19 @@ namespace DaprifyTests.Commands
         private readonly StringWriter _consoleOutput = new();
         private readonly ComponentService _service;
         private readonly ComponentSettings _settings = new();
-        private readonly OptionValidatorFactory _optionValidatorFactory;
+        private readonly OptionDictionaryValidator _validator;
         private readonly MockServiceProvider _serviceProvider = new();
         private readonly TemplateFactory _templateFactory;
         private readonly DirectoryInfo _startingDir = new(Directory.GetCurrentDirectory());
 
         private const string FILE_EXT = ".yml", COMPONENTS_DIR = "Dapr/Components";
-        private readonly OptionValues arguments = new(["pubsub", "statestore"]);
+        private readonly OptionValues arguments = new(new Key("components"), ["pubsub", "statestore"]);
 
         public TryComponentCommandTests()
         {
             MyPathValidator myPathValidator = new();
-            _optionValidatorFactory = new(myPathValidator);
+            OptionValuesValidator optionValuesValidator = new();
+            _validator = new(myPathValidator, optionValuesValidator);
 
             _templateFactory = new(_serviceProvider.Object);
             _service = new(_templateFactory);
@@ -46,7 +47,7 @@ namespace DaprifyTests.Commands
             string[] argument = [_settings.CommandName, ComponentSettings.OptionName[0],
                                  arguments.GetValues().ElementAt(0).ToString(),
                                  arguments.GetValues().ElementAt(1).ToString()];
-            DaprifyCommand<ComponentService, ComponentSettings> sut = new(_service, _settings, _optionValidatorFactory);
+            DaprifyCommand<ComponentService, ComponentSettings> sut = new(_service, _settings, _validator);
 
             // Act
             sut.Parse(argument).Invoke();

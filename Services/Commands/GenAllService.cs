@@ -18,7 +18,6 @@ namespace Daprify.Services
         public override void Generate(OptionDictionary options)
         {
             PrintMessage("start");
-            options = LoadConfig(options);
             OptionValues settingOpt = options.GetAllPairValues(_settingKey);
 
             GenerateCerts(options, settingOpt);
@@ -29,22 +28,6 @@ namespace Daprify.Services
             _configService.Generate(options);
 
             PrintMessage("success");
-        }
-
-        private static OptionDictionary LoadConfig(OptionDictionary options)
-        {
-            Key configKey = new("config");
-            Log.Verbose("Checking for config file...");
-            IEnumerable<Value> config = options.GetAllPairValues(configKey).GetValues();
-
-            if (config != null)
-            {
-                string configPath = config.First().ToString();
-                Log.Verbose("Loading config from {config}", configPath);
-                options = OptionDictionary.PopulateFromJson(configPath);
-            }
-
-            return options;
         }
 
         private void GenerateCerts(OptionDictionary options, OptionValues settingOpt)
