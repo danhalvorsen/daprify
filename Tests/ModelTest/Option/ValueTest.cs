@@ -79,5 +79,26 @@ namespace DaprifyTests.Options
             // Act & Assert
             Asserts.VerifyFalse(value1.Equals(value2));
         }
+
+        [TestMethod]
+        public void Expect_EqualsReturnsFalseForDifferentObjectType()
+        {
+            // Arrange
+            Value value1 = new("testValue");
+            object value2 = new();
+
+            // Act & Assert
+            Asserts.VerifyFalse(value1.Equals(value2));
+        }
+
+        [TestMethod]
+        public void Expect_EqualsReturnsFalseForNull()
+        {
+            // Arrange
+            Value key = new("testValue");
+
+            // Act & Assert
+            Asserts.VerifyFalse(key.Equals(null));
+        }
     }
 }

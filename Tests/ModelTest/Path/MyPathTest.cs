@@ -105,6 +105,16 @@ namespace DaprifyTests.Paths
         }
 
         [TestMethod]
+        public void Expect_GetFullPath_WithValidPath_ShouldReturnFullPath()
+        {
+            // Act
+            static void act() => MyPath.GetFullPath(null!);
+
+            // Assert
+            Asserts.VerifyException<ArgumentNullException>(act);
+        }
+
+        [TestMethod]
         public void Expect_SetDirectoryPath_WithValidPath_ShouldUpdatePath()
         {
             // Arrange
