@@ -17,7 +17,7 @@ namespace DaprifyTests.Commands
         private readonly StringWriter _consoleOutput = new();
         private readonly GenAllService _service;
         private readonly GenAllSettings _settings = new();
-        private readonly ConfigValidator _validator;
+        private readonly OptionDictionaryValidator _validator;
         private readonly MockServiceProvider _serviceProvider = new();
         private readonly TemplateFactory _templateFactory;
         private readonly DirectoryInfo _startingDir = new(Directory.GetCurrentDirectory());

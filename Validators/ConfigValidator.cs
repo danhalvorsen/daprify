@@ -3,12 +3,12 @@ using FluentValidation;
 
 namespace Daprify.Validation
 {
-    public class ConfigValidator : AbstractValidator<OptionDictionary>
+    public class OptionDictionaryValidator : AbstractValidator<OptionDictionary>
     {
         private readonly MyPathValidator _myPathValidator;
         private readonly OptionValuesValidator _optionValuesValidator;
 
-        public ConfigValidator(MyPathValidator myPathValidator, OptionValuesValidator optionValuesValidator)
+        public OptionDictionaryValidator(MyPathValidator myPathValidator, OptionValuesValidator optionValuesValidator)
         {
             _myPathValidator = myPathValidator;
             _optionValuesValidator = optionValuesValidator;

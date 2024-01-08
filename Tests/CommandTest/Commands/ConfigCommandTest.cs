@@ -18,7 +18,7 @@ namespace DaprifyTests.Commands
         private readonly ConfigService _service;
         private readonly ConfigSettings _settings = new();
 
-        private readonly ConfigValidator _validator;
+        private readonly OptionDictionaryValidator _validator;
         private readonly TemplateFactory _templateFactory;
         private readonly DirectoryInfo _startingDir = new(Directory.GetCurrentDirectory());
 

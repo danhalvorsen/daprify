@@ -18,7 +18,7 @@ namespace DaprifyTests.Commands
         private readonly ComposeService _service;
         private readonly ComposeSettings _settings = new();
 
-        private readonly ConfigValidator _validator;
+        private readonly OptionDictionaryValidator _validator;
         private readonly TemplateFactory _templateFactory;
         private readonly DirectoryInfo _startingDir = new(Directory.GetCurrentDirectory());
 

@@ -15,7 +15,7 @@ namespace DaprifyTests.Commands
         private readonly StringWriter _consoleOutput = new();
         private readonly CertificateService _service = new();
         private readonly CertificateSettings _settings = new();
-        private readonly ConfigValidator _validator;
+        private readonly OptionDictionaryValidator _validator;
         private readonly DirectoryInfo _startingDir = new(Directory.GetCurrentDirectory());
 
         private const string DAPR_DIR = "Dapr", CERT_DIR = "Certs/", ENV_FILE = "Dapr.Env", ENV_DIR = "Env/";

@@ -15,11 +15,11 @@ namespace Daprify.Commands
     {
         private readonly Service _service;
         private readonly Settings _settings;
-        private readonly ConfigValidator _validator;
+        private readonly OptionDictionaryValidator _validator;
         private OptionDictionary _options = [];
         private readonly Option<bool> _verboseOption = new(["--v", "--verbose"], "Enable verbose logging");
 
-        public DaprifyCommand(Service service, Settings settings, ConfigValidator validator)
+        public DaprifyCommand(Service service, Settings settings, OptionDictionaryValidator validator)
             : base(settings.CommandName, settings.CommandDescription + settings.CommandExample)
         {
             _service = service;
