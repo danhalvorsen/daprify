@@ -81,6 +81,16 @@ namespace DaprifyTests.Projects
         }
 
         [TestMethod]
+        public void Contains_WithValidTarget_ReturnsFalse()
+        {
+            // Arrange
+            Project project = new(_mockIQuery.Object, _name);
+
+            // Act & Assert
+            Asserts.VerifyBool(project.Contains("NotValid"), false);
+        }
+
+        [TestMethod]
         public void Contains_WithNullTarget_ThrowsArgumentNullException()
         {
             // Arrange

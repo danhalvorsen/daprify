@@ -101,6 +101,21 @@ namespace DaprifyTests.Projects
             Asserts.VerifyExceptionWithMessage<FileNotFoundException>(act, $"Error occurred while trying to find the project file: '{invalidPath}'");
         }
 
+        [TestMethod]
+        public void Expect_SetRelaiveProjectPath_Sets_RelativeProjectPath()
+        {
+            // Arrange
+            Project sut = new(_mockIQuery.Object, _mockISolution.Object, _csprojPath.ToString());
+            MyPath relativePath = _csprojPath;
+            string expectedPath = ".";
+
+            // Act
+            sut.SetRelativeProjectPath(relativePath);
+
+            // Assert
+            Asserts.VerifyString(sut.GetRelativeProjPath().ToString(), expectedPath);
+        }
+
         [TestCleanup]
         public void TestCleanup()
         {
