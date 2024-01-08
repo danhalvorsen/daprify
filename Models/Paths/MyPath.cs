@@ -47,7 +47,7 @@ namespace Daprify.Models
 
         public void SetDirectoryPath()
         {
-            _path = Path.GetDirectoryName(_path) ?? throw new ArgumentNullException(nameof(_path));
+            _path = Path.GetDirectoryName(_path) ?? throw new DirectoryNotFoundException(nameof(_path));
         }
 
         public bool HasFileExtension()

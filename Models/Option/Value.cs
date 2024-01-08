@@ -1,19 +1,9 @@
 
 namespace Daprify.Models
 {
-    public class Value
+    public class Value(string value)
     {
-        private string _value;
-
-        public Value(string value)
-        {
-            SetValue(value);
-        }
-
-        private void SetValue(string value)
-        {
-            _value = value ?? throw new ArgumentNullException(nameof(value), "The option value cannot be null!");
-        }
+        private readonly string _value = value ?? throw new ArgumentNullException(nameof(value), "The option value cannot be null!");
 
         public override string ToString()
         {
