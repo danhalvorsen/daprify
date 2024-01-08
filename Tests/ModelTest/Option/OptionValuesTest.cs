@@ -10,34 +10,23 @@ namespace DaprifyTests.Options
         public void Expect_Constructor_WithStringList_InitializesCorrectly()
         {
             // Arrange
+            Key key = new("key");
             List<string> expectedValues = ["value1", "value2", "value3"];
 
             // Act
-            OptionValues sut = new(expectedValues);
+            OptionValues sut = new(key, expectedValues);
 
             // Assert
             Asserts.VerifyEnumerableString(sut.GetStringEnumerable(), expectedValues);
         }
 
         [TestMethod]
-        public void Expect_Constructor_WithValueList_InitializesCorrectly()
-        {
-            // Arrange
-            List<Value> valueList = [new("value1"), new("value2"), new("value3")];
-
-            // Act
-            OptionValues sut = new(valueList);
-
-            // Assert
-            Asserts.VerifyEnumerableValue(sut.GetValues(), valueList);
-        }
-
-        [TestMethod]
         public void Expect_CorrectCount()
         {
             // Arrange
+            Key key = new("key");
             List<string> expectedValues = ["value1", "value2", "value3"];
-            OptionValues sut = new(expectedValues);
+            OptionValues sut = new(key, expectedValues);
 
             // Act
             int count = sut.Count();
@@ -50,9 +39,10 @@ namespace DaprifyTests.Options
         public void RemoveValue_RemovesSpecifiedValue()
         {
             // Arrange
-            List<Value> initialValues = [new("value1"), new("value2"), new("value3")];
+            Key key = new("key");
+            List<string> initialValues = ["value1", "value2", "value3"];
             Value valueToRemove = new("value2");
-            OptionValues sut = new(initialValues);
+            OptionValues sut = new(key, initialValues);
 
             // Act
             sut.RemoveValue(valueToRemove);
@@ -65,12 +55,13 @@ namespace DaprifyTests.Options
         public void Contain_ReturnsTrueForContainedValue()
         {
             // Arrange
+            Key key = new("key");
             Value valueToCheck = new("value1");
-            List<Value> initialValues = [valueToCheck, new("value2"), new("value3")];
-            OptionValues sut = new(initialValues);
+            List<string> initialValues = [valueToCheck.ToString(), new("value2"), new("value3")];
+            OptionValues sut = new(key, initialValues);
 
             // Act
-            bool contains = sut.Contain(valueToCheck);
+            bool contains = sut.GetValues().Contains(valueToCheck);
 
             // Assert
             Asserts.VerifyTrue(contains);
@@ -80,12 +71,13 @@ namespace DaprifyTests.Options
         public void Contain_ReturnsFalseForNonExistentValue()
         {
             // Arrange
+            Key key = new("key");
             Value valueToCheck = new("nonexistent");
-            List<Value> initialValues = [new("value1"), new("value2"), new("value3")];
-            OptionValues sut = new(initialValues);
+            List<string> initialValues = ["value1", "value2", "value3"];
+            OptionValues sut = new(key, initialValues);
 
             // Act
-            bool contains = sut.Contain(valueToCheck);
+            bool contains = sut.GetValues().Contains(valueToCheck);
 
             // Assert
             Asserts.VerifyFalse(contains);
