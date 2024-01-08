@@ -26,14 +26,15 @@ namespace DaprifyTests.Commands
                             CONFIG_FILE = "config.yml", CONFIG_DIR = "Config/", CERT_DIR = "Certs/",
                             ENV_FILE = "Dapr.Env", ENV_DIR = "Env/", COMPONENT_DIR = "Components/";
         private readonly MyPath _confPath;
-        private readonly OptionValues componentArgs = new(["pubsub", "statestore"]);
-        private readonly OptionValues settingArgs = new(["mtls", "tracing"]);
-        private readonly OptionValues certFiles = new(["ca.crt", "issuer.crt", "issuer.key"]);
+        private readonly OptionValues componentArgs = new(new Key("components"), ["pubsub", "statestore"]);
+        private readonly OptionValues settingArgs = new(new Key("settings"), ["mtls", "tracing"]);
+        private readonly OptionValues certFiles = new(new Key("certificates"), ["ca.crt", "issuer.crt", "issuer.key"]);
 
         public TryGenAllCommandTests()
         {
             MyPathValidator myPathValidator = new();
-            _validator = new(myPathValidator);
+            OptionValuesValidator optionValuesValidator = new();
+            _validator = new(myPathValidator, optionValuesValidator);
 
             _templateFactory = new(_serviceProvider.Object);
             MockIQuery mockIQuery = new();

@@ -23,12 +23,13 @@ namespace DaprifyTests.Commands
         private readonly DirectoryInfo _startingDir = new(Directory.GetCurrentDirectory());
 
         private const string FILE_EXT = ".yml", COMPONENTS_DIR = "Dapr/Components";
-        private readonly OptionValues arguments = new(["pubsub", "statestore"]);
+        private readonly OptionValues arguments = new(new Key("components"), ["pubsub", "statestore"]);
 
         public TryComponentCommandTests()
         {
             MyPathValidator myPathValidator = new();
-            _validator = new(myPathValidator);
+            OptionValuesValidator optionValuesValidator = new();
+            _validator = new(myPathValidator, optionValuesValidator);
 
             _templateFactory = new(_serviceProvider.Object);
             _service = new(_templateFactory);

@@ -24,7 +24,8 @@ namespace DaprifyTests.Commands
         public TryCertificateCommandTests()
         {
             MyPathValidator myPathValidator = new();
-            _validator = new(myPathValidator);
+            OptionValuesValidator optionValuesValidator = new();
+            _validator = new(myPathValidator, optionValuesValidator);
 
             Console.SetOut(_consoleOutput);
             Directory.SetCurrentDirectory(DirectoryService.CreateTempDirectory().ToString());

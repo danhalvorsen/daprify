@@ -29,7 +29,8 @@ namespace DaprifyTests.Commands
         public TryComposeCommandTests()
         {
             MyPathValidator myPathValidator = new();
-            _validator = new(myPathValidator);
+            OptionValuesValidator optionValuesValidator = new();
+            _validator = new(myPathValidator, optionValuesValidator);
 
             MockServiceProvider _serviceProvider = new();
             MockIQuery mockIQuery = new();
