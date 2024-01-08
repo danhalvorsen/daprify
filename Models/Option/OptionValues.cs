@@ -13,7 +13,11 @@ namespace Daprify.Models
         public OptionValues(Key key, List<string> stringValues)
         {
             _key = key;
-            _values = stringValues.Select(v => new Value(v)) ?? throw new ArgumentNullException(nameof(stringValues), "The option values cannot be null!");
+            if (stringValues == null)
+            {
+                throw new ArgumentNullException(nameof(stringValues), "The option values cannot be null!");
+            }
+            _values = stringValues.Select(v => new Value(v));
         }
 
         public void SetKey(Key key)

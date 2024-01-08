@@ -18,7 +18,7 @@ namespace Daprify.Validation
         public void DefineRules()
         {
             Key projectPathKey = new("project_path");
-            Key solutionPathKey = new("solution_paths"); ;
+            Key solutionPathKey = new("solution_paths");
             Key componentKey = new("components");
             Key settingsKey = new("settings");
 

@@ -16,7 +16,7 @@ namespace Daprify.Templates
 
         protected abstract string TemplateString { get; }
 
-        public TemplateBase()
+        protected TemplateBase()
         {
             _template = Handlebars.Compile(TemplateString);
         }

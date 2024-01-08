@@ -92,7 +92,7 @@ namespace Daprify.Commands
         {
             if (optionName == "config")
             {
-                _options = LoadConfig(values.First());
+                _options = LoadConfig(values[0]);
                 return true;
             }
             else
