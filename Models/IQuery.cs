@@ -4,13 +4,13 @@ namespace Daprify.Models
 {
     public interface IQuery
     {
-        public bool CheckPackageReference(Project project, string dependency);
+        public bool CheckPackageReference(IProject project, string dependency);
         public string? GetFileInDirectory(IPath dirPath, string fileType);
     }
 
     public class Query : IQuery
     {
-        public bool CheckPackageReference(Project project, string dependency)
+        public bool CheckPackageReference(IProject project, string dependency)
         {
             XDocument proj = project.GetProject();
             return proj
