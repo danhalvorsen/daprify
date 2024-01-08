@@ -4,7 +4,7 @@ namespace Daprify.Settings
 {
     public class ComponentSettings : ISettings
     {
-        public static List<string>? AvailableComponents => ["bindings", "configstore", "crypto", "lock", "pubsub", "secretstore", "statestore"];
+        public static List<string> AvailableComponents => ["bindings", "configstore", "crypto", "lock", "pubsub", "secretstore", "statestore"];
         public static List<string> DefaultValue { get; set; } = ["pubsub", "statestore"];
 
         public string CommandName => "gen_components";
