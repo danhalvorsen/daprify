@@ -8,13 +8,30 @@ Understanding the capabilities of Dapr and the components needed for your projec
 
 Read more at **[Dapr Resources](#additional-resources)**
 
+**Table of content**
+
+- [Usage](#usage)
+  - [General Usage](#general-usage)
+  - [Generate All](#generate-all)
+  - [Generate Certificates](#generate-certificates)
+  - [Generate Component Files](#generate-component-files)
+  - [Generate Config File](#generate-config-file)
+  - [Generate Dockerfiles](#generate-dockerfiles)
+  - [Generate Docker-Compose File](#generate-docker-compose-file)
+- [Available Options and Arguments](#available-options-and-arguments)
+- [How to use config.json](#configjson)
+- [Additional Resources](#additional-resources)
+
 ## Usage
 
-1. Define your project requirements in the `config.json` file located in `Daprify/Commands`.
-2. Run the available commands in your terminal.
+1. Define your project requirements in the `config.json` file located in `Daprify/Commands`. Read more about the config.json at **[config properties](#configjson)**
+2. Run the available commands in your terminal: **dotnet run gen_all --config config.json**
 3. If project_path or solution_paths is given the outputs are saved directly into your project's root in **<YOUR_PROJECT>/Dapr/**.
 4. If not, they are saved in **Daprify/Dapr/**. Copy the **Dapr** directory into your own project's root directory.
-5. Run **docker-compose up -d** inside Dapr/Docker.
+5. If using **https**: Specify the location of your certificate and password in the _environment_ section for that service in docker-compose.yml.
+6. Run **docker-compose up -d** inside Dapr/Docker.
+
+It is also possible to use specific commands in cases where you only need for instance only need one new component file. For more information about the available commands, use the CLI help function of **dotnet run [command] -- -help** or find the specific command below.
 
 ### General Usage
 
@@ -303,24 +320,62 @@ dotnet run gen_compose --components rabbitmq sentry --services Frontend Backend
 
 ## Available options and arguments
 
-| Command           | Option           | Available Arguments                                                  |
-| ----------------- | ---------------- | -------------------------------------------------------------------- |
-| `gen_all`         | `config`         |                                                                      |
-|                   | `components`     | dashboard, placement, rabbitmq, redis, sentry, zipkin                |
-|                   | `project_path`   |                                                                      |
-|                   | `services`       |                                                                      |
-|                   | `settings`       | logging, metric, middleware, mtls, tracing, https                    |
-|                   | `solution_paths` |                                                                      |
-| `gen_certs`       |                  |                                                                      |
-| `gen_config`      | `settings`       | logging, metric, middleware, mtls, tracing                           |
-| `gen_components`  | `components`     | bindings, configstore, crypto, lock, pubsub, secretstore, statestore |
-| `gen_dockerfiles` | `project_path`   |                                                                      |
-|                   | `services`       |                                                                      |
-|                   | `solution_paths` |                                                                      |
-| `gen_compose`     | `components`     | dashboard, placement, rabbitmq, redis, sentry, zipkin                |
-|                   | `settings`       | https, mtls,                                                         |
-|                   | `services`       |                                                                      |
-|                   | `solution_paths` |                                                                      |
+| Command           | Option           | Available Arguments                                                                                                         |
+| ----------------- | ---------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `gen_all`         | `config`         |                                                                                                                             |
+|                   | `components`     | dashboard, placement, rabbitmq, redis, sentry, zipkin, bindings, configstore, crypto, lock, pubsub, secretstore, statestore |
+|                   | `project_path`   |                                                                                                                             |
+|                   | `services`       |                                                                                                                             |
+|                   | `settings`       | logging, metric, middleware, mtls, tracing, https                                                                           |
+|                   | `solution_paths` |                                                                                                                             |
+| `gen_certs`       |                  |                                                                                                                             |
+| `gen_config`      | `settings`       | logging, metric, middleware, mtls, tracing                                                                                  |
+| `gen_components`  | `components`     | bindings, configstore, crypto, lock, pubsub, secretstore, statestore                                                        |
+| `gen_dockerfiles` | `project_path`   |                                                                                                                             |
+|                   | `services`       |                                                                                                                             |
+|                   | `solution_paths` |                                                                                                                             |
+| `gen_compose`     | `components`     | dashboard, placement, rabbitmq, redis, sentry, zipkin                                                                       |
+|                   | `settings`       | https, mtls,                                                                                                                |
+|                   | `services`       |                                                                                                                             |
+|                   | `solution_paths` |                                                                                                                             |
+
+## Config.json
+
+The config.json file simplifies the process of defining your projects needs.
+
+- **components**: Used for creation of the specified **component.yml** files and adding the component to the docker-compose.yml if needed.
+- **services**: This option is necessary for including services in your setup that does not have a PackageReference to Dapr.
+- **settings**: Used for adding specified settings to Dapr's **config.yml** file mounted to each Dapr sidecar.
+- **project_path**: Determines the relative path in each service's Dockerfile from your .csproj file to the root of your project.
+- **solution_paths**: Automates the identification of projects in your solution that include a PackageReference to Dapr, and integrates these services into the docker-compose.yml.
+
+Below is an illustrative example of config.json, encompassing all possible configurations. It's important to note that some components are more specialized, such as the rabbitmq being a specific type of pubsub component or redis being a specific type of statestore. the https setting should be used if your microservice uses a https, which setup
+
+For further details on the various components and settings, refer to the **[Dapr Resources](#additional-resources)** section.
+
+```json
+{
+  "components": [
+    "bindings",
+    "configstore",
+    "crypto",
+    "lock",
+    "pubsub",
+    "secretstore",
+    "statestore",
+    "dashboard",
+    "placement",
+    "rabbitmq",
+    "redis",
+    "sentry",
+    "zipkin"
+  ],
+  "services": ["ServiceA", "ServiceB"],
+  "settings": ["https", "logging", "metric", "middleware", "mtls", "tracing"],
+  "project_path": ["../../Project"],
+  "solution_paths": ["../../Project/MicroService1", "../../Project/MicroService2"]
+}
+```
 
 ## Additional Resources
 
