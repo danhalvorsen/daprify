@@ -23,7 +23,7 @@ namespace DaprifyTests.Commands
         private readonly DirectoryInfo _startingDir = new(Directory.GetCurrentDirectory());
 
         private const string FILE_EXT = ".yml", COMPONENTS_DIR = "Dapr/Components";
-        private readonly OptionValues arguments = new(new Key("components"), ["pubsub", "statestore"]);
+        private readonly OptionValues arguments = new(new Key("components"), ["bindings", "configstore", "crypto", "lock", "pubsub", "secretstore", "statestore"]);
 
         public TryComponentCommandTests()
         {
@@ -44,9 +44,13 @@ namespace DaprifyTests.Commands
         public void Expected_Components_Generated()
         {
             // Arrange
-            string[] argument = [_settings.CommandName, ComponentSettings.OptionName[0],
-                                 arguments.GetValues().ElementAt(0).ToString(),
-                                 arguments.GetValues().ElementAt(1).ToString()];
+            string[] argument =
+            [
+                _settings.CommandName,
+                ComponentSettings.OptionName[0],
+                .. arguments.GetStringEnumerable(),
+            ];
+
             DaprifyCommand<ComponentService, ComponentSettings> sut = new(_service, _settings, _validator);
 
             // Act
