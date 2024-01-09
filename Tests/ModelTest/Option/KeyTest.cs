@@ -14,7 +14,7 @@ namespace DaprifyTests.Options
             Key key = new(expectedKey);
 
             // Act & Assert
-            Asserts.VerifyString(key.ToString(), expectedKey);
+            Asserts.VerifyShouldBe(key.ToString(), expectedKey);
         }
 
         [TestMethod]

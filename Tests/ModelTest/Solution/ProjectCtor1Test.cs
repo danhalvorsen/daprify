@@ -17,7 +17,7 @@ namespace DaprifyTests.Projects
             Project sut = new(_mockIQuery.Object, _name);
 
             // Assert
-            Asserts.VerifyString(sut.GetName().ToString(), _name.ToString());
+            Asserts.VerifyShouldBe(sut.GetName(), _name);
         }
 
         [TestMethod]
@@ -27,7 +27,7 @@ namespace DaprifyTests.Projects
             Project sut = new(_mockIQuery.Object, _name);
 
             // Assert
-            Asserts.VerifyString(sut.GetPath().ToString(), string.Empty);
+            Asserts.VerifyShouldBe(sut.GetPath().ToString(), string.Empty);
         }
 
         [TestMethod]

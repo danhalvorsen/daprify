@@ -17,7 +17,7 @@ namespace DaprifyTests.Options
             OptionValues sut = new(key, expectedValues);
 
             // Assert
-            Asserts.VerifyEnumerableString(sut.GetStringEnumerable(), expectedValues);
+            Asserts.VerifyEnumerableEquivalent(sut.GetStringEnumerable(), expectedValues);
         }
 
         [TestMethod]

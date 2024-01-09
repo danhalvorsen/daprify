@@ -19,7 +19,7 @@ namespace DaprifyTests.Paths
             AbsolutePath sut = new(relativePath);
 
             // Assert
-            Asserts.VerifyString(sut.ToString(), expectedAbsolutePath);
+            Asserts.VerifyShouldBe(sut.ToString(), expectedAbsolutePath);
         }
 
 
@@ -34,7 +34,7 @@ namespace DaprifyTests.Paths
             RelativePath sut = MyPath.GetRelativePath(_basePath, targetPath);
 
             // Assert
-            Asserts.VerifyString(sut.ToString(), expectedResult);
+            Asserts.VerifyShouldBe(sut.ToString(), expectedResult);
         }
 
         [TestMethod]
@@ -56,7 +56,7 @@ namespace DaprifyTests.Paths
             RelativePath sut = MyPath.GetRelativePath(_basePath, _basePath);
 
             // Assert
-            Asserts.VerifyString(sut.ToString(), expectedResult);
+            Asserts.VerifyShouldBe(sut.ToString(), expectedResult);
         }
 
         [TestMethod]
@@ -71,7 +71,7 @@ namespace DaprifyTests.Paths
             RelativePath sut = MyPath.GetRelativePath(basePath, targetPath);
 
             // Assert
-            Asserts.VerifyString(sut.ToString(), expectedResult);
+            Asserts.VerifyShouldBe(sut.ToString(), expectedResult);
         }
 
         [TestMethod]
@@ -85,7 +85,7 @@ namespace DaprifyTests.Paths
             RelativePath sut = MyPath.GetRelativePath(_basePath, targetPath);
 
             // Assert
-            Asserts.VerifyString(sut.ToString(), expectedResult);
+            Asserts.VerifyShouldBe(sut.ToString(), expectedResult);
         }
     }
 }

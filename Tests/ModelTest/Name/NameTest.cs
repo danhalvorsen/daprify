@@ -16,7 +16,7 @@ namespace DaprifyTests.Names
             Name sut = new(name);
 
             // Assert
-            Asserts.VerifyString(sut.ToString(), name);
+            Asserts.VerifyShouldBe(sut.ToString(), name);
         }
 
         [TestMethod]
@@ -56,7 +56,7 @@ namespace DaprifyTests.Names
             sut.SetName(name);
 
             // Assert
-            Asserts.VerifyString(sut.ToString(), name);
+            Asserts.VerifyShouldBe(sut.ToString(), name);
         }
 
         [TestMethod]
@@ -95,7 +95,7 @@ namespace DaprifyTests.Names
             Name retrievedName = sut.GetName();
 
             // Assert
-            Asserts.VerifyString(sut.ToString(), retrievedName.ToString());
+            Asserts.VerifyShouldBe(sut, retrievedName);
         }
     }
 }
