@@ -21,7 +21,7 @@ namespace DaprifyTests.IQuery
             bool result = sut.CheckPackageReference(_mockProject.Object, dependency);
 
             // Assert
-            Asserts.VerifyBool(result, true);
+            Asserts.VerifyTrue(result);
         }
 
         [TestMethod]
@@ -36,7 +36,7 @@ namespace DaprifyTests.IQuery
             bool result = sut.CheckPackageReference(_mockProject.Object, dependency);
 
             // Assert
-            Asserts.VerifyBool(result, false);
+            Asserts.VerifyFalse(result);
         }
     }
 }

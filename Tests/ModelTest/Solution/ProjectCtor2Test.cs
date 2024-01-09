@@ -32,7 +32,7 @@ namespace DaprifyTests.Projects
             Project sut = new(_mockIQuery.Object, _mockISolution.Object, _csprojPath.ToString());
 
             // Assert
-            Asserts.VerifyString(sut.GetSolution().GetPath().ToString(), _mockISolution.Object.GetPath().ToString());
+            Asserts.VerifyShouldBe(sut.GetSolution().GetPath(), _mockISolution.Object.GetPath());
 
         }
 
@@ -54,7 +54,7 @@ namespace DaprifyTests.Projects
             Project sut = new(_mockIQuery.Object, _mockISolution.Object, _csprojPath.ToString());
 
             // Assert
-            Asserts.VerifyString(sut.GetPath().ToString(), _csprojPath.ToString());
+            Asserts.VerifyShouldBe(sut.GetPath().ToString(), _csprojPath.ToString());
 
         }
 
@@ -68,7 +68,7 @@ namespace DaprifyTests.Projects
             Project sut = new(_mockIQuery.Object, _mockISolution.Object, _csprojPath.ToString());
 
             // Assert
-            Asserts.VerifyString(sut.GetRelativeSlnPath().ToString(), relativeSlnPath.ToString());
+            Asserts.VerifyShouldBe(sut.GetRelativeSlnPath().ToString(), relativeSlnPath.ToString());
 
         }
 
@@ -81,7 +81,7 @@ namespace DaprifyTests.Projects
             Project sut = new(_mockIQuery.Object, _mockISolution.Object, _csprojPath.ToString());
 
             // Assert
-            Asserts.VerifyString(sut.GetName().ToString(), _name.ToString());
+            Asserts.VerifyShouldBe(sut.GetName().ToString(), _name.ToString());
 
         }
 
@@ -113,7 +113,7 @@ namespace DaprifyTests.Projects
             sut.SetRelativeProjectPath(relativePath);
 
             // Assert
-            Asserts.VerifyString(sut.GetRelativeProjPath().ToString(), expectedPath);
+            Asserts.VerifyShouldBe(sut.GetRelativeProjPath().ToString(), expectedPath);
         }
 
         [TestCleanup]

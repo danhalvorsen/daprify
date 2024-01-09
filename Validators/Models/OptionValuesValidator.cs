@@ -46,12 +46,6 @@ namespace Daprify.Validation
         private bool ValidateOptionValues(OptionValues optionValues, IEnumerable<string> validOptions, string optionType)
         {
             var values = optionValues.GetValues();
-            if (values == null || !values.Any())
-            {
-                Log.Verbose("No {OptionType}s to validate.", optionType);
-                return false;
-            }
-
             return values.All(value =>
             {
                 bool isValid = validOptions.Contains(value.ToString());

@@ -1,20 +1,10 @@
-using Daprify.Models;
 using FluentAssertions;
 
 namespace DaprifyTests.Assert
 {
-    public class Asserts
+    public static class Asserts
     {
 
-        public static void VerifyEmpty(IEnumerable<string> sut)
-        {
-            sut.Should().BeEmpty();
-        }
-
-        public static void VerifyBool(bool sut, bool expected)
-        {
-            sut.Should().Be(expected);
-        }
         public static void VerifyNotNull<T>(T sut)
         {
             sut.Should().NotBeNull();
@@ -25,7 +15,7 @@ namespace DaprifyTests.Assert
             sut.Should().NotBeNull().And.HaveCount(expectedCount);
         }
 
-        public static void VerifyString(string sut, string expected)
+        public static void VerifyShouldBe<T>(T sut, T expected)
         {
             sut.Should().Be(expected);
         }
@@ -35,12 +25,7 @@ namespace DaprifyTests.Assert
             sut.Should().BeOfType<T>();
         }
 
-        public static void VerifyEnumerableString(IEnumerable<string> sut, IEnumerable<string> expected)
-        {
-            sut.Should().BeEquivalentTo(expected);
-        }
-
-        public static void VerifyEnumerableValue(IEnumerable<Value> sut, IEnumerable<Value> expected)
+        public static void VerifyEnumerableEquivalent<T>(IEnumerable<T> sut, IEnumerable<T> expected)
         {
             sut.Should().BeEquivalentTo(expected);
         }

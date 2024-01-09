@@ -25,7 +25,7 @@ namespace DaprifyTests.Projects
             Asserts.VerifyItemCount(sut, names.Count);
             for (int i = 0; i < names.Count; i++)
             {
-                Asserts.VerifyString(sut.Select(p => p.GetName().ToString()).ElementAt(i), names.ElementAt(i).ToString());
+                Asserts.VerifyShouldBe(sut.Select(p => p.GetName().ToString()).ElementAt(i), names.ElementAt(i).ToString());
             }
         }
 
@@ -40,7 +40,7 @@ namespace DaprifyTests.Projects
             sut.SetPath(path.Object);
 
             // Assert
-            Asserts.VerifyString(sut.GetPath().ToString(), path.Object.ToString());
+            Asserts.VerifyShouldBe(sut.GetPath(), path.Object);
         }
 
         [TestMethod]
@@ -77,7 +77,7 @@ namespace DaprifyTests.Projects
             Project project = new(_mockIQuery.Object, _name);
 
             // Act & Assert
-            Asserts.VerifyBool(project.Contains("Temp"), true);
+            Asserts.VerifyTrue(project.Contains("Temp"));
         }
 
         [TestMethod]
@@ -87,7 +87,7 @@ namespace DaprifyTests.Projects
             Project project = new(_mockIQuery.Object, _name);
 
             // Act & Assert
-            Asserts.VerifyBool(project.Contains("NotValid"), false);
+            Asserts.VerifyFalse(project.Contains("NotValid"));
         }
 
         [TestMethod]

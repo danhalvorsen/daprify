@@ -18,7 +18,7 @@ namespace DaprifyTests.Paths
             MyPath sut = new(validPath);
 
             // Assert
-            Asserts.VerifyString(sut.ToString(), validPath);
+            Asserts.VerifyShouldBe(sut.ToString(), validPath);
         }
 
         [TestMethod]
@@ -45,7 +45,7 @@ namespace DaprifyTests.Paths
             sut.SetPath(newPath);
 
             // Assert
-            Asserts.VerifyString(sut.ToString(), newPath);
+            Asserts.VerifyShouldBe(sut.ToString(), newPath);
         }
 
         [TestMethod]
@@ -74,7 +74,7 @@ namespace DaprifyTests.Paths
             IEnumerable<string> expectedPaths = paths.Select(p => new MyPath(p).ToString());
             IEnumerable<string> actualPaths = sut.Select(mp => mp.ToString());
 
-            Asserts.VerifyEnumerableString(actualPaths, expectedPaths);
+            Asserts.VerifyEnumerableEquivalent(actualPaths, expectedPaths);
         }
 
         [TestMethod]
@@ -126,7 +126,7 @@ namespace DaprifyTests.Paths
             sut.SetDirectoryPath();
 
             // Assert
-            Asserts.VerifyString(sut.ToString(), dirName!);
+            Asserts.VerifyShouldBe(sut.ToString(), dirName!);
         }
 
         [TestMethod]

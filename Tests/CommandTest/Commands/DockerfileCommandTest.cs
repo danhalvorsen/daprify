@@ -12,27 +12,29 @@ using System.CommandLine.Parsing;
 namespace DaprifyTests.Commands
 {
     [TestClass]
-    public class TryComponentCommandTests
+    public class TryDockerfileCommandTests
     {
         private readonly StringWriter _consoleOutput = new();
-        private readonly ComponentService _service;
-        private readonly ComponentSettings _settings = new();
+        private readonly DockerfileService _service;
+        private readonly DockerfileSettings _settings = new();
         private readonly OptionDictionaryValidator _validator;
-        private readonly MockServiceProvider _serviceProvider = new();
-        private readonly TemplateFactory _templateFactory;
         private readonly DirectoryInfo _startingDir = new(Directory.GetCurrentDirectory());
 
-        private const string FILE_EXT = ".yml", COMPONENTS_DIR = "Dapr/Components";
-        private readonly OptionValues arguments = new(new Key("components"), ["bindings", "configstore", "crypto", "lock", "pubsub", "secretstore", "statestore"]);
+        private const string FILE_EXT = ".Dockerfile", DOCKER_DIR = "Dapr/Docker";
+        private readonly OptionValues arguments = new(new Key("components"), ["ServiceA", "ServiceB"]);
 
-        public TryComponentCommandTests()
+        public TryDockerfileCommandTests()
         {
             MyPathValidator myPathValidator = new();
             OptionValuesValidator optionValuesValidator = new();
             _validator = new(myPathValidator, optionValuesValidator);
 
-            _templateFactory = new(_serviceProvider.Object);
-            _service = new(_templateFactory);
+            MockIQuery mockIQuery = new();
+            MockIProjectProvider mockIProjectProvider = new();
+            MockServiceProvider serviceProvider = new();
+
+            TemplateFactory templateFactory = new(serviceProvider.Object);
+            _service = new(mockIQuery.Object, mockIProjectProvider.Object, templateFactory);
             Console.SetOut(_consoleOutput);
 
             Directory.SetCurrentDirectory(DirectoryService.CreateTempDirectory().ToString());
@@ -41,24 +43,20 @@ namespace DaprifyTests.Commands
 
 
         [TestMethod]
-        public void Expected_Components_Generated()
+        public void Expected_Dockerfiles_Generated()
         {
             // Arrange
-            string[] argument =
-            [
-                _settings.CommandName,
-                ComponentSettings.OptionName[0],
-                .. arguments.GetStringEnumerable(),
-            ];
-
-            DaprifyCommand<ComponentService, ComponentSettings> sut = new(_service, _settings, _validator);
+            string[] argument = [_settings.CommandName, DockerfileSettings.ServiceOptionName[0],
+                                 arguments.GetValues().ElementAt(0).ToString(),
+                                 arguments.GetValues().ElementAt(1).ToString()];
+            DaprifyCommand<DockerfileService, DockerfileSettings> sut = new(_service, _settings, _validator);
 
             // Act
             sut.Parse(argument).Invoke();
 
             // Assert
             string consoleOutput = _consoleOutput.ToString();
-            Directory.SetCurrentDirectory(MyPath.Combine(DirectoryService.GetCurrentDirectory().ToString(), COMPONENTS_DIR).ToString());
+            Directory.SetCurrentDirectory(MyPath.Combine(DirectoryService.GetCurrentDirectory().ToString(), DOCKER_DIR).ToString());
 
             foreach (string arg in arguments.GetStringEnumerable())
             {

@@ -17,8 +17,8 @@ namespace DaprifyTests.Paths
             RelativePath sut = new(basePath, targetPath);
 
             // Assert
-            Asserts.VerifyString(sut.ToString(), expected);
-            Asserts.VerifyString(sut.GetTargetPath().ToString(), targetPath.ToString());
+            Asserts.VerifyShouldBe(sut.ToString(), expected);
+            Asserts.VerifyShouldBe(sut.GetTargetPath(), targetPath);
         }
 
         [TestMethod]
@@ -66,7 +66,7 @@ namespace DaprifyTests.Paths
             RelativePath sut = new(basePath, basePath);
 
             // Assert
-            Asserts.VerifyString(sut.ToString(), expected);
+            Asserts.VerifyShouldBe(sut.ToString(), expected);
         }
     }
 }

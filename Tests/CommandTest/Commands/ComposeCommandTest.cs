@@ -24,7 +24,7 @@ namespace DaprifyTests.Commands
 
         private const string EXPECTED_FILENAME = "docker-compose.yml", DOCKER_DIR = "Dapr/Docker";
         private readonly List<string> serviceArguments = ["ServiceA", "ServiceB",];
-        private readonly List<string> componentArguments = ["rabbitmq", "redis",];
+        private readonly List<string> componentArguments = ["dashboard", "placement", "rabbitmq", "redis", "sentry", "zipkin"];
 
         public TryComposeCommandTests()
         {

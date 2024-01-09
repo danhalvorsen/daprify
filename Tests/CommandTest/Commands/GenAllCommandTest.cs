@@ -26,8 +26,9 @@ namespace DaprifyTests.Commands
                             CONFIG_FILE = "config.yml", CONFIG_DIR = "Config/", CERT_DIR = "Certs/",
                             ENV_FILE = "Dapr.Env", ENV_DIR = "Env/", COMPONENT_DIR = "Components/";
         private readonly MyPath _confPath;
-        private readonly OptionValues componentArgs = new(new Key("components"), ["pubsub", "statestore"]);
-        private readonly OptionValues settingArgs = new(new Key("settings"), ["mtls", "tracing"]);
+        private readonly OptionValues componentArgs = new(new Key("components"), ["bindings", "configstore", "crypto", "lock", "pubsub", "secretstore", "statestore"]);
+        private readonly OptionValues composeArgs = new(new Key("components"), ["dashboard", "placement", "rabbitmq", "redis", "sentry", "zipkin"]);
+        private readonly OptionValues settingArgs = new(new Key("settings"), ["https", "logging", "metric", "middleware", "mtls", "tracing"]);
         private readonly OptionValues certFiles = new(new Key("certificates"), ["ca.crt", "issuer.crt", "issuer.key"]);
 
         public TryGenAllCommandTests()
@@ -60,8 +61,7 @@ namespace DaprifyTests.Commands
             // Arrange
             string[] argument = [_settings.CommandName,
                                  GenAllSettings.SettingOptionName[0],
-                                 settingArgs.GetValues().ElementAt(0).ToString(),
-                                 settingArgs.GetValues().ElementAt(1).ToString()];
+                                 .. settingArgs.GetStringEnumerable(),];
             DaprifyCommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _validator);
 
             // Act
@@ -85,8 +85,7 @@ namespace DaprifyTests.Commands
             // Arrange
             string[] argument = [_settings.CommandName,
                                  GenAllSettings.SettingOptionName[0],
-                                 settingArgs.GetValues().ElementAt(0).ToString(),
-                                 settingArgs.GetValues().ElementAt(1).ToString()];
+                                 .. settingArgs.GetStringEnumerable(),];
             DaprifyCommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _validator);
 
             // Act
@@ -103,8 +102,7 @@ namespace DaprifyTests.Commands
         {
             // Arrange
             string[] argument = [_settings.CommandName, GenAllSettings.ComponentOptionName[0],
-                                componentArgs.GetValues().ElementAt(0).ToString(),
-                                componentArgs.GetValues().ElementAt(1).ToString()];
+                                .. componentArgs.GetStringEnumerable()];
             DaprifyCommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _validator);
 
             // Act
@@ -146,11 +144,9 @@ namespace DaprifyTests.Commands
             // Arrange
             string[] argument = [_settings.CommandName,
                                 GenAllSettings.ComponentOptionName[0],
-                                componentArgs.GetValues().ElementAt(0).ToString(),
-                                componentArgs.GetValues().ElementAt(1).ToString(),
+                                .. composeArgs.GetStringEnumerable(),
                                 GenAllSettings.SettingOptionName[0],
-                                settingArgs.GetValues().ElementAt(0).ToString(),
-                                settingArgs.GetValues().ElementAt(1).ToString()];
+                                .. settingArgs.GetStringEnumerable()];
             DaprifyCommand<GenAllService, GenAllSettings> sut = new(_service, _settings, _validator);
 
             // Act

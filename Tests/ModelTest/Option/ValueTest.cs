@@ -17,7 +17,7 @@ namespace DaprifyTests.Options
             Value value = new(expectedValue);
 
             // Assert
-            Asserts.VerifyString(value.ToString(), expectedValue);
+            Asserts.VerifyShouldBe(value.ToString(), expectedValue);
         }
 
         [TestMethod]
@@ -42,7 +42,7 @@ namespace DaprifyTests.Options
             Value value = new(expectedValue);
 
             // Act & Assert
-            Asserts.VerifyString(value.ToString(), expectedValue);
+            Asserts.VerifyShouldBe(value.ToString(), expectedValue);
         }
 
         [TestMethod]
