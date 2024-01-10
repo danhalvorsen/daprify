@@ -12,13 +12,13 @@ namespace Daprify.Templates
     command: [""./sentry"",
       ""-issuer-credentials"", ""/dapr/certs"",
       ""-trust-domain"", ""cluster.local"", # issuer name of the certificates
-      ""-config"", ""/dapr/config/config.yaml"",
+      ""-config"", ""/dapr/config/config.yml"",
       ""-log-level"", ""debug"",
     ]
     volumes:
-      - ""./Dapr/Certs/:/dapr/certs""
-      - ""./Dapr/Components/:/dapr/components""
-      - ""./Dapr/Config/:/dapr/config""
+      - ""../Certs/:/dapr/certs""
+      - ""../Components/:/dapr/components""
+      - ""../Config/:/dapr/config""
     ports:
       - ""8082:8080""
       

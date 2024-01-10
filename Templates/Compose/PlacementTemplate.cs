@@ -15,7 +15,7 @@ namespace Daprify.Templates
     ports:
       - ""50005:50005""
     volumes:
-      - ""./Dapr/Certs/:/var/run/secrets/dapr.io/tls"" # if using TLS
+      - ""../Certs/:/var/run/secrets/dapr.io/tls"" # if using TLS
       
 ";
   }
