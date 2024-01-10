@@ -18,14 +18,14 @@ namespace Daprify.Templates
       ""-app-port"", ""{{{port}}}"",
       ""-placement-host-address"", ""placement:50005"",
       ""-components-path"", ""/dapr/components"",
-      ""-config"", ""/dapr/config/config.yaml"",
+      ""-config"", ""/dapr/config/config.yml"",
       ""-log-level"", ""debug"",
       {{{https}}}
       {{{mtls}}}
       ]
     volumes:
-      - ""./Dapr/Components/:/dapr/components""
-      - ""./Dapr/Config/:/dapr/config""
+      - ""../Components/:/dapr/components""
+      - ""../Config/:/dapr/config""
     {{{env_file}}}    
     depends_on:
       - {{{service}}}

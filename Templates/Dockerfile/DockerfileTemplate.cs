@@ -32,7 +32,7 @@ ENTRYPOINT [""dotnet"", ""{{ServiceName}}.dll""]";
         {
             var data = new
             {
-                ServicePath = GetRelativePath(project) + ".csproj",
+                ServicePath = GetRelativePath(project),
                 ServiceName = project.GetName(),
             };
 

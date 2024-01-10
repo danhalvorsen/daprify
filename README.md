@@ -341,7 +341,7 @@ dotnet run gen_compose --components rabbitmq sentry --services Frontend Backend
 
 ## Config.json
 
-The config.json file simplifies the process of defining your projects needs. The paths should be relative from Daprify/Commands to the location of either your project path or solution path
+The config.json file simplifies the process of defining your projects needs. The paths should be relative from _Daprify/Commands_ to the location of either your project path or solution paths.
 
 - **components**: Used for creation of the specified **component.yml** files and adding the component to the docker-compose.yml if needed.
 - **services**: This option is necessary for including services in your setup that does not have a PackageReference to Dapr.
