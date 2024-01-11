@@ -1,4 +1,5 @@
 using Daprify.Models;
+using Daprify.Settings;
 using Serilog;
 
 namespace Daprify.Templates
@@ -49,11 +50,33 @@ namespace Daprify.Templates
     private static IEnumerable<string> GetDependsOn(OptionDictionary options)
     {
       OptionValues components = options.GetAllPairValues(new("components"));
-      foreach (Value component in components.GetValues())
+      foreach (string component in components.GetStringEnumerable())
       {
-        yield return component.ToString().ToLower();
+        string componentName = UpdateComponentName(component.ToLower());
+        if (!ComposeComponent(componentName))
+        {
+          continue;
+        }
+
+        yield return componentName;
       }
     }
+
+    private static string UpdateComponentName(string component)
+    {
+      return component switch
+      {
+        "pubsub" => "rabbitmq",
+        "statestore" => "redis",
+        _ => component
+      };
+    }
+
+    private static bool ComposeComponent(string componentName)
+    {
+      return ComposeSettings.AvailableComponents.Contains(componentName);
+    }
+
 
     private string GetHttps(OptionValues settings, string servicePort)
     {

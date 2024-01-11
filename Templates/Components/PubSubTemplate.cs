@@ -11,7 +11,7 @@ spec:
   type: pubsub.rabbitmq
   version: v1
   metadata:
-    - name: host
+    - name: connectionString
       value: amqp://rabbitmq:5672 # Required. Example: ""amqp://rabbitmq.default.svc.cluster.local:5672"", ""amqp://localhost:5672""
     # - name: durable
     #   value: <REPLACE-WITH-DURABLE> # Optional. Default: ""false""

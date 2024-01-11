@@ -4,6 +4,6 @@ namespace Daprify.Templates
     {
         protected override string TemplateString =>
 @"env_file: 
-    - ""../Env/Dapr.env""";
+    - ../Env/Dapr.env";
     }
 }

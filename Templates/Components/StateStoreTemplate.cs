@@ -8,7 +8,7 @@ kind: Component
 metadata:
   name: redis
 spec:
-  type: pubsub.redis
+  type: state.redis
   version: v1
   metadata:
     - name: redisHost
